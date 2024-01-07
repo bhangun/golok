@@ -35,6 +35,16 @@ flutter run
 
 ## Model's Specification 
 ```
+version: 1.0
+info:
+  title: 
+  description:
+
+applications:
+
+entities:
+
+enums:
 
 ```
 
