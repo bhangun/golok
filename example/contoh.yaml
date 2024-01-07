@@ -1,0 +1,64 @@
+version: 1.0
+info:
+  title: 
+  description:
+
+applications:
+- name: lapak
+  packageName: tech.kays
+  server:
+    applicationType: microservice
+    packageName: com.golok.demo
+    serviceDiscoveryType: eureka
+    authenticationType: jwt
+    databaseType: mongodb
+    prodDatabaseType: mongodb
+    devDatabaseType: mongodb
+    cacheProvider: no
+    enableHibernateCache: false
+    buildTool: gradle
+    serverPort: 8083
+    skipUserManagement: true
+    
+  front:
+    framework: flutter
+    database: hive
+    admin: true
+    themes:
+    - default
+    - dark
+    - light
+    plugins:
+    - connection
+
+    stateManagement: riverpod
+    platform:
+    - web
+    - android
+    - linux
+    - ios
+    - desktop
+    - all
+
+entities:
+- name: product
+  doc: 
+  properties:
+  - name: id
+    type: int
+    show: false
+  - name
+  - description
+  - sku
+  - name: image
+    type: image
+  - category
+  - name: price
+    type: price
+  - name: unit
+    type: unit
+    
+enums:
+- myproduct
+- abcde
+  
