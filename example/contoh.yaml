@@ -19,18 +19,15 @@ applications:
     buildTool: gradle
     serverPort: 8083
     skipUserManagement: true
-    
-  front:
+  frontend:
     framework: flutter
     database: hive
     admin: true
-    themes:
-    - default
-    - dark
-    - light
+    # Themes option, if not defined would be default.  
+    # default | dark | light
+    themes: default
     plugins:
     - connection
-
     stateManagement: riverpod
     platform:
     - web
@@ -39,17 +36,22 @@ applications:
     - ios
     - desktop
     - all
-
+    entities:
+    - Product
+    - Order
+    - OrderLine
 entities:
-- name: product
-  doc: 
+- name: Product
+  doc: Ini adalah Product
   properties:
   - name: id
     type: int
     show: false
   - name
   - description
-  - sku
+  - name: sku
+    min: 3
+    max: 50
   - name: image
     type: image
   - category
@@ -57,8 +59,41 @@ entities:
     type: price
   - name: unit
     type: unit
-    
+- name: Order
+  doc: Order product
+  properties:
+  - name: id
+    type: int
+    show: false
+  - name: createdAt
+    type: dateTime
+  relationship:
+  - type: oneToMany
+    to: OrderLine
+    name: items
+- name: OrderLine
+  doc: Order product
+  properties:
+  - name: id
+    type: int
+    show: false
+  - name: createdAt
+    type: dateTime
+  - name: product
+    type: product
+  - name: orderItem
+    type: product 
+- name: Shipment
+  doc: Shipment
+  properties:
+  - name: id
+    type: int
+    show: false
+  - name: createdAt
+    type: dateTime
 enums:
-- myproduct
-- abcde
+- unit
+  - kg
+  - g
+  - cm
   
