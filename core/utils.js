@@ -38,6 +38,9 @@ function parse(path, destination){
 
 } 
 
+/**
+ * 
+ */
 function parseYaml(file){
   var context = YAML.parse(file);
   var entities = parseProperties(context.entities);
