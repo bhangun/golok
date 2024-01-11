@@ -3,9 +3,7 @@
   var newEntities = []
 
   for (i in services) { 
-    if(services[i].serviceName == entities.) {
-     
-    }
+    
   }
 
 _%>
@@ -13,8 +11,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'rest/rest_services.dart'; <% if(entities.length > 1) { for (i in entities) { %>
-import 'package:<%= appsName %>/models/<%= entities[i].entityInstance.toLowerCase() %>.dart'; <% }} else {for (i in services) { %>
-import 'package:<%= appsName %>/models/<%= services[i].responseType %>.dart'; <% }} %>
+import 'package:<%= info.name %>/models/<%= entities[i].entityInstance.toLowerCase() %>.dart'; <% }} else {for (i in services) { %>
+import 'package:<%= info.name %>/models/<%= services[i].responseType %>.dart'; <% }} %>
 
 /// <%= info.title %>
 /// @version <%= info.version %>

@@ -1,7 +1,12 @@
+kind: golok
 version: 1.0
 info:
-  title: 
-  description:
+  name: lapak
+  title: Contoh1
+  description: Ini contoh aplikasi
+
+services:
+- serviceName: namaservice
 
 applications:
 - name: lapak
@@ -40,15 +45,19 @@ applications:
     - Product
     - Order
     - OrderLine
+    
 entities:
 - name: Product
   doc: Ini adalah Product
+  entityInstance: instance
   properties:
   - name: id
     type: int
     show: false
   - name
-  - description
+  - name: description
+    type: string
+    truncateAt: 20
   - name: sku
     min: 3
     max: 50
@@ -91,6 +100,28 @@ entities:
     show: false
   - name: createdAt
     type: dateTime
+
+operations:
+- name: getConsumer
+  path: /apisix/admin/consumers
+  verb: get
+  doc: Return the consumer list according to the specified page number and page size, and can search consumers by username.
+  example:
+  - path: /apisix/admin/consumers
+    doc: This is doc
+  parameters:
+  - name: page	
+    position: query	
+    doc: page number	
+    required: no	
+    type: integer
+  response:
+  - code: 200
+    type: product
+    example: 
+    
+  - code: 201
+
 enums:
 - unit
   - kg

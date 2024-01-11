@@ -1,51 +1,103 @@
 import process from 'node:process';
-import  { dirname, resolve, join  } from 'node:path';
-import { readFileSync, writeFile, readdirSync, writeFileSync, mkdir } from 'node:fs';
+import path from 'node:path';
+import fs from 'node:fs';
 import { Buffer } from 'node:buffer';
 import { exec, spawn } from 'node:child_process';
-import Crayon from './crayon.js';
 import ejs from 'ejs';
 import YAML from 'yaml';
 
 
-const TEMPLATE_DIR =  './template/flutter/riverpod';
+const DEFAULT_TEMPLATE_DIR =  './template/flutter/riverpod';
 const MODE_0666 = parseInt('0666', 8)
 const MODE_0755 = parseInt('0755', 8)
 
-export { parse, rewriteFile}
+export { parse, rewriteFile, typeCheck, copyFile, initiateFlutter}
 
 
-function grey(text){
-  var t = '\x1b[2m%s\x1b[0m';
-  return text;
-}
 /**
- * 
+ * Main function to parse model  
  */
-function parse(path, destination){
-    const file = readFileSync(path, 'utf8');
+function parse(path, destination, otherTemplateDir){
+    const file = fs.readFileSync(path, 'utf8');
     const context = parseYaml(file);
 
-    //process.env.PATH
-    //console.log(dirname('../flutter'));
-    //exec('"../coba1/flutter create coba2" arg1 arg2')
-    //console.log(path.dirname('../flutter'));
-    //initiateFlutter();
-
-    //copyTemplateMulti('', destination, context);
-    //makeDir(destination);
-    //template('/Users/bhangun/workopen/golok/data/template.ejs',ym);
-
+    renderTemplate(otherTemplateDir, destination, context);
 } 
 
 /**
- * 
+ * Parse yaml file to reconfigure
  */
 function parseYaml(file){
   var context = YAML.parse(file);
   var entities = parseProperties(context.entities);
   context.entities = entities;
   return context;
+}
+
+/**
+ * Render template directory.
+ */
+function renderTemplate(otherTemplateDir, toDir, context, nameGlob) {
+  console.log('\x1b[33m%s\x1b[0m','Generated files to '+toDir+' : ');
+
+  fs.readdirSync((otherTemplateDir)? otherTemplate: DEFAULT_TEMPLATE_DIR, {recursive:true})
+    //.filter(minimatch.filter(nameGlob, { matchBase: true }))
+    .forEach(function (templateFile) {
+      //console.log('\x1b[32m%s\x1b[0m',templateFile);
+
+      renderEjsFile(path.join(DEFAULT_TEMPLATE_DIR, templateFile), templateFile, toDir, context);
+      //copyTemplate(path.join(fromDir, name), path.join(toDir, name))
+  });
+}
+
+/**
+ * Render .ejs files
+ */
+function renderEjsFile(source, templateFile, toDir, context, options){
+  const destinPath = path.join(toDir, templateFile);
+
+  if(!fs.existsSync(toDir))
+    makeDir(toDir);
+
+  if(fs.lstatSync(source).isDirectory())
+    makeDir(source);
+  
+  // If not .ejs, just copy the file 
+  if(path.extname(source) != '.ejs') 
+    copyFile(source, destinPath);
+  else
+    // Render all ejs file
+    ejs.renderFile(source, context, options, function(err, str){
+        if (err) throw err;
+
+        // Write rendered file to new directory
+        fs.writeFile(destinPath, str, (err) => {
+          console.log('\x1b[32m%s\x1b[0m',destinPath);
+            if (err) throw err;
+            console.log('\x1b[33m%s\x1b[0m','The file has been saved!');
+        });  
+    });
+}
+
+/**
+ * Copy file 
+ */
+function copyFile(from, to){
+  console.log('\x1b[32m%s\x1b[0m', to)
+  fs.copyFile(from, to, (err) => {
+    if (err) throw err;
+    console.log("File ", from, 'has been copied!');
+  });
+}
+
+/**
+ * Rename file
+ */
+function rename(oldName, newName){
+  fs.rename(oldName, newName, (err) => { 
+    if(err) throw err
+    console.log("\nFile Renamed!\n"); 
+  });
 }
 
 /**
@@ -68,112 +120,68 @@ function parseProperties(entities){
   return entities;
 }
 
-function initiateFlutter(){
+/**
+ * Create flutter apps
+ */
+function initiateFlutter(destinDir){
   //spawn('"flutter"', ['create', '../coba3'], { shell: true });
 
-  exec('"flutter" create coba4', (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
+  exec('"flutter" create ' + destinDir, (err, stdout, stderr) => {
+    if (err) throw err;
     console.log(stdout);
-  });
-}
-
-/**
- * Copy multiple files from template directory.
- */
-function copyTemplateMulti(fromDir, toDir, context, nameGlob) {
-  readdirSync(join(TEMPLATE_DIR, fromDir), {recursive:true})
-    //.filter(minimatch.filter(nameGlob, { matchBase: true }))
-    .forEach(function (name) {
-      console.log(name);
-      template(join(TEMPLATE_DIR, name), toDir, context);
-      //copyTemplate(join(fromDir, name), join(toDir, name))
-  });
-}
-
-/**
- * Render template
- */
-function template(source, to, context, options){
-  ejs.renderFile(source, context, options, function(err, str){
-      if (err) throw err;
-      writeFile(to, str, (err) => {
-          if (err) throw err;
-              console.log('The file has been saved!');
-      }); 
   });
 }
 
 /**
  * Copy file from template directory.
  */
-function copyTemplate (from, to) {
-  makeDir(dirname(to));
-  write(to, readFileSync(join(TEMPLATE_DIR, from), 'utf-8'))
-}
+/* function copyTemplate(from, to) {
+  makeDir(path.dirname(to));
+  write(to, readFileSync(path.join(DEFAULT_TEMPLATE_DIR, from), 'utf-8'))
+} */
 
 
-function rewriteFile(args, generator) {
+/**
+ * Rewrite file
+ */
+function rewriteFile(path, generator) {
     let fullPath;
     if (args.path) {
-      fullPath = join(args.path, args.file);
+      fullPath = path.join(args.path, args.file);
     }
     fullPath = generator.destinationPath(args.file);
   
     args.haystack = fs.read(fullPath);
     const body = rewrite(args);
-    generator.fs.write(fullPath, body);
+    write(fullPath, body);
     return args.haystack !== body;
 }
 
 /**
- * Prompt for confirmation on STDOUT/STDIN
- */
-
-function confirm (msg, callback) {
-  var rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-
-  rl.question(msg, function (input) {
-    rl.close()
-    callback(/^y|yes|ok|true$/i.test(input))
-  })
-}
-
-
-/**
- * echo str > file.
+ * Write file
  *
  * @param {String} file
  * @param {String} str
  */
-
-function write (file, str, mode) {
-  writeFileSync(file, str, { mode: mode || MODE_0666 })
-  console.log('   \x1b[36mcreate\x1b[0m : ' + file)
+function write(file, str, mode) {
+  fs.writeFileSync(file, str, { mode: mode || MODE_0666 })
+  console.log('  \x1b[36mcreate\x1b[0m : ' + file)
 }
-
-function makeDir(dir){
-  mkdir( dir, (err) => { 
-    if (err) { 
-        return console.error(err); 
-    } 
-    console.log('Directory created successfully!'); 
-  }); 
-}
-
 
 /**
-    array
-    date
-    string
-    boolean
-    null 
-    object
+ * Create directory
+ */
+function makeDir(dir){
+  if(!fs.existsSync(dir))
+    fs.mkdir( dir, (err) => { 
+      if (err) throw err
+      console.log('Directory created successfully!'); 
+    }); 
+}
+
+/**
+ * Check type from value 
+ * output : array | date | string | boolean | null | object
 */
 const typeCheck = (value) => {
   const return_value = Object.prototype.toString.call(value);
@@ -183,4 +191,3 @@ const typeCheck = (value) => {
   );
   return type.toLowerCase();
 };
-

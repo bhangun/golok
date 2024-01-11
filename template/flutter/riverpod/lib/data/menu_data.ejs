@@ -20,7 +20,7 @@ List<Menu> menu(BuildContext context) => [
         title: AppLocalizations.of(context).about,
         icon: "home",
         path: "/about",
-      ), <% for (i in services) { %>
+      ), <%_ for (i in services) { %>
       Menu(
         title: AppLocalizations.of(context).<%= services[i].serviceName %>,
         icon: "home",

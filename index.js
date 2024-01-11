@@ -23,8 +23,9 @@ program.command('create')
   .description('Generate fullstack application by model first')
   .argument('<string>', 'Model file in yaml')
   .option('-o, --output <string>', 'Output file to generated apps')
+  .option('-t, --template <string>', 'Path to your own template')
   .action((model, options) => {
-    parse(model, options.output)
+    parse(model, options.output, options.template)
   });
 
 program.parse(process.argv);
