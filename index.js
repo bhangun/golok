@@ -1,23 +1,17 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { parse } from'./core/utils.js';
+import { generate } from'./lib/utils.js';
+import Logo  from './lib/logo.js';
 
 const program = new Command();
-
-console.log('\x1b[2m%s\x1b[0m','                    ▒');
-console.log('\x1b[2m%s\x1b[0m','                    ▒░');
-console.log('\x1b[36m%s\x1b[0m','  ________        ','\x1b[2m','▒░░','\x1b[36m','        __    ');
-console.log('\x1b[36m%s\x1b[0m',' /  _____/  ____  ','\x1b[2m','▒░░','\x1b[36m','  ____ |  | __');
-console.log('\x1b[36m%s\x1b[0m','/   \\  ___ /  _ \\ ','\x1b[2m','▒░░','\x1b[36m',' /  _ \\|  |/ /');
-console.log('\x1b[36m%s\x1b[0m','\\    \\_\\  (  (_) )','\x1b[2m','▒░░','\x1b[36m','(  (_) )    < ');
-console.log('\x1b[36m%s\x1b[0m',' \\______  /\\____/ ','\x1b[2m','▓▓','\x1b[36m','  \\____/|__|_ \\');
-console.log('\x1b[36m%s\x1b[0m','        \\/        ','\x1b[2m','▓▓▄█','\x1b[36m','           \\/');
-console.log('\x1b[2m%s\x1b[0m','                     ▀▀▀    ');                                                                                                       
+                                                                                                     
                                                             
 program.name('golok')
   .description('CLI to some JavaScript string utilities')
   .version('0.1.0');
+
+Logo.show();
 
 program.command('create')
   .description('Generate fullstack application by model first')
@@ -25,7 +19,7 @@ program.command('create')
   .option('-o, --output <string>', 'Output file to generated apps')
   .option('-t, --template <string>', 'Path to your own template')
   .action((model, options) => {
-    parse(model, options.output, options.template)
+    generate(model, options.output, options.template)
   });
 
 program.parse(process.argv);

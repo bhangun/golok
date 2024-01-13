@@ -1,4 +1,4 @@
-import { typeCheck } from '../core/utils.cjs';
+import { typeCheck } from '../lib/utils.cjs';
 
 describe('sum module', () => {
     test('current directory', () => {
