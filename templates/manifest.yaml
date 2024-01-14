@@ -1,0 +1,16 @@
+version: 1.0
+name: default
+templates:
+- name: flutter
+  templates:
+  - name: riverpod
+    templates:
+    - name: app
+    - name: entity
+      loop: true
+      items:
+      - entity.dart.ejs
+        lib/modules/{entity}/model/{entity}.dart
+      - entity_form.dart.ejs
+        /modules/{entity}/pages/{entity}_form.dart
+    
