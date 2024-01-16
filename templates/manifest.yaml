@@ -9,8 +9,8 @@ templates:
     - name: entity
       loop: true
       items:
-      - entity.dart.ejs
-        lib/modules/{entity}/model/{entity}.dart
-      - entity_form.dart.ejs
-        /modules/{entity}/pages/{entity}_form.dart
+      - from: entity.dart.ejs
+        to: lib/modules/{entity}/model/{entity}.dart
+      - from: entity_form.dart.ejs
+        to: lib/modules/{entity}/pages/{entity}_form.dart
     
