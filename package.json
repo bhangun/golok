@@ -1,6 +1,6 @@
 {
   "name": "golok",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tools to create anything",
   "main": "index.js",
   "type": "module",
