@@ -34,19 +34,173 @@ flutter run
 ```
 
 ## Model's Specification 
+Model to define detail need to generate application.
+This model has several main object below:
 ```
+kind: golok-model
 version: 1.0
 info:
-  title: 
-  description:
-
 applications:
-
 entities:
-
 enums:
-
+operations:
 ```
+
+#### Example:
+```
+info:
+  name: lapak
+  title: Contoh1
+  description: Ini contoh aplikasi
+applications:
+- name: lapak
+  packageName: tech.kays
+  frontend:
+    framework: flutter
+    database: hive
+    admin: true
+    # Themes option, if not defined would be default.  
+    # default | dark | light
+    themes: default
+    plugins:
+    - connection
+    stateManagement: riverpod
+    # web | android | linux | ios | desktop | all
+    platform:
+    - web
+    - android
+
+    entities:
+    - Product
+    - Order
+    - OrderLine
+entities:
+- name: Product
+  doc: Ini adalah Product
+  entityInstance: instance
+  properties:
+  - name: id
+    type: int
+    show: false
+  - name
+  - name: description
+    type: string
+    truncateAt: 20
+  - name: sku
+    min: 3
+    max: 50
+  - name: image
+    type: image
+  - category
+  - name: price
+    type: price
+  - name: unit
+    type: unit
+enums:
+- unit
+  - kg
+  - g
+  - cm
+```
+
+### Info
+
+#### Example:
+```
+info:
+  name: lapak
+  title: Contoh1
+  description: Ini contoh aplikasi
+```
+### Applications
+
+#### Example:
+```
+applications:
+- name: lapak
+  packageName: tech.kays
+  frontend:
+    framework: flutter
+    database: hive
+    admin: true
+    # Themes option, if not defined would be default.  
+    # default | dark | light
+    themes: default
+    plugins:
+    - connection
+    stateManagement: riverpod
+    # web | android | linux | ios | desktop | all
+    platform:
+    - web
+    - android
+
+    entities:
+    - Product
+    - Order
+    - OrderLine
+```
+### Entities
+
+#### Example:
+```
+entities:
+- name: Product
+  doc: Ini adalah Product
+  entityInstance: instance
+  properties:
+  - name: id
+    type: int
+    show: false
+  - name
+  - name: description
+    type: string
+    truncateAt: 20
+  - name: sku
+    min: 3
+    max: 50
+  - name: image
+    type: image
+  - category
+  - name: price
+    type: price
+  - name: unit
+    type: unit
+```
+### enums
+
+#### Example:
+```
+enums:
+- unit
+  - kg
+  - g
+  - cm
+```
+### Operations
+
+#### Example:
+```
+operations:
+- name: getConsumer
+  path: /apisix/admin/consumers
+  verb: get
+  doc: Return the consumer list according to the specified page number and page size, and can search consumers by username.
+  example:
+  - path: /apisix/admin/consumers
+    doc: This is doc
+  parameters:
+  - name: page	
+    position: query	
+    doc: page number	
+    required: no	
+    type: integer
+  response:
+  - code: 200
+    type: product
+    example: 
+  - code: 201
+```
+
 
 ## Contribution
 

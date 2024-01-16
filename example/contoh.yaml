@@ -1,7 +1,7 @@
-kind: golok
+kind: golok-model
 version: 1.0
 info:
-  name: lapak
+  name: golokApps
   title: Contoh1
   description: Ini contoh aplikasi
 
@@ -9,7 +9,7 @@ services:
 - serviceName: namaservice
 
 applications:
-- name: lapak
+- name: golokApps
   packageName: tech.kays
   server:
     applicationType: microservice
@@ -103,11 +103,11 @@ entities:
 
 operations:
 - name: getConsumer
-  path: /apisix/admin/consumers
+  path: /golok/admin/consumers
   verb: get
-  doc: Return the consumer list according to the specified page number and page size, and can search consumers by username.
+  doc: Return the consumer list 
   example:
-  - path: /apisix/admin/consumers
+  - path: /golok/admin/consumers
     doc: This is doc
   parameters:
   - name: page	
@@ -119,7 +119,6 @@ operations:
   - code: 200
     type: product
     example: 
-    
   - code: 201
 
 enums:
