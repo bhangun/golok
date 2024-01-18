@@ -1,8 +1,8 @@
-import { typeCheck } from '../lib/utils.cjs';
+import {typeCheck} from '../lib/utils.cjs';
 
 describe('sum module', () => {
-    test('current directory', () => {
-        console.log(typeCheck('{}'));
-        //expect(sum(1, 2)).toBe(3);
-    });
+  test('current directory', () => {
+    console.log(typeCheck('{}'));
+    // expect(sum(1, 2)).toBe(3);
+  });
 });
