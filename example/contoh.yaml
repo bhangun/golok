@@ -9,11 +9,31 @@ services:
 - serviceName: namaservice
 
 applications:
-- name: golokApps
-  packageName: tech.kays
+  frontend:
+    appsName: my_golok_front
+    framework: flutter
+    packageName: tech.kays
+    database: hive
+    admin: true
+    # Themes option, if not defined would be default.  
+    # default | dark | light
+    themes: default
+    plugins:
+    - connection
+    stateManagement: riverpod
+    # web | android | linux | ios | desktop | all
+    # Value input as String aor array.
+    # e.g platform: web, android
+    # or 
+    # platfrom: 
+    # - web
+    # - android
+    platform: web, android, linux, ios, desktop
+    entities: Product, Order, OrderLine
   server:
-    applicationType: microservice
+    appsName: myGolokServer
     packageName: com.golok.demo
+    applicationType: microservice
     serviceDiscoveryType: eureka
     authenticationType: jwt
     databaseType: mongodb
@@ -24,28 +44,7 @@ applications:
     buildTool: gradle
     serverPort: 8083
     skipUserManagement: true
-  frontend:
-    framework: flutter
-    database: hive
-    admin: true
-    # Themes option, if not defined would be default.  
-    # default | dark | light
-    themes: default
-    plugins:
-    - connection
-    stateManagement: riverpod
-    platform:
-    - web
-    - android
-    - linux
-    - ios
-    - desktop
-    - all
-    entities:
-    - Product
-    - Order
-    - OrderLine
-    
+    entities: 
 entities:
 - name: Product
   doc: Ini adalah Product
@@ -122,8 +121,6 @@ operations:
   - code: 201
 
 enums:
-- unit
-  - kg
-  - g
-  - cm
+- name: unit
+  values: kg, g, cm
   
