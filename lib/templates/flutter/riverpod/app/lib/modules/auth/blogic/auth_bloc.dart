@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../models/status.dart';
+import '../../main/main_routes.dart';
 import '../../../services/auth_jwt_services.dart';
+import '../../../services/navigation.dart';
 
 final authBloc = ChangeNotifierProvider((ref) => AuthBloc(ref: ref));
 
@@ -71,34 +73,34 @@ class AuthBloc extends ChangeNotifier {
   String messagePassword(context) {
     switch (passwordMessage) {
       case "confirm":
-        return AppLocalizations.of(context).passwordConfirm;
+        return AppLocalizations.of(context)!.passwordConfirm;
       case "empty":
-        return AppLocalizations.of(context).passwordEmpty;
+        return AppLocalizations.of(context)!.passwordEmpty;
       case "length":
-        return AppLocalizations.of(context).passwordLength;
+        return AppLocalizations.of(context)!.passwordLength;
       case "match":
-        return AppLocalizations.of(context).passwordMatch;
+        return AppLocalizations.of(context)!.passwordMatch;
       default:
         return "";
     }
   }
 
   message(context) {
-    Status(errorMessage: AppLocalizations.of(context).errorUnauthorized);
+    Status(errorMessage: AppLocalizations.of(context)!.errorUnauthorized);
     switch (status.errorMessage) {
       case "unauthorized":
-        Status(errorMessage: AppLocalizations.of(context).errorUnauthorized);
+        Status(errorMessage: AppLocalizations.of(context)!.errorUnauthorized);
         break;
       case "username":
-        return AppLocalizations.of(context).errorUsername;
+        return AppLocalizations.of(context)!.errorUsername;
       default:
-        return AppLocalizations.of(context).errorNetwork;
+        return AppLocalizations.of(context)!.errorNetwork;
     }
   }
 
   signIn(context) {
     print('----ssdfsfd---');
-   // Status(errorMessage: message(context));
+    // Status(errorMessage: message(context));
     loggedIn = true;
     /*  AuthServices.login(username, password, rememberMe).then((v) {
       _loggedin(v);
@@ -107,7 +109,26 @@ class AuthBloc extends ChangeNotifier {
   }
 
   void _loggedin(value) async {
-    
+    //int id = (await DatabaseServices.db.fetchObject(value))["user"];
+    //for (var user in await AuthServices.userStatic()) {
+    /* if (user.id == id) {
+        this.user = user;
+      } */
+    //}
+
+    NavigationServices.navigateTo(MainRoutes.home);
+    /* if (value == 'SUCCESS') {
+      FLog.info(text: "Success login!");
+      NavigationServices.navigateTo(MainRoutes.home);
+    } else if (value.toString().contains("[401]")) {
+      showError = true;
+      loading = false;
+      errorMessage = "unauthorized";
+    } else if (value.toString().contains("[400]")) {
+      showError = true;
+      loading = false;
+      errorMessage = "username";
+    } */
   }
 
   Future register() async {
@@ -115,7 +136,7 @@ class AuthBloc extends ChangeNotifier {
   }
 
   Future gotoHome() async {
-   
+    if (loggedIn) NavigationServices.navigateTo(MainRoutes.home);
   }
 
   Future forgotPassword() async {
@@ -133,12 +154,12 @@ class AuthBloc extends ChangeNotifier {
   Future<void> logout() async {
     const Status(loading: true);
     AuthServices.logout();
-   
+    NavigationServices.navigateTo(MainRoutes.login);
     const Status(loading: false);
   }
 
   void signOut() {
-    loggedIn =false;
+    loggedIn = false;
     notifyListeners();
   }
 }

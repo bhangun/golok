@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:<%= info.name %>/models/app_data.dart';
-import 'package:<%= info.name %>/modules/user/models/user.dart';
 import 'package:logging/logging.dart';
 
+import '../models/app_data.dart';
+import '../modules/user/models/user.dart';
 import 'local_database/db_services.dart';
 import 'rest/rest_services.dart';
 

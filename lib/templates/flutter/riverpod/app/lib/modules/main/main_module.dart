@@ -1,7 +1,6 @@
-
-import 'utils/modules/menu.dart';
+import '../../utils/modules/menu.dart';
 import 'main_routes.dart';
-import 'utils/modules/module_model.dart';
+import '../../utils/modules/module_model.dart';
 
 
 class MainModule implements Module {

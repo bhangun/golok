@@ -1,4 +1,4 @@
-import '../main_module.dart';
+import 'main/main_module.dart';
 import '../utils/modules/module_model.dart';
 import 'user/user_module.dart';
 

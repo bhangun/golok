@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../main_routes.dart';
+import '../modules/main/main_routes.dart';
 import '../utils/config.dart';
 
 class SplashScreen extends StatefulWidget {

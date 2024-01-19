@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../utils/helper.dart';
-import '../bloc/auth/auth_bloc.dart';
-import '../utils/config.dart';
-import '../widgets/form/textfield_widget.dart';
+import '../../../utils/helper.dart';
+import '../blogic/auth_bloc.dart';
+import '../../../utils/config.dart';
+import '../../../widgets/form/textfield_widget.dart';
 
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -88,7 +88,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
           )));
 
   Widget _usernameField(context) => TextFieldWidget(
-        hint: AppLocalizations.of(context).email,
+        hint: AppLocalizations.of(context)!.email,
         inputType: TextInputType.emailAddress,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -108,7 +108,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
       );
 
   Widget _passwordField(context) => TextFieldWidget(
-        hint: AppLocalizations.of(context).password,
+        hint: AppLocalizations.of(context)!.password,
         isObscure: _isObscure,
         padding: const EdgeInsets.only(top: 16.0),
         icon: Icons.lock,
@@ -125,7 +125,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
       alignment: FractionalOffset.centerRight,
       child: TextButton(
           key: const Key('user_forgot_password'),
-          child: Text(AppLocalizations.of(context).forgot_password),
+          child: Text(AppLocalizations.of(context)!.forgot_password),
           onPressed: () => ref.read(authBloc.notifier).forgotPassword()));
 
   Widget _signInButton(context) => ElevatedButton(
@@ -137,7 +137,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
           //}
           //showModal(context, AppLocalizations.of(context).errorNetwork);
         },
-        child: Text(AppLocalizations.of(context).sign_in),
+        child: Text(AppLocalizations.of(context)!.sign_in),
       );
 
   _onEyePressed() {

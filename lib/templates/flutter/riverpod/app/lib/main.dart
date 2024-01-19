@@ -18,12 +18,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:universal_platform/universal_platform.dart';
 
-import 'main_routes.dart';
-import 'bloc/auth/auth_bloc.dart';
+import 'modules/main/main_routes.dart';
+import 'modules/auth/blogic/auth_bloc.dart';
 import 'utils/modules/modules_registry.dart';
 import 'utils/routes.dart';
 import 'utils/themes/app_theme.dart';
-import 'bloc/settings/settings_bloc.dart';
+import 'blogic/settings/settings_bloc.dart';
 
 Future setDesktopWindow() async {
   await DesktopWindow.setMinWindowSize(const Size(400, 400));
@@ -34,7 +34,7 @@ Future<void> main() async {
   // Initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     if (kDebugMode) {
       print('${record.level.name}: ${record.time}: ${record.message}');
@@ -49,11 +49,11 @@ Future<void> main() async {
   ModulesRegistry.routes();
 
   // Run main app
-  runApp(const ProviderScope(child: KujangApp()));
+  runApp(const ProviderScope(child: GolokApp()));
 }
 
-class KujangApp extends ConsumerWidget {
-  const KujangApp({Key? key}) : super(key: key);
+class GolokApp extends ConsumerWidget {
+  const GolokApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
