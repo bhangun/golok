@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../models/status.dart';
 import '../../main/main_routes.dart';
-import '../../../services/auth_jwt_services.dart';
+import '../services/auth_jwt_services.dart';
 import '../../../services/navigation.dart';
 
 final authBloc = ChangeNotifierProvider((ref) => AuthBloc(ref: ref));
@@ -99,7 +99,6 @@ class AuthBloc extends ChangeNotifier {
   }
 
   signIn(context) {
-    print('----ssdfsfd---');
     // Status(errorMessage: message(context));
     loggedIn = true;
     /*  AuthServices.login(username, password, rememberMe).then((v) {

@@ -2,46 +2,58 @@ import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:awesome_bottom_bar/widgets/inspired/inspired.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/helper.dart';
-import '../../utils/modules/menu.dart';
+import '../utils/config.dart';
+import '../utils/constants.dart';
+import '../utils/helper.dart';
+import '../utils/modules/menu.dart';
+import '../widgets/side_menu/side_menu.dart';
 
-class AdaptivePhone extends StatefulWidget {
-  const AdaptivePhone(
-      {Key? key,
-      this.floatingActionButton,
-      required this.menuItems,
-      this.onBottomTap,
-      this.currentIndex,
-      this.title,
-      this.width,
-      this.image,
-      this.drawer,
-      this.body,
-      this.actions})
-      : super(key: key);
+class PhoneScreen extends StatefulWidget {
   final Widget? floatingActionButton;
   final List<Menu>? menuItems;
+  final ValueChanged<Menu>? onMenuClick;
   final void Function(int)? onBottomTap;
   final int? currentIndex;
   final Widget? title;
   final double? width;
   final String? image;
   final Widget? body;
-  final Widget? drawer;
+  //final Widget? drawer;
   final List<Widget>? actions;
 
+  const PhoneScreen(
+      {Key? key,
+      this.floatingActionButton,
+      required this.menuItems,
+      this.onBottomTap,
+      this.onMenuClick,
+      this.currentIndex,
+      this.title,
+      this.width,
+      this.image,
+     // this.drawer,
+      this.body,
+      this.actions})
+      : super(key: key);
+  
+
   @override
-  State<AdaptivePhone> createState() => _AdaptivePhoneState();
+  State<PhoneScreen> createState() => _PhoneScreenState();
 }
 
-class _AdaptivePhoneState extends State<AdaptivePhone> {
+class _PhoneScreenState extends State<PhoneScreen> {
   @override
   Widget build(BuildContext context) {
-    // List<TabItem<Menu>> mm = <TabItem<Menu>>[];
-
     return Scaffold(
       body: widget.body,
-      drawer: widget.drawer,
+      //drawer: widget.drawer,
+      drawer: SideMenu(
+            width: sideMenuWidth,
+            image: imageSplash,
+            menuItems: widget.menuItems,
+            currentIndex: widget.currentIndex,
+            title: widget.title,
+            onMenuClick: widget.onMenuClick),
       appBar: AppBar(
         // leading: const Icon(Icons.cabin),
         title: widget.title,

@@ -8,24 +8,21 @@ class AppTheme {
         .copyWith(
           titleLarge: base.titleLarge!.copyWith(fontSize: 18.0),
           bodySmall: base.bodySmall!.copyWith(
-           // fontWeight: FontWeight.w400,
             fontSize: 12.0,
           ),
           bodyMedium: base.bodyMedium!.copyWith(
-           // fontWeight: FontWeight.w500,
             fontSize: 14.0,
           ),
         )
         .apply(
-         // displayColor: MaterialColors.black,
-          // bodyColor: MaterialColors.black,
-        );
+            displayColor: MaterialColors.black,
+            bodyColor: MaterialColors.black,
+            );
   }
 
   static ThemeData lightTheme() {
-    final ThemeData base = ThemeData(
-      colorScheme: lightColorScheme,
-    );
+    final ThemeData base =
+        ThemeData(colorScheme: lightColorScheme, useMaterial3: true);
     return base.copyWith(
       textTheme: _buildTextTheme(base.textTheme),
       primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
@@ -33,9 +30,8 @@ class AppTheme {
   }
 
   static ThemeData darkTheme() {
-    final ThemeData base = ThemeData(
-      colorScheme: darkColorScheme,
-    );
+    final ThemeData base =
+        ThemeData(colorScheme: darkColorScheme, useMaterial3: true);
     return base.copyWith(
       textTheme: const TextTheme(bodySmall: TextStyle()),
     );

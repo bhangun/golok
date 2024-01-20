@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../modules/main/main_routes.dart';
-import '../utils/config.dart';
+import '../main_routes.dart';
+import '../../../utils/config.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -27,7 +26,7 @@ class _Splashpagestate extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Center(child: SvgPicture.asset(imageSplash)),
+      child: Center(child: Image.asset(imageSplash)),
     );
   }
 

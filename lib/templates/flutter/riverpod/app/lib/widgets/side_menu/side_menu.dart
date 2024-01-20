@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../utils/helper.dart';
 
+import '../../utils/helper.dart';
 import '../../utils/modules/menu.dart';
 
 class SideMenu extends StatefulWidget {
@@ -40,7 +39,7 @@ class _SideMenuState extends State<SideMenu> {
               DrawerHeader(
                 child: Center(
                     child: Column(children: [
-                  SvgPicture.asset(
+                  Image.asset(
                     widget.image!,
                     width: 60,
                     height: 60,

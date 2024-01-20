@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 
 import '../../utils/config.dart';
-import '../auth_jwt_services.dart';
+import '../../modules/auth/services/auth_jwt_services.dart';
 import 'rest_error_util.dart';
 
-final log = Logger('AuthServices');
+final log = Logger('RestServices');
 
 class RestServices {
   static final _dio = Dio()

@@ -6,7 +6,7 @@ import '../../utils/config.dart';
 import 'db.dart';
 
 // import 'database_constants.dart';
-final log = Logger('AuthServices');
+final log = Logger('DatabaseServices');
 
 class DatabaseServices {
   var key = '';

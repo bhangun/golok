@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'status.dart';
-
-// import '../../user/model/user.dart';
+import '../../../models/status.dart';
 
 @immutable
 class Authentication {
@@ -11,7 +9,6 @@ class Authentication {
       required this.password,
       this.rememberMe = false,
       this.token = '',
-      //  this.user = const User(),
       this.loggedIn = false,
       this.loginMessage = '',
       this.passwordMessage = '',

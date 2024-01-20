@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../../modules/register_modules.dart';
 import '../routes.dart';
 import 'modules.dart';
