@@ -1,7 +1,26 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
+/// User entity
 class User extends Equatable {
+
+  final int id;
+  final String? login;
+  final String? username;
+  final String? firstName;
+  final String? lastName;
+  final String? password;
+  final String? email;
+  final String? phone;
+  final String? imageUrl;
+  final bool? activated;
+  final String? langKey;
+  final List<dynamic>? authorities;
+  final String? createdBy;
+  final DateTime? createdDate;
+  final String? lastModifiedBy;
+  final DateTime? lastModifiedDate;
+
   const User(
       {required this.id,
       this.login,
@@ -20,23 +39,6 @@ class User extends Equatable {
       this.lastModifiedBy,
       this.lastModifiedDate})
       : super();
-
-  final int id;
-  final String? login;
-  final String? username;
-  final String? firstName;
-  final String? lastName;
-  final String? password;
-  final String? email;
-  final String? phone;
-  final String? imageUrl;
-  final bool? activated;
-  final String? langKey;
-  final List<dynamic>? authorities;
-  final String? createdBy;
-  final DateTime? createdDate;
-  final String? lastModifiedBy;
-  final DateTime? lastModifiedDate;
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(

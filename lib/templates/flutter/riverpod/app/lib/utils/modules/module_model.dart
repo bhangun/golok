@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import 'menu.dart';
-
+import '../../models/menu.dart';
 
 abstract class Module {
   String? name;

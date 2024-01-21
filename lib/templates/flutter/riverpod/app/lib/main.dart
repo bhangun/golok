@@ -10,25 +10,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:logging/logging.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 import 'modules/main/main_routes.dart';
 import 'modules/auth/blogic/auth_bloc.dart';
 import 'utils/modules/modules_registry.dart';
 import 'utils/routes.dart';
-import 'utils/themes/app_theme.dart';
-import 'blogic/settings/settings_bloc.dart';
+import 'themes/app_theme.dart';
+import 'modules/settings/settings_bloc.dart';
 
-Future setDesktopWindow() async {
-  await DesktopWindow.setMinWindowSize(const Size(400, 400));
-  await DesktopWindow.setWindowSize(const Size(1300, 900));
-}
 
 Future<void> main() async {
   // Initialized
@@ -41,10 +35,6 @@ Future<void> main() async {
     }
   });
 
-   if (UniversalPlatform.isDesktop) {
-    setDesktopWindow();
-  }
-
   // Register all module
   ModulesRegistry.routes();
 
@@ -53,7 +43,7 @@ Future<void> main() async {
 }
 
 class GolokApp extends ConsumerWidget {
-  const GolokApp({Key? key}) : super(key: key);
+  const GolokApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/modules/menu.dart';
+import '../models/menu.dart';
 import '../widgets/side_menu/side_menu_fold.dart';
 
 class MediumScreen extends StatefulWidget {

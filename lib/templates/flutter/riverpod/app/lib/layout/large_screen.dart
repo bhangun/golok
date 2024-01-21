@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/config.dart';
 import '../utils/constants.dart';
-import '../utils/modules/menu.dart';
+import '../models/menu.dart';
 import '../widgets/side_menu/side_menu.dart';
 
 class LargeScreen extends StatefulWidget {

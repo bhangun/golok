@@ -1,6 +1,4 @@
-
-
-import 'menu.dart';
+import '../../models/menu.dart';
 
 class Modules {
     // singleton object

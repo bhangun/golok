@@ -1,19 +1,23 @@
 kind: golok-model
 version: 1.0
+# General info 
 info:
   name: golokApps
   title: Contoh1
   description: Ini contoh aplikasi
 
-services:
-- serviceName: namaservice
+endpoint:
+  url: http://localhost
 
+# Applications
 applications:
   frontend:
     appsName: my_golok_front
+    # Option : flutter | react | vue
     framework: flutter
     packageName: tech.kays
-    database: hive
+    # Local Database: hive | sqlLite
+    localDatabase: hive
     admin: true
     # Themes option, if not defined would be default.  
     # default | dark | light
@@ -22,13 +26,15 @@ applications:
     - connection
     stateManagement: riverpod
     # web | android | linux | ios | desktop | all
-    # Value input as String aor array.
+    # Value input as String or array.
     # e.g platform: web, android
     # or 
     # platfrom: 
     # - web
     # - android
-    platform: web, android, linux, ios, desktop
+    platform: web,android, linux, ios,desktop
+    # Locale options: en | id
+    locale: en, id
     entities: Product, Order, OrderLine
   server:
     appsName: myGolokServer
@@ -45,6 +51,10 @@ applications:
     serverPort: 8083
     skipUserManagement: true
     entities: 
+# Services    
+services:
+- serviceName: namaservice
+
 entities:
 - name: Product
   doc: Ini adalah Product
@@ -61,12 +71,13 @@ entities:
     min: 3
     max: 50
   - name: image
-    type: image
+    ref: image
   - category
   - name: price
-    type: price
+    ref: price
   - name: unit
-    type: unit
+    enum: unit
+
 - name: Order
   doc: Order product
   properties:
@@ -79,6 +90,7 @@ entities:
   - type: oneToMany
     to: OrderLine
     name: items
+
 - name: OrderLine
   doc: Order product
   properties:
@@ -88,9 +100,14 @@ entities:
   - name: createdAt
     type: dateTime
   - name: product
-    type: product
+    ref: 
+      name: product
+      label: product
   - name: orderItem
-    type: product 
+    ref: 
+      name: product
+      label: product 
+
 - name: Shipment
   doc: Shipment
   properties:

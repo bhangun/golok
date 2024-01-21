@@ -1,5 +1,4 @@
-
-import '../../utils/modules/menu.dart';
+import '../../models/menu.dart';
 import '../../utils/modules/module_model.dart';
 import 'dashboard_routes.dart';
 

@@ -5,7 +5,7 @@
 import 'package:adaptive_screen/adaptive_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/modules/menu.dart';
+import '../models/menu.dart';
 import 'large_screen.dart';
 import 'medium_screen.dart';
 import 'phone_screen.dart';

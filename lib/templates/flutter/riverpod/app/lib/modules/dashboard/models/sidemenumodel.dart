@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../utils/modules/menu.dart';
+import '../../../models/menu.dart';
 import 'header.dart';
 
 part 'sidemenumodel.g.dart';
