@@ -10,7 +10,7 @@ templates:
       loop: true
       items:
       - from: entity.dart.ejs
-        to: lib/modules/{entity}/model/{entity}.dart
+        to: lib/modules/{entityName}/model/{entityFile}.dart
       #- from: entity_form.dart.ejs
       #  to: lib/modules/{entity}/pages/{entity}_form.dart
     

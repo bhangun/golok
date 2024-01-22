@@ -91,7 +91,7 @@ entities:
     to: OrderLine
     name: items
 
-- name: orderLine
+- name: OrderLineProduct
   doc: Order product
   properties:
   - name: id
