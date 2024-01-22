@@ -56,7 +56,7 @@ services:
 - serviceName: namaservice
 
 entities:
-- name: Product
+- name: product
   doc: Ini adalah Product
   entityInstance: instance
   properties:
@@ -91,7 +91,7 @@ entities:
     to: OrderLine
     name: items
 
-- name: OrderLine
+- name: orderLine
   doc: Order product
   properties:
   - name: id

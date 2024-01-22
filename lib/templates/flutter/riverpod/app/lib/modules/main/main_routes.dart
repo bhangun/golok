@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
-import 'package:golokApps/pages/home.dart';
 
+import 'pages/home.dart';
 import '../../utils/routes.dart';
 import 'pages/about.dart';
 import '../dashboard/pages/dashboard.dart';

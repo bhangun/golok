@@ -11,6 +11,6 @@ templates:
       items:
       - from: entity.dart.ejs
         to: lib/modules/{entity}/model/{entity}.dart
-      - from: entity_form.dart.ejs
-        to: lib/modules/{entity}/pages/{entity}_form.dart
+      #- from: entity_form.dart.ejs
+      #  to: lib/modules/{entity}/pages/{entity}_form.dart
     
