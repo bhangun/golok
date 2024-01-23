@@ -71,10 +71,10 @@ entities:
     min: 3
     max: 50
   - name: image
-    ref: image
+    # ref: image
   - category
   - name: price
-    ref: price
+    # ref: price
   - name: unit
     enum: unit
 
