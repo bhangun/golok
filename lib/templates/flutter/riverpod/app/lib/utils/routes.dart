@@ -14,7 +14,7 @@ class Routes {
 
   static final List<RouteBase> _goroutes = [];
 
-  static Future<Routes> get instance async {
+  static get instance async {
     _goroutes.addAll(MainRoutes.goroutes);
     return _singleton;
   }

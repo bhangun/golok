@@ -32,7 +32,7 @@ class RestServices {
         onResponse:
             (Response<dynamic> e, ResponseInterceptorHandler responseHandler) =>
                 {responseHandler.next(e)},
-        onError: (DioError error, ErrorInterceptorHandler errorHandler) {
+        onError: (DioException error, ErrorInterceptorHandler errorHandler) {
           log.severe(DioErrorUtil.handleError(error));
           // Do something with response error
           if (error.response?.statusCode == 403) {
@@ -46,13 +46,13 @@ class RestServices {
     ..interceptors.add(QueuedInterceptor());
 
   // GET
-  static Future<dynamic> fetch(String uri) async {
+  static fetch(String uri) async {
     Response response = await _dio.get(uri);
     return response.data;
   }
 
   // POST
-  static Future<dynamic> post(String uri, dynamic data) async {
+  static post(String uri, dynamic data) async {
     Object response = await _dio
         .post(uri, data: data)
         .then((value) => value.data)
@@ -61,13 +61,13 @@ class RestServices {
   }
 
   // DELETE
-  static Future<dynamic> delete(String uri, [dynamic id]) async {
+  static delete(String uri, [dynamic id]) async {
     Response response = await _dio.delete(uri, data: id);
     return response.data;
   }
 
   // PUT
-  static Future<dynamic> update(String uri, dynamic data) async {
+  static update(String uri, dynamic data) async {
     Response response = await _dio.put(uri, data: data);
     return response.data;
   }

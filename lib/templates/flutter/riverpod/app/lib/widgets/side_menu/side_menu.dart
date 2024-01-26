@@ -8,7 +8,7 @@ class SideMenu extends StatefulWidget {
       {Key? key,
       this.floatingActionButton,
       required this.menuItems,
-      this.onMenuClick,
+      required this.onMenuClick,
       this.currentIndex,
       this.title,
       this.width,
@@ -67,7 +67,7 @@ class _SideMenuState extends State<SideMenu> {
         ? Builder(builder: (context) {
             return ListTile(
                 onTap: () => widget.onMenuClick!(menu),
-                leading: getIcon(menu.icon!),
+                leading: getIcon((menu.icon != null)?menu.icon!:'home'),
                 title: Text(menu.title!));
           })
         : ExpansionTile(

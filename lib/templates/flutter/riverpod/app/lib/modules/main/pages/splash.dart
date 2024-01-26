@@ -31,8 +31,8 @@ class _Splashpagestate extends State<SplashScreen> {
   }
 
   startTimer() {
-    var _duration = const Duration(milliseconds: 300);
-    return Timer(_duration, navigate);
+    var duration = const Duration(milliseconds: 300);
+    return Timer(duration, navigate);
   }
 
   navigate() async {

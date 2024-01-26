@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
-import '../models/app_data.dart';
 import '../modules/user/models/user.dart';
 import 'local_database/db_services.dart';
 import 'rest/rest_services.dart';
@@ -16,7 +14,7 @@ class AuthServices {
 
   /// Path authenticate,
   /// Post authorize & Get isAuthorize
-  static Future<int> login(String username, String password,
+  static login(String username, String password,
       [bool rememberMe = false]) async {
     try {} catch (e) {
       log.info(e.toString());
@@ -47,16 +45,16 @@ class AuthServices {
     //return 'unauthorized';
   }
 
-  static Future<User> signIn() async {
+  static signIn() async {
     return await RestServices.post('authenticate', 'body');
   }
 
-  static Future<List<User>> userStatic() async {
+  static userStatic() async {
     return User.listFromJson(
         json.decode(await rootBundle.loadString('assets/data/users.json')));
   }
 
-  static Future<String> fetchToken() async {
+  static fetchToken() async {
     String token = ''; //await dbs.fetchToken();
     return token;
   }

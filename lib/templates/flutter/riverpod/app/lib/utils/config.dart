@@ -4,7 +4,7 @@ const appName = 'Golok Apps';
 // Caution! use your host IP instead of LOCALHOST
 // because it not recognize on emulator
 
-const baseURL = '<%= endpoint.url %>';
+const baseURL = 'http://localhost';
 
 List<String> contentTypes = [
   "application/json",

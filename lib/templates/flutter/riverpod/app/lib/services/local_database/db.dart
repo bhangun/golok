@@ -26,7 +26,7 @@ class LocalDatabase {
   var encryptionKey = "";
 
   // Database object accessor
-  Future<Database> database(String key) async {
+  database(String key) async {
     encryptionKey = key;
 
     // If completer is null, LocalDatabaseClass is newly instantiated, so database is not yet opened
@@ -42,7 +42,7 @@ class LocalDatabase {
     return _dbOpenCompleter!.future;
   }
 
-  Future _openDatabase() async {
+   _openDatabase() async {
     // Get a platform-specific directory where persistent app data can be stored
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;

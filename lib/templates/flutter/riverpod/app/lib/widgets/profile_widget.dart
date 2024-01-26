@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:golok_apps/services/local_database/db_services.dart';
 
 import '../utils/constants.dart';
 import 'dropdown_widget.dart';
@@ -20,7 +21,7 @@ class ProfileCard extends ConsumerWidget {
          DropdownItem(
             title: accountName,
             icon: "list",
-            onTap: ()=>print('list')         
+            onTap: ()=> log.name        
         ),
          DropdownItem(
             title: "Sign out",

@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../../modules/register_modules.dart';
 import '../routes.dart';
 import 'modules.dart';
@@ -13,13 +15,16 @@ class ModulesRegistry {
 
   static routes() {
     registerModules().forEach((m) {
-       m.pages().forEach((p) {
-        Modules.addPages(p);
-      });
-
       Routes.addRoutes(m.goroutes());
       m.services();
     });
   }
 
+  static pages(BuildContext context) {
+    registerModules().forEach((m) {
+      m.pages(context).forEach((p) {
+        Modules.addPages(p);
+      });
+    });
+  }
 }

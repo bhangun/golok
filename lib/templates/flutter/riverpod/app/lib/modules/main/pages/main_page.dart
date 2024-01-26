@@ -1,67 +1,46 @@
 import 'package:adaptive_screen/device_info.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:golok_apps/utils/modules/modules.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logging/logging.dart';
 
 import '../../../layout/adaptive_layout.dart';
-import '../../../data/data.dart';
-import '../../auth/blogic/auth_bloc.dart';
-import '../../settings/settings_bloc.dart';
+import '../../../utils/modules/modules_registry.dart';
+import '../blogics/auth_bloc.dart';
+import '../blogics/settings_bloc.dart';
 import '../../dashboard/bloc/menu_bloc.dart';
 import '../../../models/menu.dart';
 import '../../../widgets/dropdown_widget.dart';
 import '../../../widgets/profile_widget.dart';
 
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({Key? key, required this.child}) : super(key: key);
 
+final log = Logger('MainPage');
+
+class MainPage extends HookConsumerWidget {
   final Widget child;
-  @override
-  HomePageState createState() => HomePageState();
-}
-
-class HomePageState extends ConsumerState<HomePage> {
-  int pageIndex = 0;
-  String account = 'Fulan';
-  String title = 'Dashboard';
-  
-  @override
-  void initState() {
-    super.initState();
-  }
+  const MainPage({super.key, required this.child});
 
   @override
-  void dispose() {
-    super.dispose();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    ModulesRegistry.pages(context);
 
-  @override
-  Widget build(BuildContext context) {
+    final pageIndex = useState(0);
+    String account = 'Fulan';
+    String title = 'Dashboard';
     var settings = ref.watch(settingsBloc);
-    List<Menu> menus = menu(context);
+    List<Menu> menus = Modules.pages;//(context);
 
     return AdaptiveLayout(
       title: const Text('Golok'),
-      actions: header(context, title, settings),
-      currentIndex: pageIndex,
-      menuItems: menus,
-      body: widget.child,
-      onMenuClick: (menu) => context.go(menu.path!),
-      onBottomTap: (value) => setState(() {
-        pageIndex = value;
-      }),
-      floatingActionButton: _hasFAB ? _buildFab(context) : null,
-    );
-  }
-
-  List<Widget> header(context, title, settings) => [
+      actions: [
         // Title
         if (!DeviceScreen.isPhone(context)) Text(title),
 
         // Space
         if (!DeviceScreen.isPhone(context))
           Spacer(flex: DeviceScreen.isLargeScreen(context) ? 2 : 1),
-
 
         // Switch them button
         IconButton(
@@ -89,13 +68,20 @@ class HomePageState extends ConsumerState<HomePage> {
           ),
         ProfileCard(
           accountName: account,
-          onTap: () => _handleSignOut(context),
+          onTap: () => _handleSignOut(context, ref),
         ),
-      ];
-
-  bool get _hasFAB {
-    if (pageIndex == 2) return false;
-    return true;
+      ],
+      currentIndex: pageIndex.value,
+      menuItems: menus,
+      body: child,
+      onMenuClick: (menu) {
+       log.info(menu);
+        context.go('/users');
+        
+        },
+      onBottomTap: (value) => pageIndex.value = value,
+      floatingActionButton: pageIndex.value == 2 ? null : _buildFab(context),
+    );
   }
 
   FloatingActionButton _buildFab(BuildContext context) {
@@ -105,13 +91,10 @@ class HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  void _handleFabPressed() {
-    
-  }
+  void _handleFabPressed() {}
 
-  Future<void> _handleSignOut(context) async {
-    ref.watch(authBloc.notifier).signOut();
-    //var shouldSignOut = await (
+  void _handleSignOut(context, ref) async {
+    // ref.watch(authBloc.notifier).signOut();
     showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -119,14 +102,12 @@ class HomePageState extends ConsumerState<HomePage> {
         actions: [
           TextButton(
             child: const Text('No'),
-            onPressed: () {
-              //  Navigator.of(context).pop(false);
-            },
+            onPressed: () {},
           ),
           TextButton(
             child: const Text('Yes'),
             onPressed: () {
-              // ref.watch(authBloc.notifier).signOut();
+              ref.watch(authBloc.notifier).signOut();
             },
           ),
         ],

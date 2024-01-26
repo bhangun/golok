@@ -24,8 +24,8 @@ class AppTheme {
     final ThemeData base =
         ThemeData(colorScheme: lightColorScheme, useMaterial3: true);
     return base.copyWith(
-      textTheme: _buildTextTheme(base.textTheme),
-      primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
+     // textTheme: _buildTextTheme(base.textTheme),
+     // primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
     );
   }
 
@@ -33,7 +33,7 @@ class AppTheme {
     final ThemeData base =
         ThemeData(colorScheme: darkColorScheme, useMaterial3: true);
     return base.copyWith(
-      textTheme: const TextTheme(bodySmall: TextStyle()),
+     // textTheme: const TextTheme(bodySmall: TextStyle()),
     );
   }
 }

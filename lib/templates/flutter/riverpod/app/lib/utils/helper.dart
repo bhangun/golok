@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,20 +13,20 @@ bool validateEmail(String value) {
   return regExp.hasMatch(value);
 }
 
-Future<String> jsonFromFile(String path) async {
+jsonFromFile(String path) async {
   final String response = await rootBundle.loadString(path);
   return response;
 }
 
-Future<Map<String, dynamic>> jwt() async {
+jwt() async {
   return JwtDecoder.decode(''); //await DatabaseServices.db.saveToken(token));
 }
 
-Future<List<String>> roles() async {
+roles() async {
   return (await jwt())["auth"].split(",");
 }
 
-Future<bool> isRole(String role) async {
+isRole(String role) async {
   final List<String> b = await roles();
   return b.contains(role);
 }
@@ -89,8 +88,10 @@ Widget getIcon( String icon,
       semanticLabel: title,
     );
 
-IconData getIconData(String name) => icons()[name]!;
-
+IconData getIconData(String name) { 
+  if(name!='') { return icons()[name]!;}
+  else { return icons()['home']!;}
+}
 Map<String, IconData> icons() => {
       'home': Icons.home,
       'label': Icons.label,

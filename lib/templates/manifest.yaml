@@ -11,6 +11,14 @@ templates:
       items:
       - from: entity.dart.ejs
         to: lib/modules/{entityName}/model/{entityFile}.dart
-      #- from: entity_form.dart.ejs
-      #  to: lib/modules/{entity}/pages/{entity}_form.dart
+      - from: entity.module.dart.ejs
+        to: lib/modules/{entityName}/{entityFile}_module.dart
+      - from: entity.route.dart.ejs
+        to: lib/modules/{entityName}/{entityFile}_routes.dart
+      - from: entity.services.dart.ejs
+        to: lib/modules/{entityName}/services/{entityFile}_services.dart
+      - from: entity.bloc.dart.ejs
+        to: lib/modules/{entityName}/blogic/{entityFile}_blogic.dart
+      - from: pages/entity.form.dart.ejs
+        to: lib/modules/{entityName}/pages/{entityFile}_form.dart
     

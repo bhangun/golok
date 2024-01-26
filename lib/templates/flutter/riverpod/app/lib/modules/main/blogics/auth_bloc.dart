@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../models/status.dart';
-import '../../main/main_routes.dart';
+import '../main_routes.dart';
 import '../../../services/auth_jwt_services.dart';
 import '../../../services/navigation.dart';
 
@@ -107,38 +107,15 @@ class AuthBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _loggedin(value) async {
-    //int id = (await DatabaseServices.db.fetchObject(value))["user"];
-    //for (var user in await AuthServices.userStatic()) {
-    /* if (user.id == id) {
-        this.user = user;
-      } */
-    //}
-
-    NavigationServices.navigateTo(MainRoutes.home);
-    /* if (value == 'SUCCESS') {
-      FLog.info(text: "Success login!");
-      NavigationServices.navigateTo(MainRoutes.home);
-    } else if (value.toString().contains("[401]")) {
-      showError = true;
-      loading = false;
-      errorMessage = "unauthorized";
-    } else if (value.toString().contains("[400]")) {
-      showError = true;
-      loading = false;
-      errorMessage = "username";
-    } */
-  }
-
-  Future register() async {
+  register() async {
     const Status(loading: true);
   }
 
-  Future gotoHome() async {
-    if (loggedIn) NavigationServices.navigateTo(MainRoutes.home);
+  gotoHome() async {
+    if (loggedIn) NavigationServices.navigateTo(MainRoutes.main);
   }
 
-  Future forgotPassword() async {
+  forgotPassword() async {
     const Status(loading: true);
   }
 
@@ -150,7 +127,7 @@ class AuthBloc extends ChangeNotifier {
 
   void signUpWithTwitter() async {}
 
-  Future<void> logout() async {
+  void logout() async {
     const Status(loading: true);
     AuthServices.logout();
     NavigationServices.navigateTo(MainRoutes.login);

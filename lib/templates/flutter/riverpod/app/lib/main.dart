@@ -17,14 +17,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:logging/logging.dart';
 
 import 'modules/main/main_routes.dart';
-import 'modules/auth/blogic/auth_bloc.dart';
+import 'modules/main/blogics/auth_bloc.dart';
 import 'utils/modules/modules_registry.dart';
 import 'utils/routes.dart';
 import 'themes/app_theme.dart';
-import 'modules/settings/settings_bloc.dart';
+import 'modules/main/blogics/settings_bloc.dart';
+import 'utils/states/provider_observer.dart';
 
-
-Future<void> main() async {
+void main() {
   // Initialized
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -35,11 +35,13 @@ Future<void> main() async {
     }
   });
 
-  // Register all module
+  // Register all routes module
   ModulesRegistry.routes();
 
   // Run main app
-  runApp(const ProviderScope(child: GolokApp()));
+  runApp(ProviderScope(observers: [
+    AppsObserver(),
+  ], child: const GolokApp()));
 }
 
 class GolokApp extends ConsumerWidget {
@@ -54,7 +56,10 @@ class GolokApp extends ConsumerWidget {
         theme: AppTheme.lightTheme(),
         darkTheme: AppTheme.darkTheme(),
         themeMode: settingState.isLightTheme ? ThemeMode.light : ThemeMode.dark,
-        routerConfig: Routes.config(ref:ref, initial: MainRoutes.main, isLoggedIn: ref.watch(authBloc.notifier).loggedIn),
+        routerConfig: Routes.config(
+            ref: ref,
+            initial: MainRoutes.main,
+            isLoggedIn: ref.watch(authBloc.notifier).loggedIn),
         debugShowCheckedModeBanner: false,
         locale: settingState.locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,

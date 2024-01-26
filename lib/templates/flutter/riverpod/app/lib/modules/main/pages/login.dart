@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../utils/helper.dart';
-import '../blogic/auth_bloc.dart';
+import '../blogics/auth_bloc.dart';
 import '../../../utils/config.dart';
 import '../../../widgets/form/textfield_widget.dart';
 
@@ -87,7 +87,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
             ],
           )));
 
-  Widget _usernameField(context) => TextFieldWidget(
+   _usernameField(context) => TextFieldWidget(
         hint: AppLocalizations.of(context)!.email,
         inputType: TextInputType.emailAddress,
         validator: (value) {
@@ -96,6 +96,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
           } else if (!validateEmail(value)) {
             return 'Not email';
           }
+          return null;
         },
         icon: Icons.person,
         iconColor: Theme.of(context).iconTheme.color!,

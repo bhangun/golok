@@ -16,7 +16,7 @@ class DatabaseServices {
 
   // Private getter to shorten the amount of code needed to get the
   // singleton instance of an opened database.
-  Future<Database> get _db async => await LocalDatabase.db.database(key);
+  get _db async => await LocalDatabase.db.database(key);
 
   // late Future<Database> _db;
 
@@ -48,12 +48,12 @@ class DatabaseServices {
     await _appsStore.record(0).add(await _db, {'id_token': token});
   }
 
-  Future<int> deleteToken() async {
+  deleteToken() async {
     final finder = Finder(filter: Filter.byKey(0));
     return (await _appsStore.delete(await _db, finder: finder));
   }
 
-  Future<String> fetchToken() async {
+  fetchToken() async {
     final finder = Finder(filter: Filter.byKey(0));
     Map<String, Object?> value = {'id_token': ''};
     String token = '';
@@ -67,7 +67,7 @@ class DatabaseServices {
     return token;
   }
 
-  Future<dynamic> fetchObject(key) async {
+  fetchObject(key) async {
     final finder = Finder(filter: Filter.byKey(key));
     try {
       return (await _appsStore.find(await _db, finder: finder)).first;
@@ -77,16 +77,16 @@ class DatabaseServices {
   }
 
   // _db functions:--------------------------------------------------------------
-  Future<int> insert(AppData appData) async {
+  insert(AppData appData) async {
     return await _appsStore.add(await _db, appData.toMap());
   }
 
   ///
-  Future<int> insertObject(Map<String, dynamic> data) async {
+  insertObject(Map<String, dynamic> data) async {
     return await _appsStore.add(await _db, data);
   }
 
-  Future<Map<String, Object?>> fetch(String key) async {
+  fetch(String key) async {
     // For filtering by key (ID), RegEx, greater than, and many other criteria,
     // we use a Finder.
     final finder = Finder(filter: Filter.byKey(key));
@@ -101,7 +101,7 @@ class DatabaseServices {
     return value;
   }
 
-  Future<int> update(AppData appData) async {
+  update(AppData appData) async {
     // For filtering by key (ID), RegEx, greater than, and many other criteria,
     // we use a Finder.
     final finder = Finder(filter: Filter.byKey(appData.id));
@@ -112,7 +112,7 @@ class DatabaseServices {
     );
   }
 
-  Future<int> delete(AppData appData) async {
+  delete(AppData appData) async {
     final finder = Finder(filter: Filter.byKey(appData.id));
     return await _appsStore.delete(
       await _db,
@@ -120,14 +120,13 @@ class DatabaseServices {
     );
   }
 
-  Future deleteAll() async {
+  deleteAll() async {
     await _appsStore.drop(
       await _db,
     );
   }
 
-  Future<List<AppData>> getAllSortedByFilter(
-      {required List<Filter> filters}) async {
+  getAllSortedByFilter({required List<Filter> filters}) async {
     //creating finder
     final finder =
         Finder(filter: Filter.and(filters), sortOrders: [SortOrder(fieldId)]);
@@ -146,7 +145,7 @@ class DatabaseServices {
     }).toList();
   }
 
-  Future<List<AppData>> getAllAppDatas() async {
+  getAllAppDatas() async {
     final recordSnapshots = await _appsStore.find(
       await _db,
     );

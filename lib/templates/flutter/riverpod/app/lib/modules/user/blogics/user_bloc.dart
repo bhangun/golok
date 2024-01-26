@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user.dart';
 import '../services/user_services.dart';
 
-import '../user_routes.dart';
 
 final userBloc = ChangeNotifierProvider<UserBloc>((ref) => UserBloc());
 
@@ -115,7 +114,7 @@ class UserBloc extends ChangeNotifier {
     }
   }
 
-  Future getUserList() async {
+  getUserList() async {
     loading = true;
     success = false;
     isListEmpty = true;
@@ -136,7 +135,7 @@ class UserBloc extends ChangeNotifier {
     });
   }
 
-  Future<List<User>> usersList() async{
+  usersList() async{
       return await UserServices.users();
   }
 

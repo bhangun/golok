@@ -1,4 +1,3 @@
-import 'package:adaptive_screen/device_info.dart';
 import 'package:flutter/material.dart';
 
 

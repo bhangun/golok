@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutPage extends StatefulWidget {
-  AboutPage({Key? key}) : super(key: key);
+  const AboutPage({Key? key}) : super(key: key);
 
   @override
-  _AboutPageState createState() => _AboutPageState();
+  AboutPageState createState() => AboutPageState();
 }
 
-class _AboutPageState extends State<AboutPage> {
+class AboutPageState extends State<AboutPage> {
   String appName = "";
   String packageName = "";
   String version = "";
@@ -33,10 +33,10 @@ class _AboutPageState extends State<AboutPage> {
       ),
       body: Center(
           child: Column(children: [
-        Text("Apps Name: "+appName),
-        Text("Package Name: "+packageName),
-        Text("Version: "+version),
-        Text("Build Number: "+buildNumber),
+        Text("Apps Name: $appName"),
+        Text("Package Name: $packageName"),
+        Text("Version: $version"),
+        Text("Build Number: $buildNumber"),
       ])),
     );
   }
