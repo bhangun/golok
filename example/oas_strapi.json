@@ -9106,7 +9106,7 @@
               "in": "query",
               "description": "Sort by attributes ascending (asc) or descending (desc)",
               "deprecated": false,
-              "required": false,
+              "required": true,
               "schema": {
                 "type": "string"
               }
