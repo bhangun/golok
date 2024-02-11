@@ -1,0 +1,107 @@
+# General info 
+info:
+  name: golokApps
+  title: Contoh1
+  description: Ini contoh aplikasi
+
+endpoint:
+  url: http://localhost
+
+# Applications
+applications:
+  frontend:
+    appsName: my_golok_front
+    # Option : flutter | react | vue
+    framework: flutter
+    packageName: tech.kays
+    # Local Database: hive | sqlLite
+    localDatabase: hive
+    admin: true
+    # Themes option, if not defined would be default.  
+    # default | dark | light
+    themes: default
+    plugins:
+    - connection
+    stateManagement: riverpod
+    # web | android | linux | ios | desktop | all
+    # Value input as String or array.
+    # e.g platform: web, android
+    # or 
+    # platfrom: 
+    # - web
+    # - android
+    platform: web,android, linux, ios,desktop
+    # Locale options: en | id
+    locale: en, id
+    entities: Product, Order, OrderLine
+entities: 
+- Product: 
+  - name: string, min=3,max=30
+  - code: string, min=3,max=30, required
+    doc: Product code  
+  - sku: int,min=3,max=30, required
+  - brand: Brand 
+  - category: Category
+  - staff: User 
+  - status: Status
+  - unit: Unit
+
+- Inventory: 
+  - quantity: int 
+  - minStock: int 
+  - maxStock: int 
+  - status: Status, manyToOne
+  - product: Product , OneToOne
+  - expired: date 
+  - warehouse: Warehouse, manyToOne 
+ 
+- Unit: 
+ 
+- Price: 
+  - value: double 
+
+- Invoice: 
+  - order: Order 
+  - status: Status 
+ 
+- Status: 
+  - category: Category 
+ 
+- Category: 
+ 
+- Warehouse: 
+  - status: Status
+ 
+- Order: 
+  - product: Product 
+  - quantity: int 
+  - unitPrice: double 
+ 
+
+- User&NoneDefault: 
+  - employee: Employee 
+  - username: 
+  - password: 
+  - email: 
+  - active: 
+  - enable: 
+ 
+ 
+golokConfiguration: 
+  default: 
+    - name: default 
+      properties: 
+        - name: 'String, max=100' 
+        - description: 'String, max=200' 
+        - createdBy: User 
+        - createAt: datetime 
+        - updateAt: datetime 
+
+User&NoneDefault: 
+  - employee: Employee, min=3, max=20
+  - username: 
+  - password: 
+  - email: 
+  - active: 
+  - enable: 
+employee: Employee, min=3, max=20
