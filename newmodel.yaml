@@ -1,0 +1,572 @@
+info:
+  name: golokApps
+  title: Contoh1
+  description: Ini contoh aplikasi
+endpoint:
+  url: http://localhost
+applications:
+  frontend:
+    appsName: my_golok_front
+    framework: flutter
+    packageName: tech.kays
+    localDatabase: hive
+    admin: true
+    themes: default
+    plugins:
+      - connection
+    stateManagement: riverpod
+    platform: web,android, linux, ios,desktop
+    locale: en, id
+    entities: Product, Order, OrderLine
+entities:
+  - name: Company
+    properties:
+      - name: branch
+        type: Branch
+        relation: oneToMany
+      - name: brand
+        type: ""
+  - name: Office
+    properties:
+      - name: address
+        type: ""
+      - name: head
+        type: User
+      - name: phone1
+        type: ""
+      - name: phone1
+        type: ""
+      - name: email
+        type: ""
+      - name: type
+        type: OfficeType
+  - name: Product
+    properties:
+      - name: doc
+        type: Product code
+        min: "3"
+        max: "30"
+        required: true
+      - name: codeType
+        type: CodeType
+      - name: sku
+        type: int
+        min: "3"
+        max: "30"
+        required: true
+      - name: brand
+        type: Brand
+      - name: category
+        type: Category
+        relation: manyToOne
+      - name: staff
+        type: User
+        relation: manyToOne
+      - name: status
+        type: Status
+      - name: packaging
+        type: Packaging
+        relation: oneToMany
+      - name: unit
+        type: Unit
+      - name: price
+        type: Price
+        relation: oneToMany
+      - name: image
+        type: Image
+        relation: oneToMany
+  - name: Price
+    properties:
+      - name: value
+        type: double
+      - name: type
+        type: PriceType
+  - name: Tax
+    properties:
+      - name: value
+        type: double
+      - name: rule
+        type: string
+      - name: year
+        type: int
+  - name: Image
+    properties:
+      - name: type
+        type: ImageType
+      - name: storageType
+        type: ImageStorageType
+      - name: path
+        type: ""
+  - name: Inventory
+    properties:
+      - name: quantity
+        type: int
+      - name: minStock
+        type: int
+      - name: maxStock
+        type: int
+      - name: status
+        type: Status
+        relation: manyToOne
+      - name: product
+        type: Product
+      - name: remark
+      - name: expired
+        type: date
+      - name: warehouse
+        type: Warehouse
+        relation: ManyToOne
+      - name: supplier
+        type: Supplier
+  - name: Packaging
+    properties:
+      - name: unit
+        type: Unit
+        relation: oneToOne
+  - name: Unit
+    properties:
+      - name: type
+        type: UnitType
+  - name: Customer
+    properties:
+      - name: contact
+        type: Contact
+  - name: Supplier
+    properties:
+      - name: enable
+        type: bool
+      - name: contact
+        type: Contact
+        relation: oneToMany
+      - name: address
+        type: Address
+        relation: oneToMany
+  - name: Contact
+    properties: []
+  - name: Cashier
+    properties:
+      - name: staff
+        type: User
+      - name: code
+        type: int
+      - name: device
+        type: Asset
+  - name: SalesReport
+    properties:
+      - name: periode
+  - name: Asset
+    properties:
+      - name: code
+        type: string
+      - name: category
+        type: Category
+  - name: AssetType
+    properties:
+      - name: "9"
+        type: c
+      - name: "6"
+        type: r
+      - name: "6"
+        type: r
+      - name: "4"
+        type: e
+      - name: "4"
+        type: l
+  - name: Store
+    properties:
+      - name: manager
+        type: User
+  - name: Invoice
+    properties:
+      - name: order
+        type: Order
+      - name: status
+        type: InvoiceStatus
+      - name: payment
+        type: Payment
+        relation: oneToOne
+  - name: Payment
+    properties:
+      - name: method
+        type: PaymentMethod
+      - name: amount
+        type: double
+  - name: Sales
+    properties:
+      - name: total
+        type: double
+  - name: Status
+    properties:
+      - name: category
+        type: Category
+  - name: Category
+    properties:
+      - name: parent
+        type: double
+      - name: image
+        type: Image
+  - name: Warehouse
+    properties:
+      - name: receiving
+        type: Receiving
+      - name: staff
+        type: User
+      - name: status
+      - name: storage
+        type: Storage
+  - name: WarehouseMutation
+    properties:
+      - name: origin
+        type: Warehouse
+      - name: destination
+        type: Warehouse
+      - name: mutationAt
+        type: datetime
+      - name: staff
+        type: User
+      - name: items
+        type: WarehouseMutationLine
+        relation: oneToMany
+  - name: WarehouseMutationLine
+    properties:
+      - name: product
+        type: Product
+      - name: storageOrigin
+        type: Storage
+      - name: storageDestination
+        type: Storage
+  - name: Storage
+    properties:
+      - name: type
+        type: StorageType
+  - name: ReturnInvoice
+    properties:
+      - name: $doc
+        type: A return invoice is used by buyers of products and other merchandise
+      - name: invoice
+        type: Invoice
+      - name: returnDate
+        type: datetime
+      - name: items
+        type: ReturnItem
+        relation: oneToMany
+      - name: totalPrice
+        type: double
+  - name: ReturnItem
+    properties:
+      - name: product
+        type: Product
+      - name: quantity
+        type: int
+  - name: DeliveryOrder
+    properties:
+      - name: $doc
+        type: Delivery order merupakan dokumen berupa perintah pengiriman barang yang
+          dibuat pihak penjual ke penyedia jasa ekspedisi agar segera melakukan
+          proses pick-up barang berdasarkan pesanan pembeli
+      - name: order
+        type: Order
+  - name: Receiving
+    properties:
+      - name: staff
+        type: User
+      - name: status
+        type: ReceivingStatus
+      - name: supplier
+        type: Supplier
+        relation: ManyToOne
+      - name: dispatchDate
+        type: date
+      - name: doc
+        type: Surat Jalan (dispatch note) atau goods received note (GNR) atau delivery
+          note (dibedakan dari delivery order).
+      - name: payment
+        type: Payment
+      - name: doc
+        type: tempo
+      - name: doc
+        type: faktur
+      - name: invoiceDate
+        type: date
+      - name: taxPPN
+        type: string
+      - name: quantityTotal
+        type: int
+      - name: isApproved
+        type: boolean
+      - name: approvedBy
+        type: User
+  - name: Brand
+    properties:
+      - name: image
+        type: Image
+  - name: PurchaseOrder
+    properties:
+      - name: supplier
+        type: Supplier
+  - name: PurchaseOrderLine
+    properties: []
+  - name: OrderLine
+    properties:
+      - name: product
+        type: Product
+      - name: quantity
+        type: int
+      - name: amount
+        type: double
+      - name: promotion
+        type: Promotion
+  - name: Order
+    properties:
+      - name: customer
+        type: Customer
+      - name: total
+        type: double
+  - name: Salary
+    properties:
+      - name: employee
+        type: Employee
+      - name: month
+        type: Month
+      - name: year
+        type: int
+  - name: Employee
+    properties:
+      - name: birthDate
+        type: date
+      - name: birthPlace
+        type: string
+      - name: photo
+        type: Image
+      - name: contact
+        type: Contact
+      - name: address
+        type: Address
+      - name: user
+        type: User
+        relation: oneToMany
+  - name: User
+    properties: []
+  - name: Promotion
+    properties:
+      - name: type
+        type: PromotionType
+      - name: originPrice
+        type: double
+      - name: promoPrice
+        type: double
+      - name: isActive
+        type: boolean
+  - name: Discount
+    properties:
+      - name: value
+        type: int
+      - name: startDate
+        type: datetime
+      - name: endDate
+        type: datetime
+      - name: type
+        type: DiscountType
+      - name: promotion
+        type: Promotion
+        relation: oneToOne
+      - name: product
+        type: Product
+  - name: Coupons
+    properties:
+      - name: promotion
+        type: Promotion
+      - name: code
+        type: ""
+      - name: startDate
+        type: datetime
+      - name: endDate
+        type: datetime
+  - name: Bogo
+    properties:
+      - name: promotion
+        type: Promotion
+      - name: product
+        type: Product
+      - name: quantity
+        type: int
+      - name: isAllVariant
+        type: boolean
+      - name: variants
+        type: BogoVariant
+  - name: BogoVariant
+    properties: []
+  - name: Loyalty
+    properties:
+      - name: promotion
+        type: Promotion
+      - name: value
+        type: int
+      - name: type
+        type: DiscountType
+      - name: startDate
+        type: datetime
+      - name: endDate
+        type: datetime
+  - name: Member
+    properties:
+      - name: user
+        type: User
+        relation: manyToOne
+      - name: type
+        type: MemberType
+  - name: Bundling
+    properties:
+      - name: items
+        type: BundlingItem
+        relation: oneToMany
+      - name: promotion
+        type: Promotion
+      - name: unit
+        type: Unit
+  - name: BundlingItem
+    properties:
+      - name: product
+        type: Product
+      - name: quantity
+        type: int
+  - name: Customize
+    properties:
+      - name: promotion
+        type: Promotion
+      - name: conditionLogic
+        type: ""
+  - name: Setting
+    properties:
+      - name: enable
+        type: bool
+  - name: Shipment
+    properties: []
+  - name: Delivery
+    properties:
+      - name: courier
+        type: Courier
+        relation: manyToOne
+  - name: Courier
+    properties:
+      - name: type
+        type: CourierType
+      - name: driver
+        type: Contact
+        relation: manyToOne
+  - name: StockOpname
+    properties: []
+  - name: StockOpnameLine
+    properties: []
+  - name: Address
+    properties:
+      - name: city
+  - name: City
+    properties:
+      - name: country
+  - name: Country
+    properties: []
+enums:
+  CourierType:
+    - Internal
+    - External
+  UnitType:
+    - Weight
+    - Packaging
+    - Liquid
+    - Volume
+    - Dimension
+    - Length
+  ContactTitle:
+    - Mr, Tuan
+    - Mrs, Nyonya
+    - Miss, Nona
+  PriceType:
+    - Retail
+    - Grosir
+    - Reguler
+    - Promo
+  CodeType:
+    - Barcode
+    - QRCode
+  InvoiceStatus:
+    - Paid, Success full paid
+    - Unpaid, Waiting for payment
+    - Partial, Not all paid
+  PaymentMethod:
+    - Cash
+    - Debit
+    - QRCode
+    - Fintech
+  ReceivingStatus:
+    - Complete
+    - Delay
+    - Cancel
+    - Progress
+  OfficeType:
+    - HeadQuarter
+    - Branch
+    - Workshop
+    - Temporary
+    - VirtualOffice
+  DiscountType:
+    - Value
+    - Percent
+  UserType:
+    - Employee
+    - Customer
+  ImageStorageType:
+    - Local
+    - Cloud
+    - Database
+  CustomerType:
+    - Reguler
+    - Member
+  ImageType:
+    - Thumbnail
+    - Banner
+    - Icon
+    - Gallery
+  MemberType:
+    - Reguler
+    - Loyalty
+  PromotionType:
+    - Discount,Discount
+    - Coupons,Coupons
+    - Bogo, Buy One Get One, or more
+    - Loyalty, Loyalty member discount
+    - Bundling, Bundling
+    - Customize, Customize promotion
+    - Lifestyle, Lifestyle Discount
+    - Flash_Sale,Flash Sale program
+    - Giveaway, Social Media Giveaway
+    - Free_Shipping, Free Shipping
+    - Free_Samples, Free Sample
+    - Free_Gift, Free gift with purchase
+    - Holiday, Holiday promotion
+GolokConfiguration:
+  default:
+    - name: basic
+      properties:
+        - name: String, max=100
+        - description: String, max=200
+        - createdBy: User
+        - createAt: datetime
+        - updateAt: datetime
+Data:
+  entities:
+    - unit:
+        - Kg, kilogram
+        - g, gram
+        - dus
+    - packaging:
+        - Bungkus
+        - Promo
+        - Bundling
+    - price:
+        - hpp
+        - retail
+    - category:
+        - Rokok
+        - Air Mineral
+        - Makanan Ringan

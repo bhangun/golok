@@ -40,10 +40,10 @@ entities:
   - code: string, min=3,max=30, required
     doc: Product code  
   - sku: int,min=3,max=30, required
-  - brand: Brand 
-  - category: Category
-  - staff: User 
-  - status: Status
+  - brand: Brand, manyToOne
+  - category: Category, manyToOne
+  - staff: User, manyToOne
+  - status: Status, manyToOne
   - unit: Unit
 
 - Inventory: 
@@ -53,46 +53,52 @@ entities:
   - status: Status, manyToOne
   - product: Product , OneToOne
   - expired: date 
-  - warehouse: Warehouse, manyToOne 
- 
-- Unit: 
+  - warehouse: Warehouse, manyToOne  
  
 - Price: 
   - value: double 
 
 - Invoice: 
   - order: Order 
-  - status: Status 
+  - status: Status, manyToOne 
  
 - Status: 
-  - category: Category 
+  - category: Category, manyToOne
  
 - Category: 
- 
+- Unit&enum:
+  - Kg, Kilogram
+  - g, gram  
 - Warehouse: 
-  - status: Status
- 
-- Order: 
-  - product: Product 
-  - quantity: int 
-  - unitPrice: double 
- 
+  - status: Status, manyToOne
 
 - User&NoneDefault: 
-  - employee: Employee 
-  - username: 
-  - password: 
-  - email: 
-  - active: 
-  - enable: 
+  - employee: Employee, manyToOne
+  - username: ''
+  - password: ''
+  - email: ''
+  - active: ''
+  - enable: ''
+
+- Order: 
+  - product: Product, manyToOne 
+  - quantity: int 
+  - unitPrice: double 
+
+
+
+ 
+
+
  
  
 golokConfiguration: 
   default: 
     - name: default 
       properties: 
-        - name: 'String, max=100' 
-        - description: 'String, max=200' 
+        - id: double
+        - name: String, max=100 
+        - description: String, max=200
         - createdBy: User 
         - createAt: datetime 
         - updateAt: datetime 

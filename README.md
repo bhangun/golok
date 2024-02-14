@@ -144,34 +144,23 @@ applications:
 #### Example:
 ```
 entities:
-- name: Product
-  doc: Ini adalah Product
-  entityInstance: instance
-  properties:
-  - name: id
-    type: int
-    show: false
-  - name
-  - name: description
-    type: string
-    truncateAt: 20
-  - name: sku
-    min: 3
-    max: 50
-  - name: image
-    type: image
-  - category
-  - name: price
-    type: price
-  - name: unit
-    type: unit
+- Product: 
+  - name: string, min=3,max=30
+  - code: string, min=3,max=30, required
+    doc: Product code  
+  - sku: int,min=3,max=30, required
+  - brand: Brand, manyToOne
+  - category: Category, manyToOne
+  - staff: User, manyToOne
+  - status: Status, manyToOne
+  - unit: Unit
 ```
 ### enums
 
 #### Example:
 ```
 enums:
-- unit
+- Unit
   - kg
   - g
   - cm

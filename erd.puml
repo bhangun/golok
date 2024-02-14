@@ -1,0 +1,326 @@
+
+@startuml
+!theme reddress-lightblue
+
+entity "Company" as Company{
+ branch : Branch
+ brand : 
+}
+
+entity "Office" as Office{
+ address : 
+ head : User
+ phone1 : 
+ phone1 : 
+ email : 
+ type : OfficeType
+}
+
+entity "Product" as Product{
+ doc : Product code
+ codeType : CodeType
+ sku : int
+ brand : Brand
+ category : Category
+ staff : User
+ status : Status
+ packaging : Packaging
+ unit : Unit
+ price : Price
+ image : Image
+}
+
+entity "Price" as Price{
+ value : double
+ type : PriceType
+}
+
+entity "Tax" as Tax{
+ value : double
+ rule : string
+ year : int
+}
+
+entity "Image" as Image{
+ type : ImageType
+ storageType : ImageStorageType
+ path : 
+}
+
+entity "Inventory" as Inventory{
+ quantity : int
+ minStock : int
+ maxStock : int
+ status : Status
+ product : Product
+ remark : undefined
+ expired : date
+ warehouse : Warehouse
+ supplier : Supplier
+}
+
+entity "Packaging" as Packaging{
+ unit : Unit
+}
+
+entity "Unit" as Unit{
+ type : UnitType
+}
+
+entity "Customer" as Customer{
+ contact : Contact
+}
+
+entity "Supplier" as Supplier{
+ enable : bool
+ contact : Contact
+ address : Address
+}
+
+entity "Contact" as Contact{
+}
+
+entity "Cashier" as Cashier{
+ staff : User
+ code : int
+ device : Asset
+}
+
+entity "SalesReport" as SalesReport{
+ periode : undefined
+}
+
+entity "Asset" as Asset{
+ code : string
+ category : Category
+}
+
+entity "AssetType" as AssetType{
+ 9 : c
+ 6 : r
+ 6 : r
+ 4 : e
+ 4 : l
+}
+
+entity "Store" as Store{
+ manager : User
+}
+
+entity "Invoice" as Invoice{
+ order : Order
+ status : InvoiceStatus
+ payment : Payment
+}
+
+entity "Payment" as Payment{
+ method : PaymentMethod
+ amount : double
+}
+
+entity "Sales" as Sales{
+ total : double
+}
+
+entity "Status" as Status{
+ category : Category
+}
+
+entity "Category" as Category{
+ parent : double
+ image : Image
+}
+
+entity "Warehouse" as Warehouse{
+ receiving : Receiving
+ staff : User
+ status : undefined
+ storage : Storage
+}
+
+entity "WarehouseMutation" as WarehouseMutation{
+ origin : Warehouse
+ destination : Warehouse
+ mutationAt : datetime
+ staff : User
+ items : WarehouseMutationLine
+}
+
+entity "WarehouseMutationLine" as WarehouseMutationLine{
+ product : Product
+ storageOrigin : Storage
+ storageDestination : Storage
+}
+
+entity "Storage" as Storage{
+ type : StorageType
+}
+
+entity "ReturnInvoice" as ReturnInvoice{
+ $doc : A return invoice is used by buyers of products and other merchandise
+ invoice : Invoice
+ returnDate : datetime
+ items : ReturnItem
+ totalPrice : double
+}
+
+entity "ReturnItem" as ReturnItem{
+ product : Product
+ quantity : int
+}
+
+entity "DeliveryOrder" as DeliveryOrder{
+ $doc : Delivery order merupakan dokumen berupa perintah pengiriman barang yang dibuat pihak penjual ke penyedia jasa ekspedisi agar segera melakukan proses pick-up barang berdasarkan pesanan pembeli
+ order : Order
+}
+
+entity "Receiving" as Receiving{
+ staff : User
+ status : ReceivingStatus
+ supplier : Supplier
+ dispatchDate : date
+ doc : Surat Jalan (dispatch note) atau goods received note (GNR) atau delivery note (dibedakan dari delivery order).
+ payment : Payment
+ doc : tempo
+ doc : faktur
+ invoiceDate : date
+ taxPPN : string
+ quantityTotal : int
+ isApproved : boolean
+ approvedBy : User
+}
+
+entity "Brand" as Brand{
+ image : Image
+}
+
+entity "PurchaseOrder" as PurchaseOrder{
+ supplier : Supplier
+}
+
+entity "PurchaseOrderLine" as PurchaseOrderLine{
+}
+
+entity "OrderLine" as OrderLine{
+ product : Product
+ quantity : int
+ amount : double
+ promotion : Promotion
+}
+
+entity "Order" as Order{
+ customer : Customer
+ total : double
+}
+
+entity "Salary" as Salary{
+ employee : Employee
+ month : Month
+ year : int
+}
+
+entity "Employee" as Employee{
+ birthDate : date
+ birthPlace : string
+ photo : Image
+ contact : Contact
+ address : Address
+ user : User
+}
+
+entity "User" as User{
+}
+
+entity "Promotion" as Promotion{
+ type : PromotionType
+ originPrice : double
+ promoPrice : double
+ isActive : boolean
+}
+
+entity "Discount" as Discount{
+ value : int
+ startDate : datetime
+ endDate : datetime
+ type : DiscountType
+ promotion : Promotion
+ product : Product
+}
+
+entity "Coupons" as Coupons{
+ promotion : Promotion
+ code : 
+ startDate : datetime
+ endDate : datetime
+}
+
+entity "Bogo" as Bogo{
+ promotion : Promotion
+ product : Product
+ quantity : int
+ isAllVariant : boolean
+ variants : BogoVariant
+}
+
+entity "BogoVariant" as BogoVariant{
+}
+
+entity "Loyalty" as Loyalty{
+ promotion : Promotion
+ value : int
+ type : DiscountType
+ startDate : datetime
+ endDate : datetime
+}
+
+entity "Member" as Member{
+ user : User
+ type : MemberType
+}
+
+entity "Bundling" as Bundling{
+ items : BundlingItem
+ promotion : Promotion
+ unit : Unit
+}
+
+entity "BundlingItem" as BundlingItem{
+ product : Product
+ quantity : int
+}
+
+entity "Customize" as Customize{
+ promotion : Promotion
+ conditionLogic : 
+}
+
+entity "Setting" as Setting{
+ enable : bool
+}
+
+entity "Shipment" as Shipment{
+}
+
+entity "Delivery" as Delivery{
+ courier : Courier
+}
+
+entity "Courier" as Courier{
+ type : CourierType
+ driver : Contact
+}
+
+entity "StockOpname" as StockOpname{
+}
+
+entity "StockOpnameLine" as StockOpnameLine{
+}
+
+
+
+
+Company |o..}| Branch
+
+
+
+@enduml
