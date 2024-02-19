@@ -318,9 +318,4 @@ entity "StockOpnameLine" as StockOpnameLine{
 
 
 
-
-Company |o..}| Branch
-
-
-
 @enduml
