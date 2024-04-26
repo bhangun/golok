@@ -145,15 +145,18 @@ applications:
 ```
 entities:
 - Product: 
-  - name: string, min=3,max=30
-  - code: string, min=3,max=30, required
-    doc: Product code  
-  - sku: int,min=3,max=30, required
-  - brand: Brand, manyToOne
-  - category: Category, manyToOne
-  - staff: User, manyToOne
-  - status: Status, manyToOne
-  - unit: Unit
+    description:
+    example: 
+    properties:
+    - name: string, min=3,max=30
+    - code: string, min=3,max=30, required
+      doc: Product code  
+    - sku: int,min=3,max=30, required
+    - brand: Brand, manyToOne
+    - category: Category, manyToOne
+    - staff: User, manyToOne
+    - status: Status, manyToOne
+    - unit: Unit
 ```
 ### enums
 

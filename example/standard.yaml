@@ -39,14 +39,14 @@ entities:
     description:
     example: 
     properties:
-      - name:
-      - code: string, min=3,max=30, required //Product code  
-      - sku: int,min=3,max=30, required
-      - brand: Brand, manyToOne
-      - category: Category, manyToOne
-      - staff: User, manyToOne
-      - status: Status, manyToOne
-      - unit: Unit
+    - name:
+    - code: string, min=3,max=30, required //Product code  
+    - sku: int,min=3,max=30, required
+    - brand: Brand, manyToOne
+    - category: Category, manyToOne
+    - staff: User, manyToOne
+    - status: Status, manyToOne
+    - unit: Unit
 
 - Inventory: 
     description:
