@@ -35,55 +35,78 @@ applications:
     locale: en, id
     entities: Product, Order, OrderLine
 entities: 
-- Product: 
-  - name: string, min=3,max=30
-  - code: string, min=3,max=30, required
-    doc: Product code  
-  - sku: int,min=3,max=30, required
-  - brand: Brand, manyToOne
-  - category: Category, manyToOne
-  - staff: User, manyToOne
-  - status: Status, manyToOne
-  - unit: Unit
+- Product:
+    description:
+    example: 
+    properties:
+      - name:
+      - code: string, min=3,max=30, required //Product code  
+      - sku: int,min=3,max=30, required
+      - brand: Brand, manyToOne
+      - category: Category, manyToOne
+      - staff: User, manyToOne
+      - status: Status, manyToOne
+      - unit: Unit
 
 - Inventory: 
-  - quantity: int 
-  - minStock: int 
-  - maxStock: int 
-  - status: Status, manyToOne
-  - product: Product , OneToOne
-  - expired: date 
-  - warehouse: Warehouse, manyToOne  
+    description:
+    example: 
+    properties:
+      - quantity: int
+      - minStock: int
+      - maxStock: int
+      - status: Status, manyToOne
+      - product: Product , OneToOne
+      - expired: date 
+      - warehouse: Warehouse, manyToOne  
  
 - Price: 
-  - value: double 
+    description:
+    example: 
+    properties:
+      - value: double 
 
 - Invoice: 
-  - order: Order 
-  - status: Status, manyToOne 
+    description:
+    example: 
+    properties:
+      - order: Order 
+      - status: Status, manyToOne 
  
 - Status: 
-  - category: Category, manyToOne
+    description:
+    example: 
+    properties:
+      - category: Category, manyToOne
  
 - Category: 
 - Unit&enum:
   - Kg, Kilogram
   - g, gram  
-- Warehouse: 
-  - status: Status, manyToOne
+- Warehouse:
+    description:
+    example: 
+    properties:
+      - status: Status, manyToOne
 
 - User&NoneDefault: 
-  - employee: Employee, manyToOne
-  - username: ''
-  - password: ''
-  - email: ''
-  - active: ''
-  - enable: ''
+    description:
+    example: 
+    properties:
+      - employee: Employee, manyToOne
+      - username: ''
+      - password: ''
+      - email: ''
+      - active: ''
+      - enable: ''
 
 - Order: 
-  - product: Product, manyToOne 
-  - quantity: int 
-  - unitPrice: double 
+    description:
+    example: 
+    properties:
+      - product: Product, manyToOne 
+      - quantity: int 
+      - unitPrice: double 
 
 
 
