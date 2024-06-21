@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,20 +14,20 @@ bool validateEmail(String value) {
   return regExp.hasMatch(value);
 }
 
-jsonFromFile(String path) async {
+Future<String> jsonFromFile(String path) async {
   final String response = await rootBundle.loadString(path);
   return response;
 }
 
-jwt() async {
-  return JwtDecoder.decode(''); //await DatabaseServices.db.saveToken(token));
+Future<Map<String, dynamic>> jwt() async {
+  return JwtDecoder.decode('');
 }
 
-roles() async {
+Future<List<String>> roles() async {
   return (await jwt())["auth"].split(",");
 }
 
-isRole(String role) async {
+Future<bool> isRole(String role) async {
   final List<String> b = await roles();
   return b.contains(role);
 }
@@ -44,6 +45,21 @@ void setupWindow() {
   if (Platform.isMacOS) {
   } else {}
 }
+
+
+Future<bool> isConnectInternet() async {
+  bool isConnected = false;
+  try {
+    final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      isConnected = true;
+    }
+  } on SocketException catch (_) {
+    isConnected = false;
+  }
+  return isConnected;
+}
+
 
 String getOS() {
   String os = Platform.operatingSystem;
@@ -65,8 +81,7 @@ String getEnvironment(String envVarName) {
 
 showModal(context, text, [onPressed]) =>
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      action: SnackBarAction(label: 'Action', onPressed: onPressed
-          ),
+      action: SnackBarAction(label: 'Action', onPressed: onPressed),
       content: Text(text),
       duration: const Duration(milliseconds: 1500),
       width: 280.0, // Width of the SnackBar.
@@ -79,7 +94,7 @@ showModal(context, text, [onPressed]) =>
       ),
     ));
 
-Widget getIcon( String icon,
+Widget getIcon(String icon,
         {String? title, Color color = Colors.black, double size = 24.0}) =>
     Icon(
       getIconData(icon),
@@ -88,10 +103,8 @@ Widget getIcon( String icon,
       semanticLabel: title,
     );
 
-IconData getIconData(String name) { 
-  if(name!='') { return icons()[name]!;}
-  else { return icons()['home']!;}
-}
+IconData getIconData(String name) => icons()[name]!;
+
 Map<String, IconData> icons() => {
       'home': Icons.home,
       'label': Icons.label,
@@ -101,16 +114,15 @@ Map<String, IconData> icons() => {
       'abc': Icons.abc,
       'add_photo': Icons.add_a_photo,
       'add': Icons.add
-};
-
+    };
 
 transformStringParam(List<String> text) {
-    String payload = '';
-    var del = '&';
-    var i = 0;
-    for (var e in text) {
-      payload += e + (i<text.length-1?del:'');
-      i++;
-    }
-    return payload;
+  String payload = '';
+  var del = '&';
+  var i = 0;
+  for (var e in text) {
+    payload += e + (i < text.length - 1 ? del : '');
+    i++;
+  }
+  return payload;
 }
