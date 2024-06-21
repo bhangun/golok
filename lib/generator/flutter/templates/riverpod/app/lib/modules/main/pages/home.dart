@@ -1,18 +1,18 @@
+import 'package:adaptive_screen/index.dart';
 import 'package:flutter/material.dart';
 
+import '../../modules/dashboard/pages/dashboard.dart';
+import '../../modules/syirkah/pages/home_phone.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-        child:  Text('Home')
+    return const AdaptiveScreen(
+      largeScreen: DashboardPage(),
+      mediumScreen: DashboardPage(),
+      phone: HomePhonePage(),
     );
   }
 }

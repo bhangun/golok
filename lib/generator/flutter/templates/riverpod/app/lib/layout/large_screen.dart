@@ -34,40 +34,37 @@ class LargeScreen extends StatefulWidget {
 }
 
 class _LargeScreenState extends State<LargeScreen> {
+  
+class _LargeScreenState extends State<LargeScreen> {
   @override
   Widget build(BuildContext context) {
     return Row(
-        children: [
-          // Side Menu
-          SideMenu(
-              width: sideMenuWidth,
-              image: imageSplash,
-              menuItems: widget.menuItems,
-              currentIndex: widget.currentIndex,
-              title: widget.title,
-              onMenuClick: widget.onMenuClick),
-
-          // Divider
-          verticalDivider(),
-
-          // Main Section
-          Expanded(
-            child: Scaffold(
-              appBar: AppBar(
-                actions: widget.actions,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-              body: widget.body,
-              floatingActionButton: widget.floatingActionButton,
+      children: [
+        // Side Menu
+        SideMenu(
+            width: sideMenuWidth,
+            image: imageSplash,
+            menuItems: widget.menuItems,
+            /*  currentIndex: widget.currentIndex,
+            title: widget.title, */
+            onMenuClick: (val) {}),
+        // Divider
+        VerticalDivider(
+          width: 2,
+          thickness: 100,
+          color: Theme.of(context).dividerColor,
+        ),
+        // Main Section
+        Expanded(
+          child: Scaffold(
+            appBar: AppBar(
+              //actions: widget.actions,
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
-          )
-        ],
-      );
+            body: widget.body,
+          ),
+        )
+      ],
+    );
   }
-
-  Widget verticalDivider() => VerticalDivider(
-        width: 1,
-        thickness: 1,
-        color: Theme.of(context).dividerColor,
-      );
 }

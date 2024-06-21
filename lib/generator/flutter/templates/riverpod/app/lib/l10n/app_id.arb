@@ -1,23 +1,33 @@
 {
     "title": "apa kabar",
     "home": "Beranda",
-    "sign_in": "Masuk",
+
     "dashboard": "Dashboard",
     "settings": "Pengaturan",
     "about": "About Apps",
     "@about": {
         "description": "About Apps"
     },
-    "forgot_password": "Lupa Sandi",
+    
     "please_fill_field": "Silahkan isi kolom",
+    "data_empty": "Data Kosong",
+
+    "share": "Bagi",
+    "search": "Cari",
+    "add": "Tambah",
+    "cancel": "Batal",
+    "delete": "Hapus",
+
+    "email": "Email",
     "users": "Pengguna",
     "user_password": "Sandi",
     "password": "Sandi",
-    "email": "Email",
-    "delete": "Hapus",
-    "share": "Sebar",
-    "add": "Tambah",
-    "data_empty": "Data Kosong",
+    "dont_have_account":"Tidak punya akun? ",
+    "sign_in": "Masuk",
+    "sign_up": "Daftar",
+    "sign_out": "Sign Out",
+    "forgot_password": "Lupa Sandi?",
+    "want_sign_out": "Are you sure you want to logout?",
     "loginEmpty": "Email can't be empty",
     "loginValidEmail": "Please enter a valid email address",
     "loginTryEmail": "Email provided isn't valid.Try another email address",
@@ -25,6 +35,9 @@
     "passwordMatch": "Sandi tidak cocok",
     "passwordEmpty": "Sandi tidak boleh kosong",
     "passwordLength": "Sandi minimal 6 karakter",
+
+
+
     "errorUsername": "Nama User dan sandi tidak cocok",
     "errorUnauthorized": "Anda tidak memiliki otoritas",
     "errorNetwork": "Sesuatu terjadi pada jaringan, silahkan periksa jaringan"

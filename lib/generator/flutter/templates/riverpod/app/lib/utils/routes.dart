@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:syirkah/modules/syirkah/pages/home.dart';
+import '../modules/main/pages/home.dart';
 
 import '../modules/auth/pages/login3.dart';
 import '../modules/error/pages/error_404.dart';
