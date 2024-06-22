@@ -1,9 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-import '../main_routes.dart';
-import '../../../utils/configuration/config.dart';
+import '../../../utils/config.dart';
+import '../main_module.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -36,6 +35,6 @@ class _Splashpagestate extends State<SplashScreen> {
   }
 
   navigate() async {
-    Navigator.of(context).pushReplacementNamed(MainRoutes.login);
+    Navigator.of(context).pushReplacementNamed(MainModule.login);
   }
 }

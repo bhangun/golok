@@ -1,10 +1,23 @@
-import 'main/main_module.dart';
-import '../utils/modules/module_model.dart';
-import 'user/user_module.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-List<Module> registerModules(){
+import '../models/menu.dart';
+import 'main/main_module.dart';
+
+
+List<Menu> registerPages(BuildContext context){
   return [
-    MainModule(),
-    UserModule(),
+    ...MainModule().pages(context),
+    //...UserModule().pages(context),
+  ];
+}
+
+List<List<GoRoute>> modulesGoroutes()=>[
+  MainModule().goroutes(),
+];
+
+List<List<StatefulShellBranch>> modulesBranches(){
+  return [
+    MainModule().branches(),    
   ];
 }

@@ -1,30 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../models/menu.dart';
-import 'main_routes.dart';
+import '../../models/menu.dart';
+import '../../utils/routes.dart';
 import '../../utils/modules/module_model.dart';
+import 'pages/about.dart';
+import 'pages/settings.dart';
 
 class MainModule implements Module {
   @override
   String? name = 'Apps';
-
-  @override
-  String? baseRoute = '/';
+  static String main = '/';
+  static String login = '/login';
+  static String dashboard = '/dashboard';
+  static String splash = '/splash';
+  static String about = '/about';
+  static String signup = '/signup';
+  static String forgotPassword = '/forgotPassword';
+  static String profile = '/profile';
+  static String settings = '/settings';
 
   @override
   pages(BuildContext context) => [
-        Menu(title: AppLocalizations.of(context)!.home, path: MainRoutes.main),
         Menu(
-            title: AppLocalizations.of(context)!.about, path: MainRoutes.about),
-        Menu(
-            title: AppLocalizations.of(context)!.settings,
-            path: MainRoutes.setting),
+            title: 'Dashboard',
+            path: main,
+            iconWidget: const Icon(Icons.dashboard)),
+        Menu(title: 'Profile', path: profile, showInDrawer: false),
+        Menu(title: 'Admin', showInDrawer: false, items: [
+          Menu(title: 'About', path: about, showInDrawer: false),
+          Menu(title: 'Settings', path: settings, showInDrawer: false),
+        ]),
       ];
 
   @override
   services() {}
 
   @override
-  goroutes() => MainRoutes.goroutes;
+  goroutes() => [];
+
+  @override
+  List<StatefulShellBranch> branches() => [
+        Routes.shellBranch('About', about, const AboutPage(), []),
+        Routes.shellBranch(settings, settings, const SettingsPage()),
+      ];
 }

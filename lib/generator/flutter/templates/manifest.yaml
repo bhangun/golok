@@ -17,6 +17,10 @@ templates:
       to: lib/modules/{entityName}/services/{entityFile}_services.dart
     - from: entity.bloc.dart.ejs
       to: lib/modules/{entityName}/blogic/{entityFile}_blogic.dart
+    - from: pages/entity.list.dart.ejs
+      to: lib/modules/{entityName}/pages/{entityFile}_list.dart
+    - from: pages/entity.detail.dart.ejs
+      to: lib/modules/{entityName}/pages/{entityFile}_detail.dart
     - from: pages/entity.form.dart.ejs
       to: lib/modules/{entityName}/pages/{entityFile}_form.dart
     

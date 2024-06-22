@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../utils/configuration/config.dart';
-import '../utils/configuration/constants.dart';
+import '../utils/config.dart';
+import '../utils/constants.dart';
 import '../utils/helper.dart';
 import '../models/menu.dart';
 import '../widgets/side_menu/side_menu.dart';

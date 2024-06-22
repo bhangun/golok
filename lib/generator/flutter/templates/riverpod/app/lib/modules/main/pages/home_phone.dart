@@ -18,8 +18,7 @@ class _HomePhonePageState extends ConsumerState<HomePhonePage> {
 
   @override
   Widget build(BuildContext context) {
-    final SearchState searchState = ref.read(searchProvider.notifier).getData();
-    return Column(
+    return const Column(
       children: [
         Expanded(child: 
         SingleChildScrollView(
@@ -34,8 +33,3 @@ class _HomePhonePageState extends ConsumerState<HomePhonePage> {
     );
   }
 }
-final List<String> imgList = [
-  'assets/bag_1.png',
-  'assets/bag_2.png',
-  'assets/bag_3.png',
-];

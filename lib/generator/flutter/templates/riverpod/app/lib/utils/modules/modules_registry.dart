@@ -1,8 +1,8 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
+import '../../models/menu.dart';
 import '../../modules/register_modules.dart';
 import '../routes.dart';
-import 'modules.dart';
 
 class ModulesRegistry {
   // singleton object
@@ -12,19 +12,23 @@ class ModulesRegistry {
   factory ModulesRegistry() => _singleton;
 
   ModulesRegistry._();
+  static List<Menu> menus = [];
 
-  static routes() {
-    registerModules().forEach((m) {
-      Routes.addRoutes(m.goroutes());
-      m.services();
+  static List<Menu> routes(BuildContext context) {
+    return registerPages(context);
+  }
+
+
+  static goroutes() {
+    modulesGoroutes().forEach((m) {
+      Routes.addRoutes(m);
     });
   }
 
-  static pages(BuildContext context) {
-    registerModules().forEach((m) {
-      m.pages(context).forEach((p) {
-        Modules.addPages(p);
-      });
+  static branches() {
+    modulesBranches().forEach((m) {
+      Routes.addBranches(m);
     });
   }
 }
+

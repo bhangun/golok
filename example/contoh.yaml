@@ -2,7 +2,7 @@ kind: golok-model
 version: 1.0
 # General info 
 info:
-  name: golokApps
+  name: golok_apps
   title: Contoh1
   description: Ini contoh aplikasi
 

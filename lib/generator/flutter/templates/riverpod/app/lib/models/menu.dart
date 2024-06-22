@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'menu.g.dart';
@@ -10,6 +11,7 @@ class Menu extends Equatable {
   final String? subtitle;
   final String? description;
   final String? icon;
+  final Widget? iconWidget;
   final String? path;
   final String? basePath;
   final List<Menu> items;
@@ -24,6 +26,7 @@ class Menu extends Equatable {
       this.subtitle,
       this.description,
       this.icon,
+      this.iconWidget,
       this.path,
       this.roles,
       this.basePath,
@@ -37,4 +40,7 @@ class Menu extends Equatable {
 
   @override
   List<Object?> get props => ['$title'];
+
+  @override
+  String toString() => 'name: $name, path: $path, showInDrawer: $showInDrawer';
 }

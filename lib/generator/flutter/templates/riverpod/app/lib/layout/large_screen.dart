@@ -1,40 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../utils/configuration/config.dart';
-import '../utils/configuration/constants.dart';
 import '../models/menu.dart';
+import '../utils/config.dart';
+import '../utils/constants.dart';
 import '../widgets/side_menu/side_menu.dart';
 
 class LargeScreen extends StatefulWidget {
-  final Widget? title;
-  final List<Widget> actions;
   final Widget? body;
-  final int currentIndex;
   final List<Menu> menuItems;
-  final ValueChanged<int>? onFoldMenuTap;
-  final ValueChanged<int>? onBottomTap;
-  final ValueChanged<Menu>? onMenuClick;
-  final FloatingActionButton? floatingActionButton;
-
-  const LargeScreen(
-      {this.title,
-      this.body,
-      required this.actions,
-      required this.currentIndex,
-      required this.menuItems,
-      this.onMenuClick,
-      this.onBottomTap,
-      this.floatingActionButton,
-      this.onFoldMenuTap,
-      Key? key})
-      : super(key: key);
+  const LargeScreen({
+    super.key,
+    required this.body,
+    required this.menuItems,
+  });
 
   @override
   State<LargeScreen> createState() => _LargeScreenState();
 }
 
-class _LargeScreenState extends State<LargeScreen> {
-  
 class _LargeScreenState extends State<LargeScreen> {
   @override
   Widget build(BuildContext context) {

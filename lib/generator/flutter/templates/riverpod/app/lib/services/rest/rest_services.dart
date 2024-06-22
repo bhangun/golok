@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 
-import '../../utils/configuration/config.dart';
+import '../../utils/config.dart';
 import '../auth_jwt_services.dart';
 import 'rest_error_util.dart';
 

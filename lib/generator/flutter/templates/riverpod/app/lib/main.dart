@@ -16,11 +16,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:logging/logging.dart';
 
+import 'modules/main/blogics/settings_bloc.dart';
 import 'themes/theme.dart';
 import 'themes/util.dart';
 import 'utils/modules/modules_registry.dart';
 import 'utils/routes.dart';
-import 'modules/settings/settings_bloc.dart';
 
 Future<void> main() async {
   // Initialized

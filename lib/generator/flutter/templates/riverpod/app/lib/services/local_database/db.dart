@@ -5,7 +5,7 @@ import 'package:sembast/sembast_io.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'db_encryption.dart';
-import '../../utils/configuration/config.dart';
+import '../../utils/config.dart';
 
 
 class LocalDatabase {

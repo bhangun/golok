@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:golokApps/modules/main/main_module.dart';
 
 import '../../../models/status.dart';
-import '../main_routes.dart';
 import '../../../services/auth_jwt_services.dart';
 import '../../../services/navigation.dart';
 
@@ -112,7 +112,7 @@ class AuthBloc extends ChangeNotifier {
   }
 
   gotoHome() async {
-    if (loggedIn) NavigationServices.navigateTo(MainRoutes.main);
+    if (loggedIn) NavigationServices.navigateTo(MainModule.main);
   }
 
   forgotPassword() async {
@@ -130,7 +130,7 @@ class AuthBloc extends ChangeNotifier {
   void logout() async {
     const Status(loading: true);
     AuthServices.logout();
-    NavigationServices.navigateTo(MainRoutes.login);
+    NavigationServices.navigateTo(MainModule.login);
     const Status(loading: false);
   }
 

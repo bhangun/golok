@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../modules/main/pages/home.dart';
 
-import '../modules/auth/pages/login3.dart';
+import '../modules/main/pages/home.dart';
 import '../modules/error/pages/error_404.dart';
 import '../modules/main/main_module.dart';
+import '../modules/main/pages/login.dart';
 import '../modules/main/pages/splash.dart';
-import '../modules/syirkah/pages/syirkah_page.dart';
+import '../modules/main/pages/main_page.dart';
 import '../widgets/transitions/fade_transition.dart';
 
 class Routes {
@@ -52,42 +52,29 @@ class Routes {
       errorBuilder: (context, state) => NotFoundScreen(
         state: state,
       ),
-      //refreshListenable: ListenableBuilder(listenable: Listenable.merge(listenables), builder: builder),
       routes: [
         GoRoute(
           path: '/login',
-          // onExit: (context) => !auth.isLoggedIn,
           builder: (BuildContext context, GoRouterState state) =>
               const LoginPage(),
-          /* redirect: (BuildContext context, GoRouterState state) {
-            LoginState auth = ref!.watch(loginState);
-            if (auth.isLoggedIn) return MainModule.main;
-            return MainModule.login;
-          }, */
         ),
         GoRoute(
           path: '/splash',
           builder: (BuildContext context, GoRouterState state) =>
               const SplashScreen(),
-          /* redirect: (BuildContext context, GoRouterState state) {
-              
-              if (auth.isLoggedIn) return MainModule.dashboard;
-              return MainModule.login;} */
         ),
         StatefulShellRoute.indexedStack(
             builder: (BuildContext context, GoRouterState state,
                 StatefulNavigationShell navigationShell) {
-              return SyirkahPage(navigationShell: navigationShell);
+              return MainPage(navigationShell: navigationShell);
             },
             branches: [
-              Routes.shellBranch('syirkah', '/', const HomePage(), []),
+              Routes.shellBranch('main', '/', const HomePage(), []),
               ..._branches
             ]),
         ..._goroutes,
       ],
 
-      // changes on the listenable will cause the router to refresh it's route
-      //refreshListenable: _loginInfo,
     );
   }
 

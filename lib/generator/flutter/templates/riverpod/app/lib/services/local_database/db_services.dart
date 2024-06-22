@@ -2,7 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:sembast/sembast.dart';
 
 import '../../models/app_data.dart';
-import '../../utils/configuration/config.dart';
+import '../../utils/config.dart';
 import 'db.dart';
 
 // import 'database_constants.dart';
