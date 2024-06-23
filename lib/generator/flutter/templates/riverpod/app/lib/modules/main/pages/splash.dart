@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../utils/config.dart';
 import '../main_module.dart';
@@ -35,6 +36,6 @@ class _Splashpagestate extends State<SplashScreen> {
   }
 
   navigate() async {
-    Navigator.of(context).pushReplacementNamed(MainModule.login);
+    context.go(MainModule.login);
   }
 }

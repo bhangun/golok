@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../blogics/user_bloc.dart';
+import '../bloc/user_bloc.dart';
 import '../models/user.dart';
 
 class UserForm extends ConsumerStatefulWidget {

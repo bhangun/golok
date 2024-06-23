@@ -10,7 +10,7 @@ class SideMenu extends StatefulWidget {
       required this.menuItems,
       required this.onMenuClick,
       this.currentIndex,
-      this.title,
+      this.title = const Text(''),
       this.width,
       this.image})
       : super(key: key);
@@ -18,7 +18,7 @@ class SideMenu extends StatefulWidget {
   final List<Menu>? menuItems;
   final void Function(Menu)? onMenuClick;
   final int? currentIndex;
-  final Widget? title;
+  final Widget title;
   final double? width;
   final String? image;
 
@@ -44,7 +44,7 @@ class _SideMenuState extends State<SideMenu> {
                     width: 60,
                     height: 60,
                   ),
-                  widget.title!
+                  widget.title
                 ])),
               ),
 
@@ -71,7 +71,7 @@ class _SideMenuState extends State<SideMenu> {
                 title: Text(menu.title!));
           })
         : ExpansionTile(
-            leading: getIcon(menu.icon!),
+            leading: getIcon(menu.icon??'home'),
             title: Text(
               menu.title!,
              // style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

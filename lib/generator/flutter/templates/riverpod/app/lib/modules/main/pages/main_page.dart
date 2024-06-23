@@ -2,11 +2,11 @@ import 'package:adaptive_screen/adaptive_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kayys_components/models/menu.dart';
-import 'package:syirkah/layout/large_screen.dart';
-import 'package:syirkah/layout/medium_screen.dart';
-import 'package:syirkah/layout/phone_screen.dart';
 
+import '../../../layout/large_screen.dart';
+import '../../../layout/medium_screen.dart';
+import '../../../layout/phone_screen.dart';
+import '../../../models/menu.dart';
 import '../../../utils/modules/modules_registry.dart';
 
 class MainPage extends ConsumerStatefulWidget {
@@ -36,6 +36,8 @@ class _MainPageState extends ConsumerState<MainPage> {
             mediumScreen: MediumScreen(
               body: widget.navigationShell,
               menuItems: menuItems,
+              actions: const [],
+              currentIndex: 0,
             ),
 
             // If fit small screen (Phone)

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../utils/config.dart';
 import '../utils/constants.dart';
@@ -11,8 +12,8 @@ class PhoneScreen extends StatefulWidget {
   final List<Menu>? menuItems;
   final ValueChanged<Menu>? onMenuClick;
   final void Function(int)? onBottomTap;
-  final int? currentIndex;
-  final Widget? title;
+  final int currentIndex;
+  final Widget title;
   final double? width;
   final String? image;
   final Widget? body;
@@ -24,8 +25,8 @@ class PhoneScreen extends StatefulWidget {
       required this.menuItems,
       this.onBottomTap,
       this.onMenuClick,
-      this.currentIndex,
-      this.title,
+      this.currentIndex = 0,
+      this.title = const Text(''),
       this.width,
       this.image,
       this.body,
@@ -46,7 +47,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
           menuItems: widget.menuItems,
           currentIndex: widget.currentIndex,
           title: widget.title,
-          onMenuClick: widget.onMenuClick),
+          onMenuClick: onMenuClick),
       appBar: AppBar(
         title: widget.title,
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -68,7 +69,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
         ],
         backgroundColor: Theme.of(context).primaryColor,
         selectedItemColor: Theme.of(context).colorScheme.error,
-        currentIndex: widget.currentIndex!,
+        currentIndex: widget.currentIndex,
         onTap: widget.onBottomTap,
       ),
       floatingActionButton: widget.floatingActionButton,
@@ -84,7 +85,12 @@ class _PhoneScreenState extends State<PhoneScreen> {
             ),
           ),
         ],
-        currentIndex: widget.currentIndex!,
+        currentIndex: widget.currentIndex,
         onTap: widget.onBottomTap,
       );
+
+  void onMenuClick(Menu menu) {
+    context.go(menu.path!);
+    Navigator.pop(context);
+  }
 }

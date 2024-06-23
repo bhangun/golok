@@ -1,13 +1,16 @@
+
 import 'package:adaptive_screen/adaptive_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
+import 'package:syirkah/modules/main/main_module.dart';
+import 'package:kayys_components/kayys_components.dart';
 
-import '../../../utils/config.dart';
 import '../../../utils/helper.dart';
-import '../blogics/auth_bloc.dart';
-import '../../../widgets/form/textfield_widget.dart';
+import '../../../utils/config.dart';
+
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,13 +26,19 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isEyeOpen = true;
   bool _isObscure = true;
-  String? username;
-  String? password;
 
   @override
   void initState() {
-    _passwordFocusNode = FocusNode();
     super.initState();
+    _passwordFocusNode = FocusNode();
+
+    _usernameController.addListener(() {
+      // some code
+    });
+
+    _passwordController.addListener(() {
+      // some code
+    });
   }
 
   @override
@@ -43,21 +52,17 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    _usernameController.addListener(() {
-      username = _usernameController.text;
-    });
-
-    _passwordController.addListener(() {
-      password = _passwordController.text;
-    });
     return Scaffold(
         primary: true,
         body: Form(
             key: _formKey,
             child: AdaptiveScreen(
                 phone: signInFormPhoneScreen(context),
-                largeScreen: signInFormPhoneScreen(context),
-                mediumScreen: signInFormPhoneScreen(context))));
+                largeScreen:
+                    signInFormPhoneScreen(context), //signInFormLargeScreen(),
+                mediumScreen:
+                    signInFormPhoneScreen(context) //signInFormLargeScreen()),
+                )));
   }
 
   Widget signInFormPhoneScreen(context) => Center(
@@ -69,7 +74,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset(
+              SvgPicture.asset(
                 imageSplash,
                 width: 60,
                 height: 60,
@@ -78,11 +83,11 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
               _usernameField(context),
               _passwordField(context),
               _forgotPasswordButton(),
-              _signInButton(),
+              _signInButton(context),
             ],
           )));
 
-  _usernameField(context) => TextFieldWidget(
+  Widget _usernameField(context) => TextFieldWidget(
         hint: AppLocalizations.of(context)!.email,
         inputType: TextInputType.emailAddress,
         validator: (value) {
@@ -91,7 +96,6 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
           } else if (!validateEmail(value)) {
             return 'Not email';
           }
-          return null;
         },
         icon: Icons.person,
         iconColor: Theme.of(context).iconTheme.color!,
@@ -100,7 +104,7 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
         onFieldSubmitted: (value) {
           FocusScope.of(context).requestFocus(_passwordFocusNode);
         },
-        errorText: ref.watch(authBloc).loginMessage,
+       // errorText: ref.watch(loginState).loginMessage,
       );
 
   Widget _passwordField(context) => TextFieldWidget(
@@ -108,21 +112,21 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
         isObscure: _isObscure,
         padding: const EdgeInsets.only(top: 16.0),
         icon: Icons.lock,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter some text';
+          } else if (!validateEmail(value)) {
+            return 'Not email';
+          }
+          return null;
+        },
         iconColor: Theme.of(context).iconTheme.color!,
         textController: _passwordController,
         focusNode: _passwordFocusNode,
-        errorText: ref.watch(authBloc).passwordMessage,
+       // errorText: ref.watch(loginState).passwordMatch,
         onEyePressed: () => _onEyePressed(),
         isEyeOpen: _isEyeOpen,
         showEye: true,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return AppLocalizations.of(context)!.passwordEmpty;
-          } else if (value.length < 4) {
-            return AppLocalizations.of(context)!.passwordLength;
-          }
-          return '';
-        },
       );
 
   Widget _forgotPasswordButton() => Align(
@@ -130,14 +134,16 @@ class _Loginpagestate extends ConsumerState<LoginPage> {
       child: TextButton(
           key: const Key('user_forgot_password'),
           child: Text(AppLocalizations.of(context)!.forgot_password),
-          onPressed: () => ref.read(authBloc.notifier).forgotPassword()));
+          onPressed: () => context.go(MainModule.forgotPassword)));
 
-  Widget _signInButton() => ElevatedButton(
+  Widget _signInButton(context) => ElevatedButton(
         key: const Key('user_sign_button'),
         onPressed: () {
-          
-          ref.read(authBloc.notifier).signIn(context);
-          context.go('/');
+          //if (_formKey.currentState!.validate()) {
+           // ref.read(loginState.notifier).signIn(context);
+            context.go('/');
+          //}
+          //showModal(context, AppLocalizations.of(context).errorNetwork);
         },
         child: Text(AppLocalizations.of(context)!.sign_in),
       );

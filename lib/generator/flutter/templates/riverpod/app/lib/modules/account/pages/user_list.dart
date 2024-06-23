@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../blogics/user_bloc.dart';
+import '../bloc/user_bloc.dart';
 import '../models/user.dart';
 
-class UserList extends ConsumerStatefulWidget {
-  const UserList({Key? key}) : super(key: key);
+class UserListPage extends ConsumerStatefulWidget {
+  const UserListPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _UserListState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _UserListPageState();
 }
 
-class _UserListState extends ConsumerState<UserList> {
+class _UserListPageState extends ConsumerState<UserListPage> {
   final _listKey = GlobalKey<ScaffoldState>();
 
   UserBloc _userBloc = UserBloc();
@@ -43,9 +43,9 @@ class _UserListState extends ConsumerState<UserList> {
   }
 
   _buildSlidelist(BuildContext context, List<User> users) {
-    return Row(children: [
-      ListView.separated(
-        shrinkWrap: true,
+    return  Row(children: [
+      Expanded(child: ListView.separated(
+          shrinkWrap: true,
           itemCount: users.length,
           separatorBuilder: (context, index) {
             return const Divider();
@@ -64,7 +64,7 @@ class _UserListState extends ConsumerState<UserList> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 onTap: () => _userBloc.itemTap(index));
-          })
+          }))
     ]);
   }
 }

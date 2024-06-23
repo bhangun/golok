@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../modules/main/pages/home.dart';
-import '../modules/error/pages/error_404.dart';
 import '../modules/main/main_module.dart';
 import '../modules/main/pages/login.dart';
 import '../modules/main/pages/splash.dart';
 import '../modules/main/pages/main_page.dart';
+import '../widgets/error/error_404.dart';
 import '../widgets/transitions/fade_transition.dart';
 
 class Routes {
@@ -40,10 +40,9 @@ class Routes {
 
   static GoRouter config(
       {WidgetRef? ref,
-      String initial = '/',
+      String initial = '/splash',
       bool debugLog = true,
       bool isLoggedIn = true}) {
-    //LoginState auth = ref!.watch(loginState);
 
     return GoRouter(
       navigatorKey: GlobalKey<NavigatorState>(),
@@ -69,7 +68,7 @@ class Routes {
               return MainPage(navigationShell: navigationShell);
             },
             branches: [
-              Routes.shellBranch('main', '/', const HomePage(), []),
+              Routes.shellBranch('main', '/', const HomePage()),
               ..._branches
             ]),
         ..._goroutes,
@@ -88,7 +87,7 @@ class Routes {
           pageBuilder: (context, state) {
             return MaterialPage(child: child);
           },
-          routes: routes!),
+          /* routes: routes! */),
     ]);
   }
 

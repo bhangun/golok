@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../blogics/user_bloc.dart';
+import '../bloc/user_bloc.dart';
 
-class UserDetail extends ConsumerStatefulWidget {
-  const UserDetail({Key? key}) : super(key: key);
+class UserDetailPage extends ConsumerStatefulWidget {
+  final String? id;
+  const UserDetailPage({Key? key, this.id}) : super(key: key);
   
   @override
-  ConsumerState<ConsumerStatefulWidget> createState()  => _UserDetailState();
+  ConsumerState<ConsumerStatefulWidget> createState()  => _UserDetailPageState();
 }
 
-class _UserDetailState extends ConsumerState<UserDetail> {
+class _UserDetailPageState extends ConsumerState<UserDetailPage> {
   UserBloc _userBloc = UserBloc();
 
   @override
@@ -23,10 +24,10 @@ class _UserDetailState extends ConsumerState<UserDetail> {
    _userBloc = ref.watch(userBloc);
    
     return Scaffold(
-            appBar: AppBar(title: const Text('User Detail')),
+            appBar: AppBar(title:  Text('User Detail ${widget.id}')),
             body: _userBloc.isItemEmpty
                 ? const Center(child: Text('User data are empty'))
-                : userDetail(),
+                : UserDetailPage(),
             floatingActionButton: FloatingActionButton(
               onPressed: () => _userBloc.update(),
               tooltip: 'Edit',
@@ -34,7 +35,7 @@ class _UserDetailState extends ConsumerState<UserDetail> {
             ));
   }
 
-  userDetail() {
+  UserDetailPage() {
     return ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         children: <Widget>[
