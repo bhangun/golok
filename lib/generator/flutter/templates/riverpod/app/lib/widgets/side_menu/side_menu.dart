@@ -5,15 +5,14 @@ import '../../models/menu.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu(
-      {Key? key,
+      {super.key,
       this.floatingActionButton,
       required this.menuItems,
       required this.onMenuClick,
       this.currentIndex,
       this.title = const Text(''),
       this.width,
-      this.image})
-      : super(key: key);
+      this.image});
   final Widget? floatingActionButton;
   final List<Menu>? menuItems;
   final void Function(Menu)? onMenuClick;
@@ -74,7 +73,6 @@ class _SideMenuState extends State<SideMenu> {
             leading: getIcon(menu.icon??'home'),
             title: Text(
               menu.title!,
-             // style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             children: menu.items.map(_buildList).toList(),
           );

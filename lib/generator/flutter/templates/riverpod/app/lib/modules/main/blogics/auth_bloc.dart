@@ -1,11 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:golokApps/modules/main/main_module.dart';
 
 import '../../../models/status.dart';
 import '../../../services/auth_jwt_services.dart';
 import '../../../services/navigation.dart';
+import '../main_module.dart';
 
 final authBloc = ChangeNotifierProvider((ref) => AuthBloc(ref: ref));
 

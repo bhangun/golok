@@ -5,15 +5,14 @@ import '../../models/menu.dart';
 
 class SideMenuFold extends StatelessWidget {
   const SideMenuFold(
-      {Key? key,
+      {super.key,
       this.floatingActionButton,
       required this.menuItems,
       this.onMenuClick,
-      this.currentIndex})
-      : super(key: key);
+      this.currentIndex});
   final Widget? floatingActionButton;
   final List<Menu>? menuItems;
-  final void Function(int)? onMenuClick;
+  final void Function(Menu)? onMenuClick;
   final int? currentIndex;
 
   @override
@@ -26,28 +25,13 @@ class SideMenuFold extends StatelessWidget {
       destinations: [
         ...menuItems!.map(
           (d) => NavigationRailDestination(
-            icon: getIcon(d.icon!),
+            icon: getIcon(d.icon??'home'),
             label: Text(d.title!),
           ),
         ),
       ],
       selectedIndex: currentIndex,
-      onDestinationSelected: onMenuClick ?? (_) {},
+      onDestinationSelected: (index) => onMenuClick!(menuItems![index]), 
     ));
   }
 }
-
-
-  /* Widget sideMenuIcon() => Scrollbar(child: NavigationRail(
-        leading: widget.floatingActionButton,
-        destinations: [
-          ...widget.menuItems.map(
-            (d) => NavigationRailDestination(
-              icon: d.icon,
-              label: Text(d.title),
-            ),
-          ),
-        ],
-        selectedIndex: widget.currentIndex,
-        onDestinationSelected: widget.onMenuClick ?? (_) {},
-      )); */

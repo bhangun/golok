@@ -5,21 +5,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:syirkah/modules/main/main_module.dart';
-import 'package:kayys_components/kayys_components.dart';
 
 import '../../../utils/helper.dart';
 import '../../../utils/config.dart';
+import '../../../widgets/form/textfield_widget.dart';
+import '../../main/main_module.dart';
 
 
 class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
-  _Loginpagestate createState() => _Loginpagestate();
+  Loginpagestate createState() => Loginpagestate();
 }
 
-class _Loginpagestate extends ConsumerState<LoginPage> {
+class Loginpagestate extends ConsumerState<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   late FocusNode _passwordFocusNode;

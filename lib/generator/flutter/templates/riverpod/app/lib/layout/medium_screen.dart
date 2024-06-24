@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../models/menu.dart';
 import '../widgets/side_menu/side_menu_fold.dart';
@@ -24,8 +25,7 @@ class MediumScreen extends StatefulWidget {
       this.onBottomTap,
       this.floatingActionButton,
       this.onFoldMenuTap,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   @override
   State<MediumScreen> createState() => _MediumScreenState();
@@ -46,7 +46,7 @@ class _MediumScreenState extends State<MediumScreen> {
           SideMenuFold(
             menuItems: widget.menuItems,
             currentIndex: widget.currentIndex,
-            onMenuClick: widget.onFoldMenuTap,
+            onMenuClick: onMenuClick,
           ),
 
           // Divider
@@ -66,4 +66,8 @@ class _MediumScreenState extends State<MediumScreen> {
         thickness: 1,
         color: Theme.of(context).dividerColor,
       );
+
+  void onMenuClick(Menu menu) {
+    context.go(menu.path!);
+  }
 }

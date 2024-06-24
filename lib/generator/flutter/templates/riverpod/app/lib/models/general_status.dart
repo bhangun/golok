@@ -2,35 +2,35 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class StateStatus {
-  final bool isSuccess;
-  final bool isCancel;
-  final bool isLoading;
-  final bool isError;
+  final bool success;
+  final bool cancel;
+  final bool loading;
+  final bool error;
   final bool showError;
   final String? errorMessage;
 
   const StateStatus({
-    this.isSuccess = false,
-    this.isCancel = false,
-    this.isLoading = false,
-    this.isError = false,
+    this.success = false,
+    this.cancel = false,
+    this.loading = false,
+    this.error = false,
     this.showError = false,
     this.errorMessage,
   });
 
   StateStatus copyWith({
-    bool? isSuccess,
-    bool? isCancel,
-    bool? isLoading,
-    bool? isError,
+    bool? success,
+    bool? cancel,
+    bool? loading,
+    bool? error,
     bool? showError,
     String? errorMessage,
   }) {
     return StateStatus(
-      isSuccess: isSuccess ?? this.isSuccess,
-      isCancel: isCancel ?? this.isCancel,
-      isLoading: isLoading ?? this.isLoading,
-      isError: isError ?? this.isError,
+      success: success ?? this.success,
+      cancel: cancel ?? this.cancel,
+      loading: loading ?? this.loading,
+      error: error ?? this.error,
       showError: showError ?? this.showError,
       errorMessage: errorMessage,
     );
@@ -39,41 +39,41 @@ class StateStatus {
 
 @immutable
 class FormStatus {
-  final bool isCleared;
-  final bool isFilled;
-  final bool isChanged;
-  final bool isEnable;
-  final bool isPending;
-  final bool isCancel;
-  final bool isSubmit;
+  final bool cleared;
+  final bool filled;
+  final bool changed;
+  final bool enable;
+  final bool pending;
+  final bool cancel;
+  final bool submit;
 
   const FormStatus({
-    this.isCleared = false,
-    this.isFilled = false,
-    this.isChanged = false,
-    this.isEnable = false,
-    this.isPending = false,
-    this.isCancel = false,
-    this.isSubmit = false,
+    this.cleared = false,
+    this.filled = false,
+    this.changed = false,
+    this.enable = false,
+    this.pending = false,
+    this.cancel = false,
+    this.submit = false,
   });
 
   FormStatus copyWith({
-    bool? isCleared,
-    bool? isFilled,
-    bool? isChanged,
-    bool? isEnable,
-    bool? isPending,
-    bool? isCancel,
-    bool? isSubmit,
+    bool? cleared,
+    bool? filled,
+    bool? changed,
+    bool? enable,
+    bool? pending,
+    bool? cancel,
+    bool? submit,
   }) {
     return FormStatus(
-      isCleared: isCleared ?? this.isCleared,
-      isFilled: isFilled ?? this.isFilled,
-      isChanged: isChanged ?? this.isChanged,
-      isEnable: isEnable ?? this.isEnable,
-      isPending: isPending ?? this.isPending,
-      isCancel: isCancel ?? this.isCancel,
-      isSubmit: isSubmit ?? this.isSubmit,
+      cleared: cleared ?? this.cleared,
+      filled: filled ?? this.filled,
+      changed: changed ?? this.changed,
+      enable: enable ?? this.enable,
+      pending: pending ?? this.pending,
+      cancel: cancel ?? this.cancel,
+      submit: submit ?? this.submit,
     );
   }
 }
