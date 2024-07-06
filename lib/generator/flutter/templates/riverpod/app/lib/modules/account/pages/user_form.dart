@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../bloc/user_bloc.dart';
+import '../logic/user_logic.dart';
 import '../models/user.dart';
 
 class UserForm extends ConsumerStatefulWidget {
   final User? data;
-  const UserForm({Key? key, this.data}) : super(key: key);
+  const UserForm({super.key, this.data});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _UserFormState();

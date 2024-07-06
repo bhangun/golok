@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../models/menu.dart';
-import '../../utils/modules/module_model.dart';
-import '../../utils/routes.dart';
+import '../../core/modules/menu.dart';
+import '../../core/modules/module_model.dart';
+import '../../core/routes/routes.dart';
 import 'pages/user_detail.dart';
 import 'pages/user_form.dart';
 import 'pages/user_list.dart';

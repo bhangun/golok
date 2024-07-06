@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
+import '../../../core/network/rest/rest_services.dart';
+import '../../../core/persistent/local_database/db_services.dart';
 import '../../account/models/user.dart';
-import '../../../services/local_database/db_services.dart';
-import '../../../services/rest/rest_services.dart';
 
 final log = Logger('AuthServices');
 

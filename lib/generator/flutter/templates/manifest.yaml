@@ -15,8 +15,8 @@ templates:
     #  to: lib/modules/{entityName}/{entityFile}_routes.dart
     - from: entity.services.dart.ejs
       to: lib/modules/{entityName}/services/{entityFile}_services.dart
-    - from: entity.bloc.dart.ejs
-      to: lib/modules/{entityName}/blogic/{entityFile}_blogic.dart
+    - from: entity.logic.dart.ejs
+      to: lib/modules/{entityName}/logic/{entityFile}_logic.dart
     - from: pages/entity.list.dart.ejs
       to: lib/modules/{entityName}/pages/{entityFile}_list.dart
     - from: pages/entity.detail.dart.ejs

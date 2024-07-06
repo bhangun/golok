@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../bloc/user_bloc.dart';
+import '../logic/user_logic.dart';
 
 class UserDetailPage extends ConsumerStatefulWidget {
   final String? id;
-  const UserDetailPage({Key? key, this.id}) : super(key: key);
+  const UserDetailPage({super.key, this.id});
   
   @override
   ConsumerState<ConsumerStatefulWidget> createState()  => _UserDetailPageState();

@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../../../core/network/rest/rest_services.dart';
 import '../models/user.dart';
-import '../../../services/rest/rest_services.dart';
 
 class UserServices {
   static Future<User> user(String id) async {

@@ -1,57 +1,58 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../app/models/general_status.dart';
-import '../../account/models/user.dart';
+import 'status.dart';
+
 
 @immutable
-class AuthenticationState {
-  const AuthenticationState(
-      {this.username,
-      this.password,
+class Authentication {
+  const Authentication(
+      {required this.username,
+      required this.password,
       this.rememberMe = false,
-      this.user,
-      this.hasErrorInForgotPassword = false,
-      this.hasErrorsInLogin = false,
-      this.token ,
+      this.token = '',
       this.loggedIn = false,
-      this.loginMessage,
-      this.passwordMessage,
-      this.confirmPassword ,
-      this.confirmPasswordMessage,
-      this.status = const StateStatus()});
+      this.loginMessage = '',
+      this.passwordMessage = '',
+      this.confirmPassword = '',
+      this.confirmPasswordMessage = '',
+      this.status = const Status(
+          success: false,
+          showError: false,
+          loading: false,
+          errorMessage: '',
+          hasErrorInForgotPassword: false,
+          hasErrorsInLogin: false)});
 
-  final String? username;
-  final String? password;
+  final String username;
+  final String password;
   final bool rememberMe;
-  final String? token;
-  final User? user;
+  final String token;
+  // final User user;
   final bool loggedIn;
-  final String? loginMessage;
-  final String? passwordMessage;
-  final String? confirmPassword;
-  final String? confirmPasswordMessage;
-  final bool hasErrorInForgotPassword;
-  final bool hasErrorsInLogin;
-  final StateStatus status;
+  final String loginMessage;
+  final String passwordMessage;
+  final String confirmPassword;
+  final String confirmPasswordMessage;
+  final Status status;
 
-  AuthenticationState copyWith(
+  Authentication copyWith(
       {String? username,
       String? password,
       bool? rememberMe,
       String? token,
-      User? user,
+      //  User? user,
       bool? loggedIn,
       String? loginMessage,
       String? passwordMessage,
       String? confirmPassword,
       String? confirmPasswordMessage,
-      StateStatus? status}) {
-    return AuthenticationState(
+      Status? status}) {
+    return Authentication(
         username: username ?? this.username,
         password: password ?? this.password,
         rememberMe: rememberMe ?? this.rememberMe,
         token: token ?? this.token,
-        user: user ?? this.user,
+        //  user: user ?? this.user,
         loggedIn: loggedIn ?? this.loggedIn,
         loginMessage: loginMessage ?? this.loginMessage,
         passwordMessage: passwordMessage ?? this.passwordMessage,
@@ -63,6 +64,6 @@ class AuthenticationState {
 
   @override
   String toString() {
-    return 'username: $username';
+    return username;
   }
 }
