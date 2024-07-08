@@ -16,5 +16,5 @@ entities:
 
 enums:
  - Status:
-   - Ongoing
-   - Cancelled
+    - Ongoing
+    - Cancelled

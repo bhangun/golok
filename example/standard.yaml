@@ -41,7 +41,7 @@ entities:
 
 includes:
   - file: example/product.yaml
-    entities: Product, Status
+    entities: Product, Status,
     enums: Unit
   - file: example/order.yaml
 
