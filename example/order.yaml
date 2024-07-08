@@ -1,0 +1,20 @@
+entities:
+- Order:
+    description:
+    example: 
+    properties:
+    - code: String, min=3, max=10 
+    - staff: User, manyToOne
+    - status: enum=Status
+
+- OrderLine:
+    description:
+    example: 
+    properties:
+    - product: Product, manyToOne
+    - quantity: int
+
+enums:
+ - Status:
+   - Ongoing
+   - Cancelled

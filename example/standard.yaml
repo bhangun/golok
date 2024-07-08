@@ -35,22 +35,16 @@ applications:
     locale: en, id
     entities: Product, Order, OrderLine
 entities: 
-- Product:
-    description:
-    example: 
-    properties:
-    - code: String, min=3,max=30, required //Product code  
-    - sku: int,min=3,max=30, required
+  - Category:
+      properties:
+      - name: String, min=3, max=10
 
-- Order:
-    description:
-    example: 
-    properties:
-    - total: int, min=3
+includes:
+  - file: example/product.yaml
+    entities: Product, Status
+    enums: Unit
+  - file: example/order.yaml
 
-
- 
- 
 golokConfiguration: 
   default: 
     - name: default 
