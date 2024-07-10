@@ -50,9 +50,6 @@ golokConfiguration:
     - name: default 
       properties: 
         - id: double
-        - name: String, max=100 
-        - description: String, max=200
-        - createdBy: User 
         - createAt: datetime 
         - updateAt: datetime 
 

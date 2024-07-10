@@ -1,8 +1,10 @@
-import {typeCheck} from '../lib/utils.cjs';
+// import {typeCheck} from '../lib/core/utils.js';
+import {Enums} from '../lib/core/blueprint.js';
 
 describe('sum module', () => {
   test('current directory', () => {
-    console.log(typeCheck('{}'));
-    // expect(sum(1, 2)).toBe(3);
+    const en = new Enums('Kg,g');
+    // console.log(typeCheck('{}'));
+    expect(en.getScript()).toBe('Kg,');
   });
 });

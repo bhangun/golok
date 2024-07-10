@@ -1,0 +1,290 @@
+version: 1.0
+info:
+  name: golok_apps
+  title: Contoh1
+  description: Ini contoh aplikasi
+endpoint:
+  url: http://localhost
+applications:
+  frontend:
+    appsName: my_golok_front
+    framework: flutter
+    packageName: tech.kays
+    localDatabase: hive
+    admin: true
+    themes: default
+    plugins:
+      - connection
+    stateManagement: riverpod
+    platform:
+      - web
+      - android
+      - linux
+      - ios
+      - desktop
+    locale: en, id
+    entities:
+      - Product
+      - Order
+      - OrderLine
+entities:
+  - name: Category
+    properties:
+      - name: id
+        origin: double
+        dartType: double
+        snakeCase: double
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: description
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: createdBy
+        origin: User
+        dartType: ""
+        snakeCase: ""
+      - name: createAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: updateAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+    relationship:
+      - name: User
+        camelCase: user
+        titleCase: User
+        snackCase: user
+    titleCase: Category
+    camelCase: category
+    snackCase: category
+  - name: Product
+    properties:
+      - name: id
+        origin: double
+        dartType: double
+        snakeCase: double
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: description
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: createdBy
+        origin: User
+        dartType: ""
+        snakeCase: ""
+      - name: createAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: updateAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: code
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: sku
+        origin: int
+        dartType: int
+        snakeCase: int
+      - name: unit
+        origin: enum=Unit
+        dartType: ""
+        snakeCase: ""
+      - name: status
+        origin: Status
+        dartType: ""
+        snakeCase: ""
+    relationship:
+      - name: User
+        camelCase: user
+        titleCase: User
+        snackCase: user
+      - name: enum=Unit
+        camelCase: enum=Unit
+        titleCase: Enum=Unit
+        snackCase: enum=_unit
+      - name: Status
+        camelCase: status
+        titleCase: Status
+        snackCase: status
+    titleCase: Product
+    camelCase: product
+    snackCase: product
+  - name: Status
+    properties:
+      - name: id
+        origin: double
+        dartType: double
+        snakeCase: double
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: description
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: createdBy
+        origin: User
+        dartType: ""
+        snakeCase: ""
+      - name: createAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: updateAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+    relationship:
+      - name: User
+        camelCase: user
+        titleCase: User
+        snackCase: user
+    titleCase: Status
+    camelCase: status
+    snackCase: status
+  - name: Order
+    properties:
+      - name: id
+        origin: double
+        dartType: double
+        snakeCase: double
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: description
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: createdBy
+        origin: User
+        dartType: ""
+        snakeCase: ""
+      - name: createAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: updateAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: code
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: staff
+        origin: User
+        dartType: ""
+        snakeCase: ""
+      - name: status
+        origin: enum=Status
+        dartType: ""
+        snakeCase: ""
+    relationship:
+      - name: User
+        camelCase: user
+        titleCase: User
+        snackCase: user
+      - name: User
+        camelCase: user
+        titleCase: User
+        snackCase: user
+      - name: enum=Status
+        camelCase: enum=Status
+        titleCase: Enum=Status
+        snackCase: enum=_status
+    titleCase: Order
+    camelCase: order
+    snackCase: order
+  - name: OrderLine
+    properties:
+      - name: id
+        origin: double
+        dartType: double
+        snakeCase: double
+      - name: name
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: description
+        origin: String
+        dartType: String
+        snakeCase: string
+      - name: createdBy
+        origin: User
+        dartType: ""
+        snakeCase: ""
+      - name: createAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: updateAt
+        origin: datetime
+        dartType: DateTime
+        snakeCase: date_time
+      - name: product
+        origin: Product
+        dartType: ""
+        snakeCase: ""
+      - name: quantity
+        origin: int
+        dartType: int
+        snakeCase: int
+    relationship:
+      - name: User
+        camelCase: user
+        titleCase: User
+        snackCase: user
+      - name: Product
+        camelCase: product
+        titleCase: Product
+        snackCase: product
+    titleCase: OrderLine
+    camelCase: orderLine
+    snackCase: order_line
+includes:
+  - file: example/product.yaml
+    entities: Product, Status,
+    enums: Unit
+  - file: example/order.yaml
+golokConfiguration:
+  default:
+    - name: default
+      properties:
+        - id: double
+        - name: String, max=100
+        - description: String, max=200
+        - createdBy: User
+        - createAt: datetime
+        - updateAt: datetime
+enums:
+  - Unit:
+      - Kg
+      - g
+  - Status:
+      - Ongoing
+      - Cancelled
