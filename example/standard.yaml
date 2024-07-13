@@ -45,6 +45,36 @@ includes:
     enums: Unit
   - file: example/order.yaml
 
+operations:
+  - getProductByTenant:
+      return:
+        ref: Product
+        type: array
+      parameters:
+        - productId: long
+        - tenentId: long
+        - pagination: int
+
+  - getInvoiceByMonth:
+      return:
+        ref: Invoice
+        type: array
+      parameters:
+        - productId: long
+        - tenentId: long
+        - year: int
+        - month: int
+        - pagination: int
+
+  - getTags:
+      doc: Get Tags
+      return:
+        name: String
+      parameters:
+        - tags: tags
+        - pagination: int
+        
+
 golokConfiguration: 
   default: 
     - name: default 
