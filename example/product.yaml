@@ -1,6 +1,7 @@
 entities:
 - Product:
-    description:
+    doc: Ini product
+    author: bhangun
     example: 
     properties:
     - code: String, min=3,max=30, required //Product code 

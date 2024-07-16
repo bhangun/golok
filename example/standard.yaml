@@ -45,6 +45,14 @@ includes:
     enums: Unit
   - file: example/order.yaml
 
+enums: 
+  - TimeSelector:
+    - year
+    - month
+    - date
+    - hour
+    - minute
+
 operations:
   - getProductByTenant:
       return:
@@ -55,15 +63,16 @@ operations:
         - tenentId: long
         - pagination: int
 
-  - getInvoiceByMonth:
+  - getInvoiceByTime:
       return:
         ref: Invoice
         type: array
       parameters:
         - productId: long
         - tenentId: long
-        - year: int
-        - month: int
+        - from: Instant
+        - to: Instant
+        - time: enum=TimeSelector
         - pagination: int
 
   - getTags:
