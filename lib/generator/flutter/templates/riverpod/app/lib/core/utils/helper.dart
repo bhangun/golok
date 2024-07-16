@@ -80,15 +80,15 @@ String getEnvironment(String envVarName) {
 }
 
 showModal(context, text, [onPressed]) =>
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      action: SnackBarAction(label: 'Action', onPressed: onPressed),
+    ScaffoldMessenger.of(context).showsnakeBar(snakeBar(
+      action: snakeBarAction(label: 'Action', onPressed: onPressed),
       content: Text(text),
       duration: const Duration(milliseconds: 1500),
-      width: 280.0, // Width of the SnackBar.
+      width: 280.0, // Width of the snakeBar.
       padding: const EdgeInsets.symmetric(
-        horizontal: 8.0, // Inner padding for SnackBar content.
+        horizontal: 8.0, // Inner padding for snakeBar content.
       ),
-      behavior: SnackBarBehavior.floating,
+      behavior: snakeBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),

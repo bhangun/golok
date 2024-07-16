@@ -62,10 +62,10 @@ entities:
       - name: User
         camelCase: user
         titleCase: User
-        snackCase: user
+        snakeCase: user
     titleCase: Category
     camelCase: category
-    snackCase: category
+    snakeCase: category
   - name: Product
     properties:
       - name: id
@@ -116,18 +116,18 @@ entities:
       - name: User
         camelCase: user
         titleCase: User
-        snackCase: user
+        snakeCase: user
       - name: enum=Unit
         camelCase: enum=Unit
         titleCase: Enum=Unit
-        snackCase: enum=_unit
+        snakeCase: enum=_unit
       - name: Status
         camelCase: status
         titleCase: Status
-        snackCase: status
+        snakeCase: status
     titleCase: Product
     camelCase: product
-    snackCase: product
+    snakeCase: product
   - name: Status
     properties:
       - name: id
@@ -162,10 +162,10 @@ entities:
       - name: User
         camelCase: user
         titleCase: User
-        snackCase: user
+        snakeCase: user
     titleCase: Status
     camelCase: status
-    snackCase: status
+    snakeCase: status
   - name: Order
     properties:
       - name: id
@@ -208,18 +208,18 @@ entities:
       - name: User
         camelCase: user
         titleCase: User
-        snackCase: user
+        snakeCase: user
       - name: User
         camelCase: user
         titleCase: User
-        snackCase: user
+        snakeCase: user
       - name: enum=Status
         camelCase: enum=Status
         titleCase: Enum=Status
-        snackCase: enum=_status
+        snakeCase: enum=_status
     titleCase: Order
     camelCase: order
-    snackCase: order
+    snakeCase: order
   - name: OrderLine
     properties:
       - name: id
@@ -258,14 +258,14 @@ entities:
       - name: User
         camelCase: user
         titleCase: User
-        snackCase: user
+        snakeCase: user
       - name: Product
         camelCase: product
         titleCase: Product
-        snackCase: product
+        snakeCase: product
     titleCase: OrderLine
     camelCase: orderLine
-    snackCase: order_line
+    snakeCase: order_line
 includes:
   - file: example/product.yaml
     entities: Product, Status,
