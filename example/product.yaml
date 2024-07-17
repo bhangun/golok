@@ -8,7 +8,7 @@ entities:
     - name: String, max=30 
     - sku: int,min=3, max=30, required
     - unit: enum=Unit
-    - status: Status, manyToOne
+    - status: ref=Status, OneToOne
 
 - Status:
    properties:
