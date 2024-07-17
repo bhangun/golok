@@ -4,9 +4,9 @@ entities:
     author: bhangun
     example: 
     properties:
-    - code: String, min=3,max=30, required //Product code 
+    - code: String, min=3, max=30, required //Product code 
     - name: String, max=30 
-    - sku: int,min=3,max=30, required
+    - sku: int,min=3, max=30, required
     - unit: enum=Unit
     - status: Status, manyToOne
 

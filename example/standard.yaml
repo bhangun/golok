@@ -88,7 +88,7 @@ golokConfiguration:
   default: 
     - name: default 
       properties: 
-        - id: double
-        - createAt: datetime 
-        - updateAt: datetime 
+        - id: long //ID
+        - createAt: datetime //Created time 
+        - updateAt: datetime //Updated time
 
