@@ -50,6 +50,7 @@ applications:
     buildTool: gradle
     serverPort: 8083
     skipUserManagement: true
+    
     entities: 
 # Services    
 services:
@@ -141,3 +142,33 @@ enums:
 - name: unit
   values: kg, g, cm
   
+# applicationType monolith microservice gateway
+# applicationType monolith microservice, gateway
+# authenticationType jwt, session, oauth2 jwt
+# baseName jhipster
+# blueprints [] Array of blueprints to use, e.g., [blueprint1, blueprint2]
+# buildTool maven maven, gradle
+# cacheProvider ehcache or hazelcast caffeine, ehcache, hazelcast, infinispan, memcached, redis,
+# clientFramework flutter, react, vue, svelte, no
+# clientTheme none
+# clientThemeVariant 
+# databaseType sql, mongodb, cassandra,
+# devDatabaseType h2Disk
+# enableHibernateCache true
+# enableTranslation true
+# entitySuffix Suffix for entities. false for empty string.
+# jhiPrefix jhi 
+# languages [en, fr] Languages available in JHipster Braces are mandatory
+# messageBroker no kafka, pulsar, no
+# nativeLanguage en Any language supported by JHipster
+# packageName com.mycompany.myapp
+# prodDatabaseType mysql, mariadb, mssql, postgresql, oracle, no
+# reactive false
+# searchEngine no elasticsearch, couchbase, no
+# serverPort 8080, 8081
+# serviceDiscoveryType no consul, eureka, no
+# skipClient false
+# skipServer false
+# skipUserManagement false
+# testFrameworks [] cypress, protractor, cucumber, gatling
+# websocket no

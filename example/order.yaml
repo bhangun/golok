@@ -13,6 +13,7 @@ entities:
     properties:
     - product: Product, manyToOne
     - quantity: int
+    - order: Order, manyToOne
 
 enums:
  - OrderStatus:
