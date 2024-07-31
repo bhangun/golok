@@ -1,0 +1,161 @@
+
+pages:
+  - name: Route
+    doc: -| Routes match the client's request based on defined rules, 
+      loads and executes the corresponding plugins, and forwards the request to the specified Upstream.
+      Route API Route resource request address /apisix/admin/routes/{id}?ttl=0
+      Quick Note on ID Syntax#
+      ID's as a text string must be of a length between 1 and 64 characters and they should only contain uppercase, lowercase, numbers and no special characters apart from dashes ( - ), periods ( . ) and underscores ( _ ). For integer values they simply must have a minimum character count of 1.
+    baseURI: /apisix/admin/routes
+#Method Request URI Request Body Description
+    requestMethods:
+     - method: GET
+       uri: /apisix/admin/routes	
+       body: NULL	
+       description: Fetches a list of all configured Routes.
+     - method: GET
+       uri: /apisix/admin/routes/{id}
+       body: NULL
+       description: Fetches specified Route by id.
+     - method: PUT
+       uri: /apisix/admin/routes/{id}	
+       body: {...}
+       description: Creates a Route with the specified id.
+     - method: POST
+       uri: /apisix/admin/routes	
+       body: {...}
+       description: Creates a Route and assigns a random id.
+     - method: DELETE
+       uri: /apisix/admin/routes/{id}	
+       body: NULL
+       description: Removes the Route with the specified id.
+     - method: PATCH
+       uri: /apisix/admin/routes/{id}	
+       body: {...}
+       description: Updates the selected attributes of the specified, existing Route. To delete an attribute, set value of attribute set to null.
+     - method: PATCH
+       uri: /apisix/admin/routes/{id}/{path}
+       body: {...}
+       description: Updates the attribute specified in the path. The values of other attributes remain unchanged.
+
+    uriRequestParameters:
+#parameter Required Type Description Example
+      - parameter: ttl	
+        required: False	
+        type: Auxiliary	
+        description: Request expires after the specified target seconds.	
+        example: ttl=1
+    requestBodyParameters:
+#Parameter Required Type Description Example
+    - parameter: name
+      description: Identifier for the Route.
+      example: route-xxxx
+      required: False
+      type: Auxiliary	
+    - parameter: desc
+      type: Auxiliary
+      example: route xxxx
+      required: False
+      description: Description of usage scenarios.	
+    - parameter: uri
+      type:  
+      example: 
+      required: True
+      description: can't be used with uris	Match Rules	Matches the uri. For more advanced matching see Router.	"/hello"
+    - parameter: uris
+      type: 
+      example: 
+      required: True
+      description: can't be used with uri	Match Rules	Matches with any one of the multiple uris specified in the form of a non-empty list.	["/hello", "/word"]
+    - parameter: host
+      type: 
+      example:
+      required: False
+      description: can't be used with hosts	Match Rules	Matches with domain names such as foo.com or PAN domain names like *.foo.com.	"foo.com"
+    - parameter: hosts
+      type: 
+      example:
+      required: False
+      description: can't be used with host	Match Rules	Matches with any one of the multiple hosts specified in the form of a non-empty list.	["foo.com", "*.bar.com"]
+    - parameter: remote_addr
+      type: 
+      example:
+      required: False
+      description: can't be used with remote_addrs	Match Rules	Matches with the specified IP address in standard IPv4 format (192.168.1.101), CIDR format (192.168.1.0/24), or in IPv6 format (::1, fe80::1, fe80::1/64).	"192.168.1.0/24"
+    - parameter: remote_addrs
+      type: 
+      example:
+      required: False
+      description: can't be used with remote_addr	Match Rules	Matches with any one of the multiple remote_addrs specified in the form of a non-empty list.	["127.0.0.1", "192.0.0.0/8", "::1"]
+    - parameter: methods
+      type: 
+      example:
+      required: False
+      description: Match Rules	Matches with the specified methods. Matches all methods if empty or unspecified.	["GET", "POST"]
+    - parameter: priority
+      type: 
+      example:
+      required: False
+      description: Match Rules	If different Routes matches to the same uri, then the Route is matched based on its priority. A higher value corresponds to higher priority. It is set to 0 by default.	priority = 10
+    - parameter: vars
+      type: 
+      example:
+      required: False
+      description: Match Rules	Matches based on the specified variables consistent with variables in Nginx. Takes the form [[var, operator, val], [var, operator, val], ...]]. Note that this is case sensitive when matching a cookie name. See lua-resty-expr for more details.	[["arg_name", "==", "json"], ["arg_age", ">", 18]]
+    - parameter: filter_func
+      type: 
+      example:
+      required: False
+      description: Match Rules	Matches using a user-defined function in Lua. Used in scenarios where vars is not sufficient. Functions accept an argument vars which provides access to built-in variables (including Nginx variables).	function(vars) return tonumber(vars.arg_userid) % 4 > 2; end
+    - parameter: plugins
+      type: 
+      example:
+      required: False
+      description: Plugin	Plugins that are executed during the request/response cycle. See Plugin for more.	
+    - parameter: script
+      type: 
+      example:
+      required: False
+      description: Script	Used for writing arbitrary Lua code or directly calling existing plugins to be executed. See Script for more.	
+    - parameter: upstream
+      type: 
+      example:
+      required: False
+      description: Upstream	Configuration of the Upstream.	
+    - parameter: upstream_id
+      type: 
+      example:
+      required: False
+      description: Upstream	Id of the Upstream service.	
+    - parameter: service_id
+      type: 
+      example:
+      required: False
+      description: Service	Configuration of the bound Service.	
+    - parameter: plugin_config_id
+      type: 
+      example:
+      required: False
+      description: can't be used with script	Plugin	Plugin config bound to the Route.	
+    - parameter: labels
+      type: 
+      example: {"version":"v2","build":"16","env":"production"}
+      required: False
+      description: Match Rules	Attributes of the Route specified as key-value pairs.	
+    - parameter: timeout
+      type: 
+      example: {"connect": 3, "send": 3, "read": 3}
+      required: False
+      description: Auxiliary	Sets the timeout (in seconds) for connecting to, and sending and receiving messages between the Upstream and the Route. This will overwrite the timeout value configured in your Upstream.	
+    - parameter: enable_websocket
+      type: 
+      example:
+      required: False
+      description: Auxiliary	Enables a websocket. Set to false by default.	
+    - parameter: status
+      type: 
+      example: Set to 1 (enabled) by default.	1 to enable, 0 to disable
+      required: False
+      description: Auxiliary	Enables the current Route. 
+
+

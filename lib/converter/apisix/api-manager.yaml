@@ -1,0 +1,454 @@
+name: API doc of Manager API
+description: -| Manager API directly operates ETCD and provides data management 
+  for Apache APISIX, provides APIs for Front-end or other clients. License Apache License 2.0
+
+apis:
+ - name: Import config file
+   uri: /apisix/admin/migrate/import#
+   summary: -| Import the config file for restore config.
+   method: POST
+   parameters: 
+    format: (FORM)#
+    items:
+    - name:	mode
+      locatedIn: body(form)
+      description: import mode (return, skip or overwrite)
+      required: Yes
+      schema: string
+    - name:	file
+      locatedIn: body(form)
+      description: file to upload
+      required: Yes
+      schema: string
+   responses: 
+    - code: 0
+      description: import success
+      schema: ApiError
+    - code: 20001
+      description: Config conflict
+      schema: ApiError
+ - name: Check SSL Cert
+   uri: /apisix/admin/check_ssl_cert#
+   method: POST
+   summary: -| verify SSL cert and key.
+   parameters:  
+    items:
+    - name:	cert
+      locatedIn: body
+      description: cert of SSL
+      required: Yes
+      schema: string
+    - name:	key
+      locatedIn: body	key of SSL
+      description: 
+      required: Yes
+      schema: string
+   responses: 
+    - code: 0
+      description: SSL verify passed
+      schema: ApiError
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: Check SSL exist
+   uri: /apisix/admin/check_ssl_exists#
+   method: POST
+   summary: -| Check whether the SSL exists.
+   parameters:  
+    items:
+    - name:	cert
+      locatedIn: body
+      description: cert of SSL
+      required: Yes
+      schema: string
+    - name:	key
+      locatedIn: body
+      description: body	key of SSL
+      required: Yes
+      schema: string
+   responses: 
+    - code: 0
+      description: SSL exists
+      schema: ApiError
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: Consumer
+   uri: /apisix/admin/consumers#
+   method: GET
+   summary: -| Return the consumer list according to the specified page number and page size, 
+      and can search consumers by username.
+   parameters:  
+    items:
+    - name:	page
+      locatedIn: query
+      description: page number
+      required: No
+      schema: integer
+    - name:	page_size
+      locatedIn: query
+      description: page size
+      required: No
+      schema: integer
+    - name:	username
+      locatedIn: query
+      description: username of consumer
+      required: No
+      schema: string
+   responses: 
+    - code: 0
+      description: list response
+      schema: [ consumer ]
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: Routes
+   uri: /apisix/admin/notexist/routes#
+   method: GET
+   summary: -| Return result of route exists checking by name and exclude id.
+   parameters:  
+    items:
+    - name:	name
+      locatedIn: query
+      description: Name of route
+      required: No
+      schema: string
+    - name:	exclude
+      locatedIn: query
+      description: ID of route that exclude checking
+      required: No
+      schema: string
+   responses: 
+    - code: 0
+      description: Route not exists
+      schema: ApiError
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: 
+   uri: /apisix/admin/routes#
+   method: GET
+   summary: -| Return the route list according to the specified page number and page size, 
+      and can search routes by name and uri.
+   parameters:  
+    items:
+    - name:	page
+      locatedIn: query
+      description: page
+      required: No
+      schema: integer
+    - name:	page_size
+      locatedIn: query
+      description: page size
+      required: No
+      schema: integer
+    - name:	name
+      locatedIn: query
+      description: name of route
+      required: No
+      schema: string
+    - name:	uri
+      locatedIn: query
+      description: uri of route
+      required: No
+      schema: string
+    - name:	label
+      locatedIn: query
+      description: label of route
+      required: No
+      schema: string
+   responses: 
+    - code: 0
+      description: List response
+      schema: [ route ]
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: Services
+   uri: /apisix/admin/services#
+   method: GET
+   summary: -| Return the service list according to the specified page 
+      number and page size, and can search services by name.
+   parameters: 
+    items:
+    - name:	page
+      locatedIn: query
+      description: page
+      required: No
+      schema: integer
+    - name:	page_size
+      locatedIn: query
+      description: page size
+      required: No
+      schema: integer
+    - name:	name
+      locatedIn: query
+      description: query	name of service
+      required: No
+      schema: string
+   responses: 
+    - code: 0
+      description: List response
+      schema: [ service ]
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: Export routes
+   uri: /apisix/admin/export/routes/{ids}#
+   summary: -| Export specific or all routes as OpenAPI schema.
+   parameters:  
+    items:
+    - name:	ids
+      locatedIn: path
+      description: -| To export specific routes, please provide the route IDs separated by commas. 
+        If you leave the ids field empty, all routes will be exported.
+      required: No
+      schema: integer
+   responses: 
+    - code: 0
+      description: openapi json content
+      schema: [ OpenAPI schema ]
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: 
+   uri: /apisix/admin/ssl#
+   method: GET
+   summary: -| Return the SSL list according to the specified page number and page size, and can SSLs search by sni.
+   parameters:  
+    items:
+    - name:	page
+      locatedIn: query
+      description: page
+      required: No
+      schema: integer
+    - name:	page_size
+      locatedIn: query
+      description: page size
+      required: No
+      schema: integer
+    - name:	sni
+      locatedIn: query
+      description: sni of SSL
+      required: No
+      schema: string
+   responses: 
+    - code: 0
+      description: list response
+      schema: [ ssl ]
+    - code: default
+      description: unexpected error
+      schema: ApiError
+ - name: ''
+   uri: /apisix/admin/upstreams#
+   method: GET
+   summary: -| Return the upstream list according to the specified 
+    page number and page size, and can search upstreams by name.
+   parameters:  
+    items:
+    - name:	page
+      locatedIn: query	
+      description: Page number
+      required: No
+      schema: integer
+    - name:	page_size
+      locatedIn: query
+      description: Page size
+      required: No
+      schema: integer
+    - name:	name
+      locatedIn: query
+      description: Name of upstream
+      required: No
+      schema: string
+   responses: 
+    - code: 0
+      description: List response
+      schema: [ upstream ]
+    - code: default
+      description: unexpected error
+      schema: ApiError
+
+ - name: 
+   uri: /apisix/admin/user/login#
+   method: POST
+   summary: -| user login.
+   parameters:  
+    items:
+    - name:	username
+      locatedIn: body
+      description: user name
+      required: Yes
+      schema: string
+    - name:	password
+      locatedIn: body
+      description: password
+      required: Yes
+      schema: string
+   responses: 
+    - code: 0
+      description: Login success
+      schema: ApiError
+    - code: default
+      description: unexpected error
+      schema: ApiError
+#Name Type Description Required
+models:
+  - ApiError:
+     properties:
+      - code: long, //response code
+      - message: string, //response message
+
+  - BaseInfo:
+     properties:
+      - create_time: long
+      - id: object
+      - update_time: long
+
+  - Consumer:
+     properties:
+      - create_time: long
+      - desc: string
+      - id: object
+      - labels: object
+      - plugins: object
+      - update_time: long
+      - username: string
+
+  - LoginInput:
+     properties:
+      - password: string, //password
+      - username: string, //user name
+
+  - Route:
+     properties:
+      - create_time: long
+      - desc: string
+      - enable_websocket: boolean
+      - filter_func: string
+      - host: string
+      - hosts:	[ string ]	
+      - id: object
+      - labels: object
+      - methods:	[ string ]	
+      - name: string
+      - plugins: object
+      - priority: long
+      - remote_addr: string
+      - remote_addrs:	[ string ]	
+      - script: object
+      - service_id: object
+      - service_protocol: string
+      - update_time: long
+      - upstream:	UpstreamDef	
+      - upstream_id: object
+      - uri: string
+      - uris:	[ string ]	
+      - vars: object
+
+  - SSL:
+     properties:
+      - cert: string
+      - certs:	[ string ]	
+      - create_time: long
+      - exptime: long
+      - id: object
+      - key: string
+      - keys:	[ string ]	
+      - labels: object
+      - sni: string
+      - snis:	[ string ]	
+      - status: long
+      - update_time: long
+      - validity_end: long
+      - validity_start: long
+
+  - Service:
+     properties:
+      - create_time: long
+      - desc: string
+      - enable_websocket: boolean
+      - id: object
+      - labels: object
+      - name: string
+      - plugins: object
+      - script: string
+      - update_time: long
+      - upstream:	UpstreamDef	
+      - upstream_id: object
+
+  - Upstream:
+     properties:
+      - checks: object
+      - create_time: long
+      - desc: string
+      - hash_on: string
+      - id: object
+      - k8s_deployment_info: object
+      - key: string
+      - labels: object
+      - name: string
+      - nodes: object
+      - pass_host: string
+      - retries: long
+      - service_name: string
+      - timeout: object
+      - type: string
+      - update_time: long
+      - upstream_host: string
+
+  - UpstreamDef:
+     properties:
+      - checks: object
+      - desc: string
+      - hash_on: string
+      - k8s_deployment_info: object
+      - key: string
+      - labels: object
+      - name: string
+      - nodes: object
+      - pass_host: string
+      - retries: long
+      - service_name: string
+      - timeout: object
+      - type: string
+      - upstream_host: string
+  - Node:
+      properties:
+       - host: string //IP
+       - port: int //Port
+       - weight: int //Weight, priority to get load 
+
+# Extended fields APISIX Route Properties
+fields:
+ - x-apisix-plugins:
+    name: plugins
+ - x-apisix-script:
+    name: script
+ - x-apisix-upstream:
+    name: upstream
+    properties:
+      - type: roundrobin
+      - nodes: [ Node ]
+ - x-apisix-host:
+    name: host
+ - x-apisix-hosts:
+    name: hosts
+ - x-apisix-remote_addr:
+    name: remote_addr
+ - x-apisix-priority:
+    name: priority
+ - x-apisix-vars:
+    name: vars
+ - x-apisix-filter_func:
+    name: filter_func
+ - x-apisix-labels:
+    name: labels
+ - x-apisix-enable_websocket:
+    name: enable_websocket
+ - x-apisix-status:
+    name: status
+ - x-apisix-service_id:
+    name: service_id
+ - x-apisix-upstream_id:
+    name: upstream_id
