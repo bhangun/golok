@@ -107,7 +107,7 @@ function grouping(total, currentValue, currentIndex, arr) {
 var str = "10M255S"
 //var match = str.match(/^([0-9]*)M*([0-9]*)S*$/)
 
-var str = "* with ServiceImpl"
+/* var str = "* with ServiceImpl"
 var str2 = "Product,status with ServiceImpl"
 var str3= "String, min=3, max=30, required //Product code"
 var match = str.match(/^(.[A-z]*.)with*.([A-z]*)$/)
@@ -115,7 +115,14 @@ var match2 = str2.match(/^(.[A-z].*.)with*.([A-z]*)$/)
 var string = str2.match(/^(.[A-z].*.)with*.([A-z]*)$/)
 
 console.log(match)
-console.log(match2)
+console.log(match2) */
+
+const braket = 'string, min=3, max=4 , required/${id:ini test akuh , en:test doc en}/coba';
+const value = braket.match(/{(.*?)}/);
+console.log(value[1].match(/id:(.*).,./)[1]);
+console.log(value[1].match(/.,.en:(.*)/)[1]);
+
+
 
 
 /*
