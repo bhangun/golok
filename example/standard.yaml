@@ -12,7 +12,6 @@ applications:
   frontend:
     appsName: golok
     framework: flutter
-    baseName: golok
     # Local Database: hive | sqlLite
     localDatabase: sqlLite # hive
     admin: true
@@ -34,7 +33,7 @@ applications:
     locale: en, id
     entities: Product, Order, OrderLine
   backend:
-    - baseName: my_golok_front
+    - appsName: my_golok_front
       # Option : flutter | react | vue
       packageName: tech.kayys.golok
       applicationType: microservice

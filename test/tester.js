@@ -28,6 +28,7 @@ function groupBy(input, key) {
   };
 
   function groupBy2(key) {
+    _relationship.includes()
     return _relationship.reduce((acc, currentValue, i) => {
       let groupKey = currentValue[key];
       let group = {};
@@ -53,7 +54,6 @@ function groupBy(input, key) {
     }, []);
   };
 //const groupByType = _relationship.reduce(groupBy, 'type')
-
 //console.log(groupBy(_relationship, 'type'));
 console.log(groupBy2( 'type')); */
 /////////////
@@ -66,6 +66,29 @@ Object.entries(yaml.bb).forEach(el => {
     console.log(el)
 }); */
 
+const vendors = [{
+    Name: 'Magenic',
+    ID: 'ABC'
+  },
+  {
+    Name: 'Microsoft',
+    ID: 'DEF'
+  } // and so on...
+];
+
+
+function isMatch(array, target){
+    var found = false;
+    for(var i = 0; i < array.length; i++) {
+        if (array[i].Name == target) {
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
+
+console.log(isMatch(vendors, 'Magenica'))
 
 /* 
 function groupBy(input, key) {
