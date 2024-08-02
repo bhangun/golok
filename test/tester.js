@@ -117,10 +117,15 @@ var string = str2.match(/^(.[A-z].*.)with*.([A-z]*)$/)
 console.log(match)
 console.log(match2) */
 
-const braket = 'string, min=3, max=4 , required/${id:ini test akuh , en:test doc en}/coba';
+/* const braket = 'string, min=3, max=4 , required/${id:ini test akuh , en:test doc en}/coba';
 const value = braket.match(/{(.*?)}/);
 console.log(value[1].match(/id:(.*).,./)[1]);
-console.log(value[1].match(/.,.en:(.*)/)[1]);
+console.log(value[1].match(/.,.en:(.*)/)[1]); */
+
+var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+const judul = 'iniContohJudul';
+const hasil = judul.replace( rex, '$1$4 $2$3$5' );
+console.log(hasil)
 
 
 
