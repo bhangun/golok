@@ -15,7 +15,8 @@
   "dependencies": {
     "commander": "^11.1.0",
     "ejs": "^3.1.9",
-    "yaml": "^2.3.4"
+    "yaml": "^2.3.4",
+    "@google/generative-ai": "*"
   },
   "scripts": {
     "test": "jest",

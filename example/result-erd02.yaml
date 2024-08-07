@@ -1,0 +1,117 @@
+entities:
+ - BaggageCheck:
+    properties:
+      id: bigint, primaryKey
+      checkResult: varchar, max=50
+      createdAt: timestamp
+      updatedAt: timestamp
+      bookingId: bigint
+      passengerId: bigint
+      passenger: Passengers, manyToOne
+ - NoFlyList:
+    properties:
+      id: bigint, primaryKey
+      activeFrom: date
+      activeTo: date
+      noFlyReason: varchar, max=255
+      createdAt: timestamp
+      updatedAt: timestamp
+      psgnrId: bigint
+      passenger: Passengers, manyToOne
+ - Passengers:
+    properties:
+      id: bigint, primaryKey
+      firstName: varchar, max=50
+      lastName: varchar, max=50
+      dateOfBirth: date
+      countryOfCitizenship: varchar, max=50
+      countryOfResidence: varchar, max=50
+      passportNumber: varchar, max=20
+      createdAt: timestamp
+      updatedAt: timestamp
+      securityCheck: SecurityCheck, oneToOne
+      booking: Booking, oneToOne
+      baggageCheck: BaggageCheck, oneToOne
+      noFlyList: NoFlyList, oneToOne
+ - SecurityCheck:
+    properties:
+      id: bigint, primaryKey
+      checkResult: varchar, max=20
+      comments: varchar, max=65535
+      createdAt: timestamp
+      updatedAt: timestamp
+      passengerId: bigint
+      passenger: Passengers, manyToOne
+ - Booking:
+    properties:
+      bookingId: bigint, primaryKey
+      flightId: bigint
+      status: varchar, max=20
+      bookingPlatform: varchar, max=20
+      createdAt: timestamp
+      updatedAt: timestamp
+      passengerId: bigint
+      passenger: Passengers, manyToOne
+      flight: Flights, manyToOne
+      baggage: Baggage, oneToOne
+      boardingPass: BoardingPass, oneToOne
+      flightManifest: FlightManifest, oneToOne
+ - Flights:
+    properties:
+      flightId: bigint, primaryKey
+      departingGate: varchar, max=20
+      arrivingGate: varchar, max=20
+      createdAt: timestamp
+      updatedAt: timestamp
+      airlineId: bigint
+      departingAirportId: bigint
+      arrivingAirportId: bigint
+      airline: Airline, manyToOne
+      departingAirport: Airport, manyToOne
+      arrivingAirport: Airport, manyToOne
+      booking: Booking, oneToOne
+      flightManifest: FlightManifest, oneToOne
+ - Baggage:
+    properties:
+      id: bigint, primaryKey
+      weightInKg: decimal, max=4, min=2
+      createdAt: timestamp
+      updatedAt: timestamp
+      bookingId: bigint
+      booking: Booking, manyToOne
+ - FlightManifest:
+    properties:
+      id: bigint, primaryKey
+      createdAt: timestamp
+      updatedAt: timestamp
+      bookingId: bigint
+      flightId: bigint
+      booking: Booking, manyToOne
+      flight: Flights, manyToOne
+ - BoardingPass:
+    properties:
+      id: bigint, primaryKey
+      qrCode: varchar, max=65535
+      createdAt: timestamp
+      updatedAt: timestamp
+      bookingId: bigint
+      booking: Booking, manyToOne
+ - Airport:
+    properties:
+      id: bigint, primaryKey
+      airportName: varchar, max=50
+      country: varchar, max=50
+      state: varchar, max=50
+      city: varchar, max=50
+      createdAt: timestamp
+      updatedAt: timestamp
+      flights: Flights, oneToMany
+ - Airline:
+    properties:
+      id: bigint, primaryKey
+      airlineCode: varchar
+      airlineName: varchar
+      airlineCountry: varchar, max=50
+      createdAt: timestamp
+      updatedAt: timestamp
+      flights: Flights, oneToMany

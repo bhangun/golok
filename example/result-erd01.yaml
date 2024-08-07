@@ -1,0 +1,81 @@
+entities:
+ - Productline:
+    properties:
+      id: integer, max=10, primaryKey
+      descInText: varchar, max=255
+      descInHtml: varchar, max=255
+      image: varchar, max=100
+ - Product:
+    properties:
+      code: integer, max=10, primaryKey
+      productlineId: integer, max=10
+      name: varchar, max=255
+      scale: integer, max=10
+      vendor: varchar, max=255
+      pdtDescription: varchar, max=255
+      qtyInStock: integer, max=10
+      buyPrice: numeric, max=19, min=0
+      msrp: varchar, max=255
+ - Employee:
+    properties:
+      id: integer, max=10, primaryKey
+      officeCode: integer, max=10
+      reportsTo: integer, max=10
+      lastName: varchar, max=255
+      firstName: varchar, max=255
+      extension: varchar, max=255
+      email: varchar, max=255
+      jobTitle: varchar, max=100
+      office: Office, manyToOne
+ - Customer:
+    properties:
+      id: integer, max=10, primaryKey
+      salesRepEmployeeNum: integer, max=10
+      name: varchar, max=255
+      lastName: varchar, max=255
+      firstName: varchar, max=255
+      phone: varchar, max=255
+      address1: varchar, max=255
+      address2: varchar, max=255
+      city: varchar, max=255
+      state: varchar, max=255
+      postalCode: integer, max=10
+      country: varchar, max=255
+      creditLimit: numeric, max=19, min=0
+      employee: Employee, manyToOne
+ - OrderProduct:
+    properties:
+      orderId: integer, max=10, primaryKey
+      productCode: integer, max=10
+      qty: integer, max=10
+      priceEach: numeric, max=19, min=0
+      order: Order, manyToOne
+      product: Product, manyToOne
+ - Order:
+    properties:
+      id: integer, max=10, primaryKey
+      customerId: integer, max=10
+      orderDate: date
+      requiredDate: date
+      shippedDate: date
+      status: integer, max=10
+      comments: varchar, max=255
+      customer: Customer, manyToOne
+ - Office:
+    properties:
+      code: integer, max=10, primaryKey
+      city: varchar, max=255
+      phone: varchar, max=255
+      address1: varchar, max=255
+      address2: varchar, max=255
+      state: varchar, max=255
+      country: varchar, max=255
+      postalCode: integer, max=10
+      territory: varchar, max=200
+ - Payment:
+    properties:
+      checkNum: varchar, max=255, primaryKey
+      customerId: integer, max=10
+      paymentDate: date
+      amount: numeric, max=19, min=0
+      customer: Customer, manyToOne

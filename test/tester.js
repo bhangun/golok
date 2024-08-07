@@ -1,4 +1,5 @@
 //import {Enums, Properties} from '../lib/core/blueprint.js';
+import {generate} from '../lib/converter/ai/golok-ai.js';
 
 /* const en = new Enums();
 en.setEnums(['g', 'kg', 'ee', 'gg', 'vv']);
@@ -65,7 +66,7 @@ console.log(groupBy2( 'type')); */
 Object.entries(yaml.bb).forEach(el => {
     console.log(el)
 }); */
-
+/* 
 const vendors = [{
     Name: 'Magenic',
     ID: 'ABC'
@@ -75,7 +76,6 @@ const vendors = [{
     ID: 'DEF'
   } // and so on...
 ];
-
 
 function isMatch(array, target){
     var found = false;
@@ -89,6 +89,23 @@ function isMatch(array, target){
 }
 
 console.log(isMatch(vendors, 'Magenica'))
+ */
+
+/* const text = `baris1
+baris2
+baris3`;
+var lines = text.split('\n');
+lines.splice(0,1);
+console.log(lines)
+lines.splice(lines.length-1,1);
+// join the array back into a single string
+var newtext = lines.join('\n');
+//console.log(lines)
+console.log(newtext) */
+
+
+generate()
+
 
 /* 
 function groupBy(input, key) {
@@ -145,10 +162,10 @@ const value = braket.match(/{(.*?)}/);
 console.log(value[1].match(/id:(.*).,./)[1]);
 console.log(value[1].match(/.,.en:(.*)/)[1]); */
 
-var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+/* var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
 const judul = 'iniContohJudul';
 const hasil = judul.replace( rex, '$1$4 $2$3$5' );
-console.log(hasil)
+console.log(hasil) */
 
 
 
