@@ -13,10 +13,12 @@
     "quarkus"
   ],
   "dependencies": {
+    "@google/generative-ai": "*",
+    "@types/archiver": "^6.0.2",
+    "archiver": "^7.0.1",
     "commander": "^11.1.0",
     "ejs": "^3.1.9",
-    "yaml": "^2.3.4",
-    "@google/generative-ai": "*"
+    "yaml": "^2.3.4"
   },
   "scripts": {
     "test": "jest",

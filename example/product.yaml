@@ -20,6 +20,6 @@ entities:
 
 enums:
  - Unit:
-    - Kg
-    - g
+    - Kg,{id:Kg, en:Kg}
+    - g,{id:gram, en:gram}
   

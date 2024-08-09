@@ -1,5 +1,9 @@
 //import {Enums, Properties} from '../lib/core/blueprint.js';
-import {generate} from '../lib/converter/ai/golok-ai.js';
+//import {generate} from '../lib/converter/ai/golok-ai.js';
+import {parseYamlString, zip, zip2} from '../lib/core/utils.js';
+//file:///Users/bhangun/workkayys/OSS/Golok/golok/lib/core/utils.js:6
+//import archiver from 'archiver';
+
 
 /* const en = new Enums();
 en.setEnums(['g', 'kg', 'ee', 'gg', 'vv']);
@@ -104,7 +108,7 @@ var newtext = lines.join('\n');
 console.log(newtext) */
 
 
-generate()
+//generate()
 
 
 /* 
@@ -201,3 +205,231 @@ a{1,3}	between one & three
 a+?a{2,}?	match as few as possible
 ab|cd	match ab or cd
 */
+
+
+
+const yaml = `
+entities:
+ - Productline:
+    properties:
+      - id: integer, max=10, primaryKey
+      - descText: varchar, max=255
+      - descHtml: varchar, max=255
+      - image: varchar, max=100
+ - Product:
+    properties:
+      - code: integer, max=10, primaryKey
+      - productLineId: integer, max=10
+      - name: varchar, max=255
+      - scale: integer, max=10
+      - vendor: varchar, max=255
+      - pdtDescription: varchar, max=255
+      - qtyInStock: integer, max=10
+      - buyPrice: numeric, max=19, min=0
+      - msrp: varchar, max=255
+ - Employee:
+    properties:
+      - id: integer, max=10, primaryKey
+      - officeCode: integer, max=10
+      - reportsTo: integer, max=10
+      - lastName: varchar, max=255
+      - firstName: varchar, max=255
+      - extension: varchar, max=255
+      - email: varchar, max=255
+      - jobTitle: varchar, max=100
+      - office: Office, manyToOne
+ - Customer:
+    properties:
+      - id: integer, max=10, primaryKey
+      - salesRepEmployeeNum: integer, max=10
+      - name: varchar, max=255
+      - lastName: varchar, max=255
+      - firstName: varchar, max=255
+      - phone: varchar, max=255
+      - address1: varchar, max=255
+      - address2: varchar, max=255
+      - city: varchar, max=255
+      - state: varchar, max=255
+      - postalCode: integer, max=10
+      - country: varchar, max=255
+      - creditLimit: numeric, max=19, min=0
+ - OrderProduct:
+    properties:
+      - id: integer, max=10, primaryKey
+      - orderId: integer, max=10
+      - productCode: integer, max=10
+      - qty: integer, max=10
+      - priceEach: numeric, max=19, min=0
+      - order: Order, manyToOne
+      - product: Product, manyToOne
+ - Order:
+    properties:
+      - id: integer, max=10, primaryKey
+      - customerId: integer, max=10
+      - orderDate: date
+      - requiredDate: date
+      - shippedDate: date
+      - status: integer, max=10
+      - comments: varchar, max=255
+      - customer: Customer, manyToOne
+ - Payment:
+    properties:
+      - checkNum: varchar, max=255, primaryKey
+      - customerId: integer, max=10
+      - paymentDate: date
+      - amount: numeric, max=19, min=0
+      - customer: Customer, manyToOne
+ - Office:
+    properties:
+      - code: integer, max=10, primaryKey
+      - city: varchar, max=255
+      - phone: varchar, max=255
+      - address1: varchar, max=255
+      - address2: varchar, max=255
+      - state: varchar, max=255
+      - country: varchar, max=255
+      - postalCode: integer, max=10
+      - territory: varchar, max=200
+`;
+
+const yaml3 = `
+entities:
+ - Productline:
+    properties:
+      - id: integer, max=10, primaryKey
+      - descText: varchar, max=255
+      - descHtml: varchar, max=255
+      - image: varchar, max=100
+ - Product:
+    properties:
+      - code: integer, max=10, primaryKey
+      - productLineId: integer, max=10
+      - name: varchar, max=255
+      - scale: integer, max=10
+      - vendor: varchar, max=255
+      - pdtDescription: varchar, max=255
+      - qtyInStock: integer, max=10
+      - buyPrice: numeric, max=19, min=0
+      - msrp: varchar, max=255
+ - Employee:
+    properties:
+      - id: integer, max=10, primaryKey
+      - officeCode: integer, max=10
+      - reportsTo: integer, max=10
+      - lastName: varchar, max=255
+      - firstName: varchar, max=255
+      - extension: varchar, max=255
+      - email: varchar, max=255
+      - jobTitle: varchar, max=100
+      - office: Office, manyToOne
+ - Customer:
+    properties:
+      - id: integer, max=10, primaryKey
+      - salesRepEmployeeNum: integer, max=10
+      - name: varchar, max=255
+      - lastName: varchar, max=255
+      - firstName: varchar, max=255
+      - phone: varchar, max=255
+      - address1: varchar, max=255
+      - address2: varchar, max=255
+      - city: varchar, max=255
+      - state: varchar, max=255
+      - postalCode: integer, max=10
+      - country: varchar, max=255
+      - creditLimit: numeric, max=19, min=0
+ - Order:
+    properties:
+      - id: integer, max=10, primaryKey
+      - customerID: integer, max=10
+      - orderDate: date
+      - requiredDate: date
+      - shippedDate: date
+      - status: integer, max=10
+      - comments: varchar, max=255
+      - customer: Customer, manyToOne
+ - OrderProduct:
+    properties:
+      - id: integer, max=10, primaryKey
+      - orderID: integer, max=10
+      - productCode: integer, max=10
+      - qty: integer, max=10
+      - priceEach: numeric, max=19, min=0
+      - order: Order, manyToOne
+      - product: Product, manyToOne
+ - Office:
+    properties:
+      - code: integer, max=10, primaryKey
+      - city: varchar, max=255
+      - phone: varchar, max=255
+      - address1: varchar, max=255
+      - address2: varchar, max=255
+      - state: varchar, max=255
+      - country: varchar, max=255
+      - postalCode: integer, max=10
+      - territory: varchar, max=200
+ - Payment:
+    properties:
+      - checkNum: varchar, max=255, primaryKey
+      - customerID: integer, max=10
+      - paymentDate: date
+      - amount: numeric, max=19, min=0
+      - customer: Customer, manyToOne
+`
+
+const yaml2 =`
+entities:
+- Product:
+    doc: Ini product
+    author: bhangun
+    example: 
+    properties:
+    - code: String, min=3, max=30, required //Product code 
+    - name: String, max=30 
+    - sku: int,min=3, max=30, required
+    - unit: enum=Unit
+    - status: ref=Status, OneToOne
+
+- Status:
+   properties:
+   - name: String, max=30
+
+- History:
+    properties:
+    - payload: String
+`
+/* const hasil = parseYamlString(yaml)
+const hasil2 = parseYamlString(yaml3)
+console.log(hasil)
+console.log(hasil.entities[0].Productline.properties)
+console.log(hasil2.entities) */
+
+
+function zip(params) {
+  var Http = require('http'); 
+  var Archiver = require('archiver'); 
+  Http.createServer(function (request, response) { 
+      // Tell the browser that this is a zip file. 
+      response.writeHead(200, { 'Content-Type': 'application/zip', 
+          'Content-disposition': 'attachment; filename=myFile.zip' }); 
+      var zip = Archiver('zip'); 
+      // Send the file to the page output. 
+      zip.pipe(response); 
+      // Create zip with some files. Two dynamic, one static. Put #2 in a sub folder. 
+      zip.append('Some text to go in file 1.', { name: '1.txt' }) 
+      .append('Some text to go in file 2. I go in a folder!', { name: 'somefolder/2.txt' }) 
+      .file('staticFiles/3.txt', { name: '3.txt' }) .finalize(); })
+      .listen(process.env.PORT);
+  
+}
+
+
+function zip2(){
+
+  // create a file to stream archive data to.
+const output = fs.createWriteStream(__dirname + '/example.zip');
+const archive = archiver('zip', {
+  zlib: { level: 9 } // Sets the compression level.
+});
+}
+
+zip2()

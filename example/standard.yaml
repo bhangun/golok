@@ -1,7 +1,7 @@
 # General info 
 info:
   name: golok_apps
-  title: Contoh1
+  title: Contoh2
   description: Ini contoh aplikasi
 
 endpoint:
@@ -10,28 +10,28 @@ endpoint:
 # Applications
 applications:
   frontend:
-    appsName: golok
-    framework: flutter
-    # Local Database: hive | sqlLite
-    localDatabase: sqlLite # hive
-    admin: true
-    # Themes option, if not defined would be default.  
-    # default | dark | light
-    themes: default
-    plugins:
-    - connection
-    stateManagement: riverpod
-    # web | android | linux | ios | desktop | all
-    # Value input as String or array.
-    # e.g platform: web, android
-    # or 
-    # platfrom: 
-    # - web
-    # - android
-    platform: web,android, linux, ios,desktop
-    # Locale options: en | id
-    locale: en, id
-    entities: Product, Order, OrderLine
+    - appsName: golok
+      framework: flutter
+      # Local Database: hive | sqlLite
+      localDatabase: sqlLite # hive
+      admin: true
+      # Themes option, if not defined would be default.  
+      # default | dark | light
+      themes: default
+      plugins:
+      - connection
+      stateManagement: riverpod
+      # web | android | linux | ios | desktop | all
+      # Value input as String or array.
+      # e.g platform: web, android
+      # or 
+      # platfrom: 
+      # - web
+      # - android
+      platform: web,android, linux, ios,desktop
+      # Locale options: en | id
+      locale: en, id
+      entities: '*'
   backend:
     - appsName: my_golok_front
       # Option : flutter | react | vue
@@ -91,7 +91,12 @@ includes:
     entities: Product, Status,
     enums: Unit
   - file: example/order.yaml
+    
 
+enums:
+- GroupType:
+  - general, {id:Umum, en:General}
+  - private, {id:Khusus, en:Private}
 
 operations:
   - getProductByTenant:

@@ -17,5 +17,5 @@ entities:
 
 enums:
  - OrderStatus:
-    - Ongoing
-    - Cancelled
+    - Ongoing, {id:Sedang Proses, en:On Going}
+    - Cancelled, {id:Dibatalkan, en:Cancelled}
