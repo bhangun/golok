@@ -1,6 +1,6 @@
 //import {Enums, Properties} from '../lib/core/blueprint.js';
 //import {generate} from '../lib/converter/ai/golok-ai.js';
-import {parseYamlString, zip, zip2} from '../lib/core/utils.js';
+import * as utils from '../lib/core/utils.js';
 //file:///Users/bhangun/workkayys/OSS/Golok/golok/lib/core/utils.js:6
 //import archiver from 'archiver';
 
@@ -404,32 +404,4 @@ console.log(hasil.entities[0].Productline.properties)
 console.log(hasil2.entities) */
 
 
-function zip(params) {
-  var Http = require('http'); 
-  var Archiver = require('archiver'); 
-  Http.createServer(function (request, response) { 
-      // Tell the browser that this is a zip file. 
-      response.writeHead(200, { 'Content-Type': 'application/zip', 
-          'Content-disposition': 'attachment; filename=myFile.zip' }); 
-      var zip = Archiver('zip'); 
-      // Send the file to the page output. 
-      zip.pipe(response); 
-      // Create zip with some files. Two dynamic, one static. Put #2 in a sub folder. 
-      zip.append('Some text to go in file 1.', { name: '1.txt' }) 
-      .append('Some text to go in file 2. I go in a folder!', { name: 'somefolder/2.txt' }) 
-      .file('staticFiles/3.txt', { name: '3.txt' }) .finalize(); })
-      .listen(process.env.PORT);
-  
-}
-
-
-function zip2(){
-
-  // create a file to stream archive data to.
-const output = fs.createWriteStream(__dirname + '/example.zip');
-const archive = archiver('zip', {
-  zlib: { level: 9 } // Sets the compression level.
-});
-}
-
-zip2()
+utils.zip2()
