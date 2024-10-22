@@ -1,0 +1,1024 @@
+&a1
+entities: &a2
+  - name: PubInfo
+    properties:
+      - name: pubId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Pub Id
+        docEN: Pub Id
+        max: "255"
+      - name: logo
+        type:
+          origin:
+            name: image
+          dart:
+            otherEntity: true
+            name: image
+          java:
+            otherEntity: true
+            name: image
+        docID: Logo
+        docEN: Logo
+      - name: prInfoText
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Pr Info Text
+        docEN: Pr Info Text
+        max: "255"
+    relationship:
+      - to: image
+        toCamelCase: image
+        toTitleCase: Image
+        toSnakeCase: image
+        name: logo
+    nameTitleCase: PubInfo
+    nameCamelCase: pubInfo
+    nameSnakeCase: pub_info
+    blueprint: *a1
+  - name: Publishers
+    properties:
+      - name: pubId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Pub Id
+        docEN: Pub Id
+        max: "255"
+      - name: pubName
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Pub Name
+        docEN: Pub Name
+        max: "255"
+      - name: city
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: City
+        docEN: City
+        max: "255"
+      - name: country
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Country
+        docEN: Country
+        max: "255"
+      - name: pubInfo
+        type:
+          origin:
+            name: PubInfo
+          dart:
+            otherEntity: true
+            name: PubInfo
+          java:
+            otherEntity: true
+            name: PubInfo
+        docID: Pub Info
+        docEN: Pub Info
+    relationship:
+      - type: OneToOne
+        to: PubInfo
+        toCamelCase: pubInfo
+        toTitleCase: PubInfo
+        toSnakeCase: pub_info
+        name: pubInfo
+    nameTitleCase: Publishers
+    nameCamelCase: publishers
+    nameSnakeCase: publishers
+    blueprint: *a1
+  - name: Employee
+    properties:
+      - name: empId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Emp Id
+        docEN: Emp Id
+        max: "255"
+      - name: fName
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: F Name
+        docEN: F Name
+        max: "255"
+      - name: minit
+        type:
+          origin:
+            name: char
+          dart:
+            otherEntity: true
+            name: char
+          java:
+            otherEntity: true
+            name: char
+        docID: Minit
+        docEN: Minit
+        max: "1"
+      - name: lname
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Lname
+        docEN: Lname
+        max: "255"
+      - name: jobId
+        type:
+          origin:
+            name: smallint
+          dart:
+            otherEntity: true
+            name: smallint
+          java:
+            otherEntity: true
+            name: smallint
+        docID: Job Id
+        docEN: Job Id
+        min: "0"
+        max: "5"
+      - name: jobLvl
+        type:
+          origin:
+            name: tinyint
+          dart:
+            otherEntity: true
+            name: tinyint
+          java:
+            otherEntity: true
+            name: tinyint
+        docID: Job Lvl
+        docEN: Job Lvl
+        min: "0"
+        max: "3"
+      - name: pubId
+        type:
+          origin:
+            name: char
+          dart:
+            otherEntity: true
+            name: char
+          java:
+            otherEntity: true
+            name: char
+        docID: Pub Id
+        docEN: Pub Id
+        max: "1"
+      - name: hireDate
+        type:
+          origin:
+            name: datetime
+          dart:
+            name: DateTime
+          java:
+            name: Instant
+        docID: Hire Date
+        docEN: Hire Date
+      - name: job
+        type:
+          origin:
+            name: Jobs
+          dart:
+            otherEntity: true
+            name: Jobs
+          java:
+            otherEntity: true
+            name: Jobs
+        docID: Job
+        docEN: Job
+    relationship:
+      - to: char
+        toCamelCase: char
+        toTitleCase: Char
+        toSnakeCase: char
+        name: minit
+      - to: smallint
+        toCamelCase: smallint
+        toTitleCase: Smallint
+        toSnakeCase: smallint
+        name: jobId
+      - to: tinyint
+        toCamelCase: tinyint
+        toTitleCase: Tinyint
+        toSnakeCase: tinyint
+        name: jobLvl
+      - to: char
+        toCamelCase: char
+        toTitleCase: Char
+        toSnakeCase: char
+        name: pubId
+      - type: ManyToOne
+        to: Jobs
+        toCamelCase: jobs
+        toTitleCase: Jobs
+        toSnakeCase: jobs
+        name: job
+    nameTitleCase: Employee
+    nameCamelCase: employee
+    nameSnakeCase: employee
+    blueprint: *a1
+  - name: Jobs
+    properties:
+      - name: jobId
+        type:
+          origin:
+            name: smallint
+          dart:
+            otherEntity: true
+            name: smallint
+          java:
+            otherEntity: true
+            name: smallint
+        docID: Job Id
+        docEN: Job Id
+        min: "0"
+        max: "5"
+      - name: jobDesc
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Job Desc
+        docEN: Job Desc
+        max: "255"
+      - name: minLvl
+        type:
+          origin:
+            name: tinyint
+          dart:
+            otherEntity: true
+            name: tinyint
+          java:
+            otherEntity: true
+            name: tinyint
+        docID: Min Lvl
+        docEN: Min Lvl
+        min: "0"
+        max: "3"
+      - name: maxLvl
+        type:
+          origin:
+            name: tinyint
+          dart:
+            otherEntity: true
+            name: tinyint
+          java:
+            otherEntity: true
+            name: tinyint
+        docID: Max Lvl
+        docEN: Max Lvl
+        min: "0"
+        max: "3"
+    relationship:
+      - to: smallint
+        toCamelCase: smallint
+        toTitleCase: Smallint
+        toSnakeCase: smallint
+        name: jobId
+      - to: tinyint
+        toCamelCase: tinyint
+        toTitleCase: Tinyint
+        toSnakeCase: tinyint
+        name: minLvl
+      - to: tinyint
+        toCamelCase: tinyint
+        toTitleCase: Tinyint
+        toSnakeCase: tinyint
+        name: maxLvl
+    nameTitleCase: Jobs
+    nameCamelCase: jobs
+    nameSnakeCase: jobs
+    blueprint: *a1
+  - name: Stores
+    properties:
+      - name: storId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Stor Id
+        docEN: Stor Id
+        max: "255"
+      - name: storName
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Stor Name
+        docEN: Stor Name
+        max: "255"
+      - name: storAddress
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Stor Address
+        docEN: Stor Address
+        max: "255"
+      - name: city
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: City
+        docEN: City
+        max: "255"
+      - name: state
+        type:
+          origin:
+            name: char
+          dart:
+            otherEntity: true
+            name: char
+          java:
+            otherEntity: true
+            name: char
+        docID: State
+        docEN: State
+        max: "2"
+      - name: zip
+        type:
+          origin:
+            name: char
+          dart:
+            otherEntity: true
+            name: char
+          java:
+            otherEntity: true
+            name: char
+        docID: Zip
+        docEN: Zip
+        max: "5"
+      - name: discount
+        type:
+          origin:
+            name: Discounts
+          dart:
+            otherEntity: true
+            name: Discounts
+          java:
+            otherEntity: true
+            name: Discounts
+        docID: Discount
+        docEN: Discount
+      - name: sales
+        type:
+          origin:
+            name: Sales
+          dart:
+            otherEntity: true
+            name: Sales
+          java:
+            otherEntity: true
+            name: Sales
+        docID: Sales
+        docEN: Sales
+    relationship:
+      - to: char
+        toCamelCase: char
+        toTitleCase: Char
+        toSnakeCase: char
+        name: state
+      - to: char
+        toCamelCase: char
+        toTitleCase: Char
+        toSnakeCase: char
+        name: zip
+      - type: OneToOne
+        to: Discounts
+        toCamelCase: discounts
+        toTitleCase: Discounts
+        toSnakeCase: discounts
+        name: discount
+      - type: OneToMany
+        to: Sales
+        toCamelCase: sales
+        toTitleCase: Sales
+        toSnakeCase: sales
+        name: sales
+    nameTitleCase: Stores
+    nameCamelCase: stores
+    nameSnakeCase: stores
+    blueprint: *a1
+  - name: Discounts
+    properties:
+      - name: discountype
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Discountype
+        docEN: Discountype
+        max: "255"
+      - name: storId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Stor Id
+        docEN: Stor Id
+        max: "255"
+      - name: lowqty
+        type:
+          origin:
+            name: smallint
+          dart:
+            otherEntity: true
+            name: smallint
+          java:
+            otherEntity: true
+            name: smallint
+        docID: Lowqty
+        docEN: Lowqty
+        min: "0"
+        max: "5"
+      - name: highqty
+        type:
+          origin:
+            name: smallint
+          dart:
+            otherEntity: true
+            name: smallint
+          java:
+            otherEntity: true
+            name: smallint
+        docID: Highqty
+        docEN: Highqty
+        min: "0"
+        max: "5"
+      - name: discount
+        type:
+          origin:
+            name: decimal
+          dart:
+            otherEntity: true
+            name: decimal
+          java:
+            otherEntity: true
+            name: decimal
+        docID: Discount
+        docEN: Discount
+        max: "19"
+        min: "0"
+    relationship:
+      - to: smallint
+        toCamelCase: smallint
+        toTitleCase: Smallint
+        toSnakeCase: smallint
+        name: lowqty
+      - to: smallint
+        toCamelCase: smallint
+        toTitleCase: Smallint
+        toSnakeCase: smallint
+        name: highqty
+      - to: decimal
+        toCamelCase: decimal
+        toTitleCase: Decimal
+        toSnakeCase: decimal
+        name: discount
+    nameTitleCase: Discounts
+    nameCamelCase: discounts
+    nameSnakeCase: discounts
+    blueprint: *a1
+  - name: Sales
+    properties:
+      - name: storId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Stor Id
+        docEN: Stor Id
+        max: "255"
+      - name: ordNum
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Ord Num
+        docEN: Ord Num
+        max: "255"
+      - name: titleId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Title Id
+        docEN: Title Id
+        max: "255"
+      - name: ordDate
+        type:
+          origin:
+            name: datetime
+          dart:
+            name: DateTime
+          java:
+            name: Instant
+        docID: Ord Date
+        docEN: Ord Date
+      - name: qtyDate
+        type:
+          origin:
+            name: datetime
+          dart:
+            name: DateTime
+          java:
+            name: Instant
+        docID: Qty Date
+        docEN: Qty Date
+      - name: qty
+        type:
+          origin:
+            name: smallint
+          dart:
+            otherEntity: true
+            name: smallint
+          java:
+            otherEntity: true
+            name: smallint
+        docID: Qty
+        docEN: Qty
+        min: "0"
+        max: "5"
+      - name: payterms
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Payterms
+        docEN: Payterms
+        max: "255"
+      - name: store
+        type:
+          origin:
+            name: Stores
+          dart:
+            otherEntity: true
+            name: Stores
+          java:
+            otherEntity: true
+            name: Stores
+        docID: Store
+        docEN: Store
+      - name: title
+        type:
+          origin:
+            name: Titles
+          dart:
+            otherEntity: true
+            name: Titles
+          java:
+            otherEntity: true
+            name: Titles
+        docID: Title
+        docEN: Title
+    relationship:
+      - to: smallint
+        toCamelCase: smallint
+        toTitleCase: Smallint
+        toSnakeCase: smallint
+        name: qty
+      - type: ManyToOne
+        to: Stores
+        toCamelCase: stores
+        toTitleCase: Stores
+        toSnakeCase: stores
+        name: store
+      - type: ManyToOne
+        to: Titles
+        toCamelCase: titles
+        toTitleCase: Titles
+        toSnakeCase: titles
+        name: title
+    nameTitleCase: Sales
+    nameCamelCase: sales
+    nameSnakeCase: sales
+    blueprint: *a1
+  - name: Titles
+    properties:
+      - name: titleId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Title Id
+        docEN: Title Id
+        max: "255"
+      - name: type
+        type:
+          origin:
+            name: char
+          dart:
+            otherEntity: true
+            name: char
+          java:
+            otherEntity: true
+            name: char
+        docID: Type
+        docEN: Type
+        max: "1"
+      - name: price
+        type:
+          origin:
+            name: money
+          dart:
+            otherEntity: true
+            name: money
+          java:
+            otherEntity: true
+            name: money
+        docID: Price
+        docEN: Price
+      - name: pubId
+        type:
+          origin:
+            name: char
+          dart:
+            otherEntity: true
+            name: char
+          java:
+            otherEntity: true
+            name: char
+        docID: Pub Id
+        docEN: Pub Id
+        max: "1"
+      - name: ytdSales
+        type:
+          origin:
+            name: int
+          dart:
+            name: int
+          java:
+            name: Integer
+        docID: Ytd Sales
+        docEN: Ytd Sales
+        min: "0"
+        max: "10"
+      - name: notes
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Notes
+        docEN: Notes
+        max: "255"
+      - name: pubdate
+        type:
+          origin:
+            name: datetime
+          dart:
+            name: DateTime
+          java:
+            name: Instant
+        docID: Pubdate
+        docEN: Pubdate
+      - name: titleauthor
+        type:
+          origin:
+            name: Titleauthor
+          dart:
+            otherEntity: true
+            name: Titleauthor
+          java:
+            otherEntity: true
+            name: Titleauthor
+        docID: Titleauthor
+        docEN: Titleauthor
+      - name: roysched
+        type:
+          origin:
+            name: Roysched
+          dart:
+            otherEntity: true
+            name: Roysched
+          java:
+            otherEntity: true
+            name: Roysched
+        docID: Roysched
+        docEN: Roysched
+      - name: employee
+        type:
+          origin:
+            name: Employee
+          dart:
+            otherEntity: true
+            name: Employee
+          java:
+            otherEntity: true
+            name: Employee
+        docID: Employee
+        docEN: Employee
+    relationship:
+      - to: char
+        toCamelCase: char
+        toTitleCase: Char
+        toSnakeCase: char
+        name: type
+      - to: money
+        toCamelCase: money
+        toTitleCase: Money
+        toSnakeCase: money
+        name: price
+      - to: char
+        toCamelCase: char
+        toTitleCase: Char
+        toSnakeCase: char
+        name: pubId
+      - type: OneToOne
+        to: Titleauthor
+        toCamelCase: titleauthor
+        toTitleCase: Titleauthor
+        toSnakeCase: titleauthor
+        name: titleauthor
+      - type: OneToOne
+        to: Roysched
+        toCamelCase: roysched
+        toTitleCase: Roysched
+        toSnakeCase: roysched
+        name: roysched
+      - type: ManyToOne
+        to: Employee
+        toCamelCase: employee
+        toTitleCase: Employee
+        toSnakeCase: employee
+        name: employee
+    nameTitleCase: Titles
+    nameCamelCase: titles
+    nameSnakeCase: titles
+    blueprint: *a1
+  - name: Titleauthor
+    properties:
+      - name: auId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Au Id
+        docEN: Au Id
+        max: "255"
+      - name: titleId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Title Id
+        docEN: Title Id
+        max: "255"
+      - name: auOrd
+        type:
+          origin:
+            name: tinyint
+          dart:
+            otherEntity: true
+            name: tinyint
+          java:
+            otherEntity: true
+            name: tinyint
+        docID: Au Ord
+        docEN: Au Ord
+        min: "0"
+        max: "3"
+      - name: royalty
+        type:
+          origin:
+            name: int
+          dart:
+            name: int
+          java:
+            name: Integer
+        docID: Royalty
+        docEN: Royalty
+        min: "0"
+        max: "10"
+      - name: title
+        type:
+          origin:
+            name: Titles
+          dart:
+            otherEntity: true
+            name: Titles
+          java:
+            otherEntity: true
+            name: Titles
+        docID: Title
+        docEN: Title
+    relationship:
+      - to: tinyint
+        toCamelCase: tinyint
+        toTitleCase: Tinyint
+        toSnakeCase: tinyint
+        name: auOrd
+      - type: ManyToOne
+        to: Titles
+        toCamelCase: titles
+        toTitleCase: Titles
+        toSnakeCase: titles
+        name: title
+    nameTitleCase: Titleauthor
+    nameCamelCase: titleauthor
+    nameSnakeCase: titleauthor
+    blueprint: *a1
+  - name: Roysched
+    properties:
+      - name: titleId
+        type:
+          origin:
+            name: varchar
+          dart:
+            name: DateTime
+          java:
+            name: DateTime
+        docID: Title Id
+        docEN: Title Id
+        max: "255"
+      - name: lorange
+        type:
+          origin:
+            name: int
+          dart:
+            name: int
+          java:
+            name: Integer
+        docID: Lorange
+        docEN: Lorange
+        min: "0"
+        max: "10"
+      - name: hirange
+        type:
+          origin:
+            name: int
+          dart:
+            name: int
+          java:
+            name: Integer
+        docID: Hirange
+        docEN: Hirange
+        min: "0"
+        max: "10"
+      - name: royalty
+        type:
+          origin:
+            name: int
+          dart:
+            name: int
+          java:
+            name: Integer
+        docID: Royalty
+        docEN: Royalty
+        min: "0"
+        max: "10"
+      - name: title
+        type:
+          origin:
+            name: Titles
+          dart:
+            otherEntity: true
+            name: Titles
+          java:
+            otherEntity: true
+            name: Titles
+        docID: Title
+        docEN: Title
+    relationship:
+      - type: ManyToOne
+        to: Titles
+        toCamelCase: titles
+        toTitleCase: Titles
+        toSnakeCase: titles
+        name: title
+    nameTitleCase: Roysched
+    nameCamelCase: roysched
+    nameSnakeCase: roysched
+    blueprint: *a1
+info:
+  name: golok
+  title: Golok AI
+  description: Golok powered by AI
+  blueprintSource: /Users/bhangun/workkayys/OSS/Golok/golok/example/erd03.png
+  blueprintSourceDir: /Users/bhangun/workkayys/OSS/Golok/golok/example
+endpoint:
+  url: http://localhost
+applications:
+  frontend:
+    - appsName: golok
+      framework: flutter
+      localDatabase: sqlLite
+      admin: true
+      themes: default
+      stateManagement: riverpod
+      platform: web,android,linux,ios,desktop
+      locale:
+        - en
+        - id
+      entities: *a2
+      manifest:
+        version: 1
+        name: default
+        templates:
+          - name: riverpod
+            templates:
+              - name: app
+              - name: entity
+                loop: true
+                items:
+                  - from: entity.dart.ejs
+                    to: lib/modules/{entityName}/model/{entityFile}.dart
+                  - from: entity.module.dart.ejs
+                    to: lib/modules/{entityName}/{entityFile}_module.dart
+                  - from: entity.services.dart.ejs
+                    to: lib/modules/{entityName}/services/{entityFile}_services.dart
+                  - from: entity.logic.dart.ejs
+                    to: lib/modules/{entityName}/logic/{entityFile}_logic.dart
+                  - from: pages/entity.list.dart.ejs
+                    to: lib/modules/{entityName}/pages/{entityFile}_list.dart
+                  - from: pages/entity.detail.dart.ejs
+                    to: lib/modules/{entityName}/pages/{entityFile}_detail.dart
+                  - from: pages/entity.form.dart.ejs
+                    to: lib/modules/{entityName}/pages/{entityFile}_form.dart
+      zip: false
+  backend: []
