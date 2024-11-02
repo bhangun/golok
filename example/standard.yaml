@@ -81,10 +81,10 @@ applications:
         with: serviceImpl
         # except:
 
-entities: 
-  - Category:
-      properties:
-      - name: String, min=3, max=10
+#entities: 
+#  - Category:
+#      properties:
+#      - name: String, min=3, max=10
 
 includes:
   - file: example/product.yaml
