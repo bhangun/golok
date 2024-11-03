@@ -21,3 +21,4 @@ class Logo {
     }
 }
 exports.default = Logo;
+//# sourceMappingURL=logo.js.map

@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_js_1 = require("./utils.js");
-const properties_js_1 = require("./properties.js");
+const properties_js_1 = __importDefault(require("./properties.js"));
 /**
  * Entities
  */
@@ -144,3 +147,4 @@ class Entities {
     }
 }
 exports.default = Entities;
+//# sourceMappingURL=entities.js.map

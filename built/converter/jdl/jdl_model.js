@@ -172,3 +172,4 @@ exports.JDLRelationship = JDLRelationship;
   ],
   "searchEngine": "no",
   "service": "no" */
+//# sourceMappingURL=jdl_model.js.map

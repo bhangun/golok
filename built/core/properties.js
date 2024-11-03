@@ -179,3 +179,4 @@ class PropParser {
     }
 }
 exports.default = PropParser;
+//# sourceMappingURL=properties.js.map

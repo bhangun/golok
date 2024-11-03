@@ -596,3 +596,4 @@ function convertTypeJavascript(typeOrigin, entityName) {
     newType.javaTypeCapital = (0, utils_js_1.capitalize)(type);
     return newType;
 }
+//# sourceMappingURL=type_parser.js.map

@@ -13,10 +13,30 @@ interface Model {
     states: Array<State>
 }
 
+interface Entity {
+    name: string;
+    doc: string;
+    author: string;
+    nonDB: boolean;
+    refDoc: string;
+    properties: Array<Property>;
+    relationship: Array<Relationship>;
+    nameCamelCase: string;
+    nameTitleCase: string;
+    nameSnakeCase: string;
+}
+
 interface State {
     name: string;
     doc: string;
-    type: DataType;
+    author: string;
+    nonDB: boolean;
+    refDoc: string;
+    properties: Array<Property>;
+    relationship: Array<Relationship>;
+    nameCamelCase: string;
+    nameTitleCase: string;
+    nameSnakeCase: string;
 }
 
 interface Enum {
@@ -93,18 +113,7 @@ interface ReturnOperation {
     type: string;
 }
 
-interface Entity {
-    name: string;
-    doc: string;
-    author: string;
-    nonDB: boolean;
-    refDoc: string;
-    properties: Array<Property>;
-    relationship: Array<Relationship>;
-    nameCamelCase: string;
-    nameTitleCase: string;
-    nameSnakeCase: string;
-}
+
 
 interface DataType {
     java: string;

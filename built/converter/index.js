@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_js_1 = require("../core/utils.js");
 const type_parser_js_1 = require("../core/type_parser.js");
-const base_golok_js_1 = require("../core/base_golok.js");
-const oas_js_1 = require("./swagger/oas.js");
+const base_golok_js_1 = __importDefault(require("../core/base_golok.js"));
+const oas_js_1 = __importDefault(require("./swagger/oas.js"));
 /**
  * Converter
  */
@@ -141,3 +144,4 @@ class Converter extends base_golok_js_1.default {
     }
 }
 exports.default = Converter;
+//# sourceMappingURL=index.js.map

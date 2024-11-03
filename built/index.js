@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const base_golok_js_1 = require("./core/base_golok.js");
-const index_js_1 = require("./generator/flutter/index.js");
+const base_golok_js_1 = __importDefault(require("./core/base_golok.js"));
+const index_js_1 = __importDefault(require("./generator/flutter/index.js"));
 const utils_js_1 = require("./core/utils.js");
 /**
  * Golok
@@ -41,3 +44,4 @@ class Golok extends base_golok_js_1.default {
     }
 }
 const golok = new Golok();
+//# sourceMappingURL=index.js.map

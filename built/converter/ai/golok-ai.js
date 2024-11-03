@@ -8,9 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const generative_ai_1 = require("@google/generative-ai");
-const fs_1 = require("fs");
+const fs_1 = __importDefault(require("fs"));
 const utils_js_1 = require("../../core/utils.js");
 class GolokAI {
     /**
@@ -107,3 +110,4 @@ entities:
     }
 }
 exports.default = GolokAI;
+//# sourceMappingURL=golok-ai.js.map

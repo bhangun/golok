@@ -83,3 +83,4 @@ class Flutter {
     }
 }
 exports.default = Flutter;
+//# sourceMappingURL=index.js.map
