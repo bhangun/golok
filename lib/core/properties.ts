@@ -3,26 +3,14 @@ import {
     camelToTitleWithSpace, print
 } from './utils.js';
 import {convertTypeDart, convertTypeJava} from '../core/type_parser.js';
+import { Property, Relationship} from './schema';
 
 /**
  * Properties
  */
-export default class Properties {
+export default class PropParser {
     constructor(entity, rawProperties, relationship) {
         this.parse(entity, rawProperties, relationship);
-
-        /*  
-         this.name = undefined;
-         this.type = undefined;
-         this.doc = undefined;
-         this.referenceURL = undefined;
-         this.required = undefined;
-         this.relation = undefined;
-         this.min = undefined;
-         this.max = undefined;
-         this.nameCamelCase = undefined;
-         this.nameTitleCase = undefined;
-         this.nameSnakeCase = undefined; */
     }
 
     /**
@@ -31,13 +19,13 @@ export default class Properties {
     * @return {string} Property has been transpile.
     */
     parse(entity, rawProperties, relationship) {
-        let props = {};
+        let props: Property;
 
         if (rawProperties) {
             // Iterate properties
             Object.entries(rawProperties).forEach((prop) => {
 
-                const relation = {};
+                let relation: Relationship;
 
                 // Property name
                 props.name = prop[0];
@@ -126,7 +114,6 @@ export default class Properties {
                                 }
                             }
 
-                        
                         });
                     }
                 }

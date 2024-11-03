@@ -1,9 +1,9 @@
-import process from 'node:process'
-import path from 'node:path'
-import fs from 'node:fs'
+import * as process from 'node:process'
+import * as path from 'node:path'
+import * as fs from 'node:fs'
 import ejs from 'ejs'
-import YAML from 'yaml'
-import archiver from 'archiver'
+import * as YAML from 'yaml'
+import * as archiver from 'archiver'
 import { Command } from 'commander'
 import { fileURLToPath } from 'url'
 import Logo from './logo.js'
@@ -11,6 +11,8 @@ import * as utils from './utils.js'
 import Blueprint from './blueprint.js'
 import { transpileJDL, transpileJDLJson } from '../converter/jdl/jdl.js'
 import GolokAI from '../converter/ai/golok-ai.js'
+import {Config, Model, Property, Entity} from './schema'
+
 
 const PrintBlueprint = Object.freeze({
   DEFAULT: Symbol('default'),
@@ -22,39 +24,43 @@ const PrintBlueprint = Object.freeze({
  * BaseGolok
  */
 export default class BaseGolok {
+   __filename = fileURLToPath()
+  __dirname = path.dirname(__filename)
+    currentDirname = utils.getCurrentDirname()
+    archive = {}
+
+    MODE_0666 = parseInt('0666', 8)
+    MODE_0755 = parseInt('0755', 8)
+    BLUEPRINT_FILE = '.golok.blueprint.yaml'
+    BLUEPRINT_SOURCE_FILE = '.golok.blueprint.source.yaml'
+    ENTITY_DIR = '/entity'
+    APP_DIR = '/app'
+    DELIM_PATH = '/'
+    EXT_EJS = '.ejs'
+    TEMPLATES = '/templates'
+    MANIFEST = '/manifest.yaml'
+    EXAMPLE1 = 'example/standard.yaml'
+    BLUEPRINT_EXAMPLE = __dirname + '/../../' + this.EXAMPLE1
+    program;
+    config: Config; 
+    children = []
+    isConvertion = false
+    blueprintSource = ''
+    blueprintSourceDir = ''
+    printType = PrintBlueprint.DEFAULT
   /**
    * @param {number} args
    * @param {number} framework
    * @param {number} options
    */
   constructor (args, framework, options) {
-    const __filename = fileURLToPath(import.meta.url)
-    this.__dirname = path.dirname(__filename)
-    const currentDirname = utils.getCurrentDirname()
-    this.archive = {}
-
-    this.MODE_0666 = parseInt('0666', 8)
-    this.MODE_0755 = parseInt('0755', 8)
-    this.BLUEPRINT_FILE = '.golok.blueprint.yaml'
-    this.BLUEPRINT_SOURCE_FILE = '.golok.blueprint.source.yaml'
-    this.ENTITY_DIR = '/entity'
-    this.APP_DIR = '/app'
-    this.DELIM_PATH = '/'
-    this.EXT_EJS = '.ejs'
-    this.TEMPLATES = '/templates'
-    this.MANIFEST = '/manifest.yaml'
-    this.EXAMPLE1 = 'example/standard.yaml'
-    this.BLUEPRINT_EXAMPLE = this.__dirname + '/../../' + this.EXAMPLE1
+    //const __filename = fileURLToPath(import.meta.url)
+    
+    
 
     // Initiate commander
-    const program = new Command()
-    this.program = program
-    this.config = {}
-    this.children = []
-    this.isConvertion = false
-    this.blueprintSource = ''
-    this.blueprintSourceDir = ''
-    this.printType = PrintBlueprint.DEFAULT
+    this.program = new Command()
+    
 
     // Initiate golok command line interface
     this.program
@@ -77,7 +83,7 @@ export default class BaseGolok {
       .option(
         '-o, --output <string>',
         'Destination folder for generated apps',
-        currentDirname
+        this.currentDirname
       )
       .option('-t, --template <string>', 'Path to your own folder template')
       .option('-j, --jdl', 'Transpile to jhipster')
@@ -145,7 +151,7 @@ export default class BaseGolok {
       .option(
         '-o, --output <string>',
         'Destination folder for generated apps',
-        currentDirname
+        this.currentDirname
       )
       .option('-i, --input <string>', 'File to be convert.')
       .option('-k, --key <string>', 'Google Vertex API Key. As optional environment variable GOOGLE_API_KEY instead')
@@ -153,7 +159,7 @@ export default class BaseGolok {
       .action((blueprintPath, options) => {
         options.isAI = true;
         this.config.options = options;
-        const ai = new GolokAI({'key':options.key})
+        const ai = new GolokAI({'key':options.key}, {})
         ai.generate(blueprintPath).then(data => {
           this.createCommand(blueprintPath, framework, true, data, options)
         })
@@ -168,7 +174,7 @@ export default class BaseGolok {
     this.startTime = Date.now()
 
     try {
-      let yaml = {}
+      let yaml:OAS;
 
       if (framework) {
         this.framework = framework
@@ -189,7 +195,9 @@ export default class BaseGolok {
 
         utils.print('Total token: '+ aiGenerated.totalTokens);
 
+        
         yaml = utils.parseYamlString(aiGenerated.result);
+      
         if (!aiGenerated.result.applications) {
           yaml.info = this.defaultInfoBlueprint().info;
           yaml.endpoint = this.defaultInfoBlueprint().endpoint;

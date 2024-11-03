@@ -12,15 +12,17 @@ class Golok extends BaseGolok {
    * @param {String} args
    * @param {String} opts
    */
-  constructor (args, opts) {
+  constructor () {
+  //constructor (args, opts) {
     // Initiate from parent
-    super(args, opts)
+    //super(args, opts)
+    super(0, 0,0)
 
     let config = this.getConfig();
     
-    if (config.blueprint) {
+    /* if (config.blueprint) {
         this.generateFrontend(config, this)
-    }
+    } */
     
   }
 
@@ -33,7 +35,7 @@ class Golok extends BaseGolok {
     config.blueprint.applications.frontend.forEach(el => {
       switch (el.framework) {
         case Framework.flutter:
-          new Flutter().generate(config, el, obj)
+          new Flutter("","").generate(config, el, obj)
           break
         default:
           print('No framework to be generated', 'red')
@@ -43,4 +45,4 @@ class Golok extends BaseGolok {
   }
 }
 
-new Golok()
+const golok = new Golok()

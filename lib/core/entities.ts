@@ -3,13 +3,17 @@ import {
     renderEjsFile, camelize, print, extractLocale,
 } from './utils.js';
 import {convertTypeDart} from '../core/type_parser.js';
-import Properties from './properties.js';
+import PropParser from './properties.js';
+import {Model, Entity, Enum} from './schema'
 
 /**
  * Entities
  */
 export default class Entities {
-    constructor(yaml, defaultProp) {
+
+    entities: Array<Entity>;
+
+    constructor(yaml: Model, defaultProp) {
         this.entities = this.mappingEntity(yaml, defaultProp);
         //process.exit(1)
     }
@@ -23,9 +27,9 @@ export default class Entities {
     * @param {string} yaml
     * @return {string} Global config has been transpile.
     */
-    mappingEntity(yaml, defaultProp) {
+    mappingEntity(yaml: Model, defaultProp) {
 
-        const entities = [];
+        const entities = new Array<Entity>;
         /**
          * yaml.entities      <- entities:
          * entity name (e[0]) <- - Product:
@@ -36,7 +40,7 @@ export default class Entities {
             (e[1].properties)
         */
         yaml.entities.forEach((et, index) => {
-            const entity = {};
+            let entity:Entity;
             entity.name = '';
             entity.properties = [];
             entity.relationship = [];
@@ -76,7 +80,7 @@ export default class Entities {
                     if (name[1] === 'enum') {
                         if (!yaml.enums) yaml.enums = [];
 
-                        const _enum = {};
+                        let _enum: Enum;
                         _enum.name = name[0].split(',')[0];
                         _enum.values = e[1];
                         _enum.locale = extractLocale(name[0]);
@@ -98,10 +102,10 @@ export default class Entities {
                         // Get Entity documentation attribute
                         if (e[1].doc) {
                             entity.doc = e[1].doc;
-                        } else {
+                        } /* else {
                             entity.docID = entity.doc;
                             entity.docEN = e[1].docEN ? e[1].docEN : entity.docID
-                        }
+                        } */
 
                         // Add default properties for each entity
                         if (defaultProp && defaultProp.length >0 && !noProps) {
@@ -112,7 +116,7 @@ export default class Entities {
                         if (entity.properties.length > 0) {
                             const _props = [];
                             entity.properties.forEach((property) => {
-                                const prop = new Properties(entity, property, relationship);
+                                const prop = new PropParser(entity, property, relationship);
                                 _props.push(prop.getObject());
                             });
                             entity.properties = _props;
@@ -142,7 +146,7 @@ export default class Entities {
     parseProperties(entity, properties) {
         try {
             properties.forEach((property) => {
-                const prop = new Properties(entity, property);
+                const prop = new PropParser(entity, property);
 
                 entity.properties.push(prop.getObject());
             });

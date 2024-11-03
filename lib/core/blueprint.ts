@@ -7,6 +7,7 @@ import {
 } from './utils.js'
 import Entities from './entities.js'
 import Properties from './properties.js'
+import {Model, Operation, Enum, EnumValue, Parameter} from './schema'
 
 export { golokBlueprint, getFront }
 
@@ -14,12 +15,14 @@ export { golokBlueprint, getFront }
  * Blueprint
  */
 export default class Blueprint {
+  blueprint: Model;
   /**
    * constructor
    * @param {object} yaml
    * @param {object} options
    */
-  constructor (yaml, options) {
+  
+  constructor (yaml: Model, options) {
     const globalConfig = this.getGlobalConfig(yaml)
     const defaultProp = globalConfig.defaultProperties
 
@@ -109,17 +112,17 @@ export default class Blueprint {
     return _entities
   }
 
-  mappingEnums (yaml) {
-    const enums = []
+  mappingEnums (yaml:Model) {
+    let enums:Array<Enum>;
 
     // Iterate properties
     yaml.enums.forEach(en => {
-      const _enum = {}
+      let _enum:Enum;
       Object.entries(en).forEach(e => {
         _enum.name = e[0]
         _enum.values = []
         e[1].forEach(el => {
-          let value = {}
+          let value: EnumValue;
           value.name = el.split(',')[0]
           value.locale = extractLocale(el)
           _enum.values.push(value)
@@ -239,20 +242,20 @@ export default class Blueprint {
    * @param {string} yaml
    * @return {string} Global config has been transpile.
    */
-  mappingOperations (yaml) {
-    const operations = []
+  mappingOperations (yaml: Model) {
+    let operations: Array<Operation>
     yaml.operations.forEach((ops, index) => {
-      const operation = {}
+      let operation: Operation;
       operation.name = ''
 
       Object.entries(ops).forEach(op => {
-        const _op = {}
-        const parameters = []
+        let _op: Operation;
+        let parameters: Parameter
 
-        _op.name = op[0]
+        _op.name = op[0];
 
         // Get Documentations
-        if (op[1].doc) _op.doc = op[1].doc
+        if (op[1].doc) {_op.doc = op[1].doc}
 
         // Get Return
         if (op[1].return) {
@@ -269,11 +272,11 @@ export default class Blueprint {
           let _parameterString = ''
 
           op[1].parameters.forEach((par, i) => {
-            const param = {}
+            let param: Parameter;
             let isEnd = false
             Object.entries(par).forEach(p => {
-              if (p[0]) param.name = p[0]
-              if (p[1]) param.type = p[1]
+              if (p[0]) param.name = p[0];
+              if (p[1]) param.type = p[1];
             })
             isEnd = i < op[1].parameters.length - 1 ? false : true
             parameters.push(param)
@@ -333,169 +336,10 @@ function getFront (blueprint) {
   }
 }
 
-/**
- * Info
- */
-export class Info {
-  /**
-   *
-   */
-  constructor (version, title, description, termsOfService) {
-    this.version = version
-    this.title = title
-    this.description = description
-    // / termsOfService URL
-    this.termsOfService = termsOfService
-  }
-}
-
-/**
- * Contact
- */
-export class Contact {
-  constructor (name, email, url) {
-    this.name = name
-    this.email = email
-    this.url = url
-  }
-}
-
-/**
- * License
- */
-export class License {
-  constructor (name, url) {
-    this.name = name
-    this.url = url
-  }
-}
-
-/**
- * Documentation
- */
-export class Documentation {
-  constructor (name, description, url) {
-    this.name = name
-    this.description = description
-    this.url = url
-  }
-}
-
-/**
- * Endpoint
- */
-export class Endpoint {
-  constructor (url, description) {
-    this.url = url
-    this.description = description
-  }
-
-  setUrl (url) {
-    this.url = url
-  }
-  setDescription (description) {
-    this.description = description
-  }
-}
-
-/**
- * Frontend
- */
-export class Frontend {
-  constructor (args, options) {
-    this.framework = framework // String -> Fluter, Java
-    name = name // String
-    packageName = packageName // String -> tech.kays
-    localDatabase = localDatabase // String
-    admin = admin // bool
-    themes = themes // String
-    plugins = plugins // List<String>
-    stateManagement = stateManagement
-    platforms = platforms // List<String> -> web | android
-    locale = locale // List<String>
-    entities = entities // List<String>
-  }
-}
-
-/**
- *
- */
-export class Parameter {
-  constructor (type, doc, platform) {
-    this.type = type
-    this.doc = doc
-    this.platform = platform
-  }
-
-  setType (type) {
-    this.type = type
-  }
-  setDoc (doc) {
-    this.doc = doc
-  }
-  setPlatform (platform) {
-    this.platform = platform
-  }
-}
-
-/**
- * Security
- */
-export class Security {
-  constructor (args, options) {}
-}
-
 class BaseBlueprint {
   constructor () {}
 
   getObject () {
     return { name: '--' }
-  }
-}
-
-/**
- * Enums
- */
-export class Enums extends BaseBlueprint {
-  constructor (raw, name, enums, platform) {
-    super()
-    this.raw = raw // String -> Kg,g
-    this.name = name
-    this.enums = enums // List<String>
-    this.platform = platform
-    this.script = this.getScript()
-  }
-  setRaw (raw) {
-    this.raw = raw
-  }
-  setName (name) {
-    this.name = name
-  }
-  setEnums (enums) {
-    this.enums = enums
-    this.script = this.getScript()
-  }
-  setPlatform (platform) {
-    this.platform = platform
-  }
-
-  getModel () {
-    return {
-      name: this.name,
-      raw: this.raw,
-      enums: this.enums
-    }
-  }
-
-  // getScript
-  getScript () {
-    let script = ''
-    if (this.enums) {
-      this.enums.forEach((el, i) => {
-        const del = i < this.enums.length - 1 ? ',' : ''
-        script += el + del
-      })
-    }
-    return script
   }
 }

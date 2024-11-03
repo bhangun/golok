@@ -1,9 +1,10 @@
-import path from 'node:path'
-import fs from 'node:fs'
+import { dirname, extname, basename, join } from 'node:path'
+import * as fs from 'node:fs'
 import ejs from 'ejs'
-import YAML from 'yaml'
+import * as YAML from 'yaml'
 import Properties from './properties.js'
 import { fileURLToPath } from 'url'
+import {Model} from './schema'
 
 export {
   typeCheck,
@@ -40,6 +41,8 @@ export {
 
   // javaParser, jsParser, phpParser
 }
+
+
 
 const Framework = Object.freeze({
   flutter: 'flutter',
@@ -113,7 +116,7 @@ function renderEjsFile (
   context,
   options
 ) {
-  const destinPath = path.join(outputDir, templateFile.replace(/.ejs+$/, ''))
+  const destinPath = join(outputDir, templateFile.replace(/.ejs+$/, ''))
 
   // Render all ejs file
   ejs.renderFile(sourceTemplate, context, options, function (err, str) {
@@ -237,7 +240,7 @@ function camelize (str) {
 
 function extractLocale (text) {
   const localeDoc = text.match(/{(.*?)}/)
-  let props = {}
+  let props:any;
   if (localeDoc) {
     props.id = localeDoc[1].match(/id:(.*),./)[1]
     props.en = localeDoc[1].match(/.,.en:(.*)/)[1]
@@ -303,7 +306,7 @@ function titleCase (string) {
  * @param {String} text
  * @param {String} color
  */
-function print (text, color) {
+function print (text:string, color="white") {
   switch (color) {
     case 'yellow':
       console.log('\x1b[33m%s\x1b[0m', text)
@@ -337,8 +340,8 @@ function print (text, color) {
  * @param {String} inputFile
  * @return {String} value
  */
-function json2js (inputFile) {
-  const js = JSON.parse(fs.readFileSync(inputFile))
+function json2js (inputFile: string) {
+  const js = JSON.parse(fs.readFileSync(inputFile).toString())
   return js
 }
 
@@ -348,7 +351,7 @@ function json2js (inputFile) {
  * @return {String} value
  */
 function yml2js (inputFile) {
-  const file = JSON.parse(fs.readFileSync(inputFile))
+  const file = JSON.parse(fs.readFileSync(inputFile).toString())
   const js = parseYaml(file)
   return js
 }
@@ -372,7 +375,7 @@ function rename (oldName, newName) {
  * @param {String} generator
  * @return {String} value
  */
-function rewriteFile (path, generator) {
+/* function rewriteFile (path, generator) {
   let fullPath
   if (args.path) {
     fullPath = path.join(args.path, args.file)
@@ -383,7 +386,7 @@ function rewriteFile (path, generator) {
   const body = rewrite(args)
   write(fullPath, body)
   return args.haystack !== body
-}
+} */
 
 /**
  * Parse yaml file to js
@@ -391,9 +394,9 @@ function rewriteFile (path, generator) {
  * @return {String} value
  */
 function parseYaml (path) {
-  const file = fs.readFileSync(path, 'utf8', function (err) {
+  const file = fs.readFileSync(path, 'utf8')/* , function (err) {
     if (err) throw err
-  })
+  }) */
   const yaml = YAML.parse(file)
   return yaml
 }
@@ -403,7 +406,7 @@ function parseYaml (path) {
  * @param {String} path
  * @return {String} value
  */
-function parseYamlString (text) {
+function parseYamlString (text): Model {
   const yaml = YAML.parse(text)
   return yaml
 }
@@ -445,9 +448,9 @@ function getMimeType (ext) {
   }
 }
 
-function dirname () {
+function dirName () {
   const __filename = fileURLToPath(import.meta.url)
-  return path.dirname(__filename)
+  return dirname(__filename)
 }
 
 /**
@@ -462,7 +465,7 @@ function checkFileExt (file) {
   if (!pattern.test(file)) {
     print('Something wrong with your URL or Path, please change!', 'red')
   } else {
-    return path.extname(file)
+    return extname(file)
   }
 }
 
@@ -470,8 +473,8 @@ function checkFileExt (file) {
  * @return {String} default app name
  */
 function getCurrentDirname () {
-  return /^[a-zA-Z0-9-_]+$/.test(path.basename(process.cwd()))
-    ? path.basename(process.cwd())
+  return /^[a-zA-Z0-9-_]+$/.test(basename(process.cwd()))
+    ? basename(process.cwd())
     : 'kujang'
 }
 
@@ -479,6 +482,6 @@ function getCurrentDirname () {
  * @return {String} default app name
  */
 function getDirectory (filename) {
-  var parentDir = path.dirname(filename)
+  var parentDir = dirname(filename)
   return parentDir
 }

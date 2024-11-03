@@ -3,7 +3,7 @@
   "version": "0.1.5",
   "description": "Tools to create anything",
   "main": "lib/index.js",
-  "type": "module",
+  "module": "nodenext",
   "bin": {
     "golok": "./lib/index.js"
   },
@@ -18,11 +18,14 @@
     "archiver": "^7.0.1",
     "commander": "^11.1.0",
     "ejs": "^3.1.9",
+    "typescript": "^5.6.3",
     "yaml": "^2.3.4"
   },
   "scripts": {
     "test": "jest",
     "pretest": "eslint .",
+    "start": "node built/index.js",
+    "build": "npx tsc",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "release": "git push && git push --tags && npm publish",
