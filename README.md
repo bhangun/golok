@@ -23,6 +23,11 @@ golok create yourModelFile.yaml
 ![cli][golok-cli]
 ![cli][golok-cli-end]
 
+## Development
+```
+npx ts-node src/index.ts
+```
+
 
 ```bash
 cd toYourAppFolder
@@ -200,10 +205,26 @@ operations:
 ```bash
 git clone to/your/golok
 ```
+
+### Run from TS file
+```
+npx ts-node src/index.ts
+```
+
+### Add this to dist/index.js
+When this message appear:
+line 1: use strict: command not found
+
+Add at first line
+```
+#!/usr/bin/env node
+```
+
 ### Link golok
 ```bash
 npm link to/your/golok
 ```
+
 
 ### Unlink golok
 ```bash

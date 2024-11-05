@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "./built",
+    "types": [ "node"],
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
     "allowJs": true,
-    "strict": false,
     "module": "commonjs",
-    "target": "es6",
-    "sourceMap": true,
+    "target": "ESNext",
     "esModuleInterop": true,
     "moduleResolution": "node"
   },
-  "include": ["./lib/**/*"]
+  "include": ["./src/**/*"]
 }

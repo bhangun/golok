@@ -2,10 +2,10 @@
   "name": "golok",
   "version": "0.1.5",
   "description": "Tools to create anything",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "module": "nodenext",
   "bin": {
-    "golok": "./lib/index.js"
+    "golok": "./dist/index.js"
   },
   "keywords": [
     "golok",
@@ -18,13 +18,12 @@
     "archiver": "^7.0.1",
     "commander": "^11.1.0",
     "ejs": "^3.1.9",
-    "typescript": "^5.6.3",
     "yaml": "^2.3.4"
   },
   "scripts": {
     "test": "jest",
     "pretest": "eslint .",
-    "start": "node built/index.js",
+    "dev": "node dist/index.js",
     "build": "npx tsc",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
@@ -34,9 +33,12 @@
     "release:major": "npm version major -a -m \"Update to %s\" && npm run release"
   },
   "devDependencies": {
+    "@types/node": "^22.8.7",
     "eslint": "^8.56.0",
     "eslint-config-google": "^0.14.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   },
   "author": "Bhangun <n90d1n9@gmail.com> (https://github.com/bhangun)",
   "license": "MIT",

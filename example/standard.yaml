@@ -91,7 +91,17 @@ includes:
     entities: Product, Status,
     enums: Unit
   - file: example/order.yaml
-    
+
+entities:
+ - SecurityCheck:
+    properties:
+      - id: integer, max=10, primaryKey
+      - checkResult: varchar, max=255
+      - comments: varchar, max=65535
+      - createdAt: timestamp
+      - updatedAt: timestamp
+      - passengerId: integer, max=10
+      - passenger: Passengers, manyToOne    
 
 enums:
 - GroupType:
