@@ -1,15 +1,15 @@
 import {
     typeCheck, camelToTitle, extractLocale,
-    camelToTitleWithSpace, print
+    camelToTitleWithSpace, printColor
 } from './utils.js';
 import {convertTypeDart, convertTypeJava} from '../core/type_parser.js';
-import { Property, Relationship} from './schema';
+import { Entity, Property, Relationship} from './schema';
 
 /**
  * Properties
  */
-export default class PropParser {
-    constructor(entity, rawProperties, relationship) {
+export default class PropertyParser {
+    constructor(entity?: Entity, rawProperties?, relationship?) {
         this.parse(entity, rawProperties, relationship);
     }
 
@@ -18,12 +18,12 @@ export default class PropParser {
     * @param {string} rawProperties
     * @return {string} Property has been transpile.
     */
-    parse(entity, rawProperties, relationship) {
+    parse(entity: Entity, rawProperties: any, relationship: any) {
         let props: Property;
 
         if (rawProperties) {
             // Iterate properties
-            Object.entries(rawProperties).forEach((prop) => {
+            Object.entries(rawProperties).forEach((prop: any) => {
 
                 let relation: Relationship;
 

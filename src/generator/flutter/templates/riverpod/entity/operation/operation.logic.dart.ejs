@@ -1,0 +1,132 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
+
+import 'package:<%= blueprint.info.name %>/app/models/general_status.dart';
+import '../<%= snakeCase %>_module.dart';
+import '../services/<%= snakeCase %>_services.dart';
+import '../model/<%= snakeCase %>.dart';
+
+var log = Logger('<%= titleCase %>Notifier');
+
+/// Provider for the <%= titleCase %> state
+final <%= camelCase %>Provider = StateNotifierProvider<<%= titleCase %>Notifier, <%= titleCase %>State>((ref) {
+  return <%= titleCase %>Notifier();
+});
+
+/// Notifier to manage the <%= titleCase %> state
+class <%= titleCase %>Notifier extends StateNotifier<<%= titleCase %>State> {
+
+  <%= titleCase %>Notifier() : super(<%= titleCase %>State(
+    title: '',
+    isUpdated: false,
+    status: const StateStatus(),
+    formStatus: const FormStatus(),
+    isItemEmpty: true,
+    totalItem: 0,
+    isListEmpty: true,
+    <%= camelCase %>: const <%= titleCase %>(),
+    <%= camelCase %>List: []
+  ));
+
+  void set<%= titleCase %>(<%= titleCase %> <%= camelCase %>) {
+     state.copyWith(<%= camelCase %>: <%= camelCase %>);
+  }
+
+  /// selected item
+  itemTap(int index) {}
+
+  /// Add entity
+  add() {}
+
+  /// Save entity
+  void save(<%= titleCase %> <%= camelCase %>) {
+    state.copyWith(
+        <%= camelCase %>: <%= camelCase %>, status: const StateStatus(loading: true));
+    try {
+      <%= titleCase %>Services.create<%= titleCase %>(state.<%= camelCase %>);
+      state.copyWith(
+        <%= camelCase %>: <%= camelCase %>, status: const StateStatus(loading: false,success: true, error: false));
+    } catch (e) {
+      state.copyWith(
+          <%= camelCase %>: <%= camelCase %>,
+          status: const StateStatus(
+              loading: false, error: true, errorMessage: ''));
+      log.severe(state.status.errorMessage, e);
+    }
+  }
+
+  /// Delete entity by ID
+  delete(int id) {
+  }
+
+  /// Update entity
+  update() {
+    
+  }
+
+  Future getInventoryList() async {}
+}
+
+// State for the <%= titleCase %> entity
+class <%= titleCase %>State {
+  final String title;
+  final bool isUpdated;
+  final StateStatus status;
+  final FormStatus formStatus;
+  final bool isItemEmpty;
+  final bool isListEmpty;
+  final int totalItem;
+  final <%= titleCase %> <%= camelCase %>;
+  final List<<%= titleCase %>> <%= camelCase %>List;
+
+  <%= titleCase %>State({
+    required this.title,
+    required this.isUpdated,
+    required this.status,
+    required this.formStatus,
+    required this.isItemEmpty,
+    required this.totalItem,
+    required this.isListEmpty,
+    required this.<%= camelCase %>,
+    required this.<%= camelCase %>List
+  });
+
+  <%= titleCase %>State copyWith({
+    String? title,
+    bool? isUpdated,
+    StateStatus? status,
+    FormStatus? formStatus,
+    bool? isItemEmpty,
+    int? totalItem,
+    bool? isListEmpty,
+    <%= titleCase %>? <%= camelCase %>,
+    List<<%= titleCase %>>? <%= camelCase %>List
+  }) {
+    return <%= titleCase %>State(
+      title: title?? this.title,
+      isUpdated: isUpdated?? this.isUpdated,
+      status: status?? this.status,
+      formStatus: formStatus?? this.formStatus,
+      isItemEmpty: isItemEmpty?? this.isItemEmpty,
+      totalItem: totalItem?? this.totalItem,
+      isListEmpty: isListEmpty?? this.isListEmpty,
+      <%= camelCase %>: <%= camelCase %>?? this.<%= camelCase %>,
+      <%= camelCase %>List: <%= camelCase %>List?? this.<%= camelCase %>List
+    );
+  }
+
+  @override
+  String toString() {
+    return '''
+      title: $title,
+      isUpdated: $isUpdated,
+      status: $status,
+      formStatus: $formStatus,
+      isItemEmpty: $isItemEmpty,
+      totalItem: $totalItem,
+      isListEmpty: $isListEmpty,
+      <%= camelCase %>: $<%= camelCase %>,
+      <%= camelCase %>List: $<%= camelCase %>List
+    ''';
+  }
+}

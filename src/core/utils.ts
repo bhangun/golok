@@ -37,7 +37,8 @@ export {
   getMimeType,
   streamToString,
   streamToFile,
-  parseYamlString
+  getVersion,
+  //parseYamlString
 
   // javaParser, jsParser, phpParser
 }
@@ -478,7 +479,7 @@ function checkFileExt (file) {
 function getCurrentDirname () {
   return /^[a-zA-Z0-9-_]+$/.test(basename(process.cwd()))
     ? basename(process.cwd())
-    : 'kujang'
+    : 'golok'
 }
 
 /**
@@ -488,3 +489,13 @@ function getDirectory (filename) {
   var parentDir = dirname(filename)
   return parentDir
 }
+
+ /**
+   * Get golok version
+   * @return {String} value
+   */
+/*  function getVersion():string {
+  return JSON.parse(
+    fs.readFileSync(__dirname+'/')//new URL('../../package.json', import.meta.url))
+  ).version
+} */

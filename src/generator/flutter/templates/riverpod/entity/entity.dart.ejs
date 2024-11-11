@@ -1,0 +1,96 @@
+import 'dart:convert';
+import 'package:equatable/equatable.dart'; <% for (idx in relationship) { %><% if(relationship[idx].toSnakeCase === 'user'){%>
+import '../../account/models/user.dart';<%} else {%>
+import 'package:<%= blueprint.info.name %>/modules/<%= relationship[idx].toSnakeCase %>/model/<%= relationship[idx].toSnakeCase %>.dart';<% }}%>
+
+
+class <%= nameTitleCase %> extends Equatable{<% for (idx in properties) { %><% if(properties[idx].doc){%>
+    /// <%= properties[idx].doc %> <%}%>
+    final <% if(properties[idx].type.dart.name ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].type.dart.name %><%}%>? <%= properties[idx].name %>; <% } %>
+
+    const <%= name %>(<%if(properties.length > 0){%>{ <% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
+        this.<%- properties[idx].name %>,<% } else {%> 
+        this.<%- properties[idx].name %>,<% } } %> 
+    }<%}%>);
+
+    factory <%= name %>.fromJson(Map<String, dynamic> json) =>  
+        <%= name %>(<% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
+ <% if(properties[idx]['isList']) { %>  
+        <%= properties[idx].name %>: List<<%= properties[idx].type.dart.name %>>.from(json['<%= properties[idx].name %>'].map((x) => 
+        <%= properties[idx].type.dart.name %>.fromJson(x))), <% } else { %>
+        <%= properties[idx].name %>: <%= properties[idx].type.dart.nameCapital %>.fromJson(json['<%= properties[idx].name %>']), 
+        <% } } else { %><%- properties[idx].name %>: json['<%- properties[idx].name %>'], 
+        <% } } %>
+    );
+
+    Map<String, dynamic> toJson() => 
+        {<% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') {%>
+        <% if(properties[idx]['isList']) {%>"<%= properties[idx].name %>": List<dynamic>.from(<%= properties[idx].name %>.map((x) => x.toJson())), 
+        <%} else { %>"<%= properties[idx].name %>": <%= properties[idx].name %>.toJson(),
+        <%} } else {%>"<%- properties[idx].name %>": <%- properties[idx].name %>,
+        <% }} %>
+    };
+
+    static List<<%= name %>> listFromString(String str) => List<<%= name %>>.from(json.decode(str).map((x) => <%= name %>.fromJson(x)));
+
+    static List<<%= name %>> listFromJson(List<dynamic> data) {
+        return data.map((post) => <%= name %>.fromJson(post)).toList();
+    }
+
+    static String list<%= name %>ToJson(List<<%= name %>> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+    <%= nameTitleCase %> copyWith({<% for (idx in properties) { %>
+        <% if(properties[idx].type.dart.name ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].type.dart.name %><%}%>? <%= properties[idx].name %>, <% } %>
+        }) {
+    return <%= nameTitleCase %>(<% for (idx in properties) { %>
+        <%= properties[idx].name %>: <%= properties[idx].name %>?? this.<%= properties[idx].name %>, <% } %>
+        );
+    }
+
+    List<Object> get props => [<% for (idx in properties) { %>
+        <%= properties[idx].name %>!, <% } %>
+    ];
+
+    @override
+    String toString() {
+      return '''<% for (idx in properties) { %>
+      <%- properties[idx].name %>: $<%= properties[idx].name %>, <% } %>
+      ''';
+    }
+}
+
+class <%= nameTitleCase %>List {
+  final List<<%= nameTitleCase %>>? <%= nameCamelCase %>s;
+
+  <%= nameTitleCase %>List({
+    this.<%= nameCamelCase %>s,
+  });
+
+  factory <%= name %>List.fromJson(List<dynamic> json) {
+    List<<%= name %>> <%= nameCamelCase %>s = [];
+    <%= nameCamelCase %>s = json.map((post) => <%= name %>.fromJson(post)).toList();
+
+    return <%= nameTitleCase %>List(
+      <%= nameCamelCase %>s: <%= nameCamelCase %>s,
+    );
+  }
+}
+<%
+let newEnums = [];
+for (p in properties) { 
+    if(properties[p].isEnum){
+        for(b in blueprint.enums){ 
+            if (blueprint.enums[b].name == properties[p].type.origin.name) {
+                newEnums.push(blueprint.enums[b]);
+            }
+        }
+    }
+}
+%>
+<% for (p in newEnums) { %>
+enum <%= newEnums[p].name %>{<% for (v in newEnums[p].values) { %>
+   <%= newEnums[p].values[v] %>,<%}%>
+}<% }%>
+
+
+

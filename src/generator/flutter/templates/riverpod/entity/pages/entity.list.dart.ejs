@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:<%= blueprint.info.name %>/modules/<%= nameSnakeCase %>/logic/<%= nameSnakeCase %>_logic.dart';
+import 'package:<%= blueprint.info.name %>/shared/widgets/list_item_slide_widget.dart';
+import 'package:<%= blueprint.info.name %>/shared/widgets/progress_indicator_widget.dart';
+
+class <%= nameTitleCase %>List extends ConsumerStatefulWidget {
+  const <%= nameTitleCase %>List({super.key});
+
+  @override
+  <%= nameTitleCase %>ListState createState() => <%= nameTitleCase %>ListState();
+}
+
+class <%= nameTitleCase %>ListState extends ConsumerState<<%= nameTitleCase %>List> {
+  final _listKey = GlobalKey<ScaffoldState>();
+  String title = "<%= nameTitleCase %> List";
+  String dataEmpty = 'Data empty';
+  String addTooltip = 'Add';
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <%= nameTitleCase %>State <%= nameCamelCase %>State = ref.watch(<%= nameCamelCase %>Provider);
+    return Scaffold(
+        key: _listKey,
+        appBar: AppBar(title: const Text('<%= nameTitleCase %> List')),
+        body: Stack(
+          children: <Widget>[
+            <%= nameCamelCase %>State.status.loading
+                ? const CustomProgressIndicatorWidget()
+                : <%= nameCamelCase %>State.isListEmpty
+                    ? ListView.separated(
+                        itemCount: <%= nameCamelCase %>State.totalItem,
+                        separatorBuilder: (context, index) {
+                          return const Divider();
+                        },
+                        itemBuilder: (context, index) {
+                          return ListItemSlide(
+                            child: ListTile(
+                                leading: const Icon(Icons.abc),
+                                title: Text(
+                                  '${<%= nameCamelCase %>State.<%= nameCamelCase %>List[index].id}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: false,
+                                ),
+                                onTap: () => ref.read(<%= nameCamelCase %>Provider.notifier).itemTap(index)),
+                          );
+                        })
+                    : Center(child: Text(dataEmpty)),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: ref.read(<%= nameCamelCase %>Provider.notifier).add(),
+          tooltip: addTooltip,
+          child: const Icon(Icons.add),
+        ));
+  }
+}

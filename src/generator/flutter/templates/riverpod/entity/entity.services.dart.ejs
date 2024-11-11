@@ -1,0 +1,33 @@
+import 'dart:async';
+import 'dart:convert';
+
+import '../model/<%= nameSnakeCase %>.dart';
+import '../../../core/network/rest/rest_services.dart';
+
+class <%= nameTitleCase %>Services {
+
+  static Future<<%= nameTitleCase %>> <%= nameCamelCase %>(String id) async {
+    var response = await RestServices.fetch('/api/<%= nameCamelCase %>$id');
+    return <%= nameTitleCase %>.fromJson(json.decode(response));
+  }
+
+  static Future<List<<%= nameTitleCase %>>> <%= nameCamelCase %>s([var page, var size, var sort]) async {
+    var data = await RestServices.fetch('/api/<%= nameCamelCase %>s');
+    return <%= nameTitleCase %>.listFromString(data);
+  }
+
+  static create<%= nameTitleCase %>(<%= nameTitleCase %> <%= nameCamelCase %>) async {
+    
+  }
+
+  //
+  static update<%= nameTitleCase %>(<%= nameTitleCase %> <%= nameCamelCase %>) async {
+    
+  }
+
+  //
+  static delete<%= nameTitleCase %>(int id) async {
+    
+  }
+
+}

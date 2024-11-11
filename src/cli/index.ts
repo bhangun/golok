@@ -5,9 +5,10 @@ import ejs from 'ejs'
 import * as YAML from 'yaml'
 import * as archiver from 'archiver'
 import { Command } from 'commander'
-import { fileURLToPath } from 'url'
-import Golok from '../core/golok'
 import {Config} from '../core/schema'
+import CoreGolok from '../core/golok';
+import Logo from '../core/logo';
+var pjson = require('../../package.json');
 
 export default class GolokCLI {
   constructor() {
@@ -22,7 +23,7 @@ export default class GolokCLI {
     //  .version(this.getVersion())
 
     // Show Golok logo
-    //Logo.show(this.getVersion())
+    Logo.show(pjson.version)
 
     // Command definition
     program
@@ -47,7 +48,7 @@ export default class GolokCLI {
         config.options.input = blueprintPath;
         config.path = blueprintPath
         //console.log(blueprintPath)
-        const golok = new Golok(config);
+       const golok = new CoreGolok(config);
         //this.config.options = options;
 
         // this.createCommand(blueprintPath, framework, false, {}, options);

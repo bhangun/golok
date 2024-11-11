@@ -1,10 +1,10 @@
 import {
     typeCheck, camelToSnake, makeDir, camelToTitle,
-    renderEjsFile, camelize, print, extractLocale,
+    renderEjsFile, camelize, printColor, extractLocale,
 } from './utils.js';
 import {convertTypeDart} from '../core/type_parser.js';
 import PropParser from './properties.js';
-import {Model, Entity, Enum} from './schema'
+import {Blueprint, Entity, Enum, Property} from './schema'
 
 /**
  * Entities
@@ -13,7 +13,7 @@ export default class Entities {
 
     entities: Array<Entity>;
 
-    constructor(yaml: Model, defaultProp) {
+    constructor(yaml: Blueprint, defaultProp) {
         this.entities = this.mappingEntity(yaml, defaultProp);
         //process.exit(1)
     }
@@ -27,7 +27,7 @@ export default class Entities {
     * @param {string} yaml
     * @return {string} Global config has been transpile.
     */
-    mappingEntity(yaml: Model, defaultProp) {
+    mappingEntity(yaml: Blueprint, defaultProp:any):Entity[] {
 
         const entities = new Array<Entity>;
         /**
@@ -56,7 +56,7 @@ export default class Entities {
                     }
                 } catch (err) {
                     noProps = true;
-                    print(e[0] + ' entity doesn\'t have any or nested properties nor in default,' +
+                    printColor(e[0] + ' entity doesn\'t have any or nested properties nor in default,' +
                         'you must define at least one.\n', 'red');
                     process.exit(1);
                 }
@@ -121,7 +121,7 @@ export default class Entities {
                             });
                             entity.properties = _props;
                         } else {
-                            print(entity.name + ' entity doesn\'t ' +
+                            printColor(entity.name + ' entity doesn\'t ' +
                                 'have any properties nor in configuration.default,' +
                                 'you must define at least one.\n', 'red');
                             process.exit(1);
@@ -143,7 +143,7 @@ export default class Entities {
      * @param {String} blueprint
      * @return {String} value
      */
-    parseProperties(entity, properties) {
+    parseProperties(entity: Entity, properties: Property[]) {
         try {
             properties.forEach((property) => {
                 const prop = new PropParser(entity, property);

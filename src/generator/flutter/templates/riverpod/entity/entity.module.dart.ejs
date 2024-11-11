@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/modules/menu.dart';
+import '../../core/modules/module_model.dart';
+import '../../core/routes/routes.dart';
+import 'pages/<%= nameSnakeCase %>_list.dart';
+import 'pages/<%= nameSnakeCase %>_detail.dart';
+import 'pages/<%= nameSnakeCase %>_form.dart';
+
+class <%= nameTitleCase %>Module implements Module {
+  @override
+  String? name = '<%= nameTitleCase %>';
+  static const String <%= nameCamelCase %>List = '/<%= nameCamelCase %>List';
+  static const String <%= nameCamelCase %>Detail = '/<%= nameCamelCase %>Detail';
+  static const String <%= nameCamelCase %>Form = '/<%= nameCamelCase %>Form';
+
+  @override
+  pages(BuildContext context) {
+    return [
+      const Menu(title: '<%= nameTitleCase %> Detail', path: <%= nameTitleCase %>Module.<%= nameCamelCase %>Detail),
+      const Menu(title: '<%= nameTitleCase %> Form', path: <%= nameTitleCase %>Module.<%= nameCamelCase %>Form),
+      const Menu(
+          title: '<%= nameTitleCase %> List',
+          path: <%= nameTitleCase %>Module.<%= nameCamelCase %>List,
+          showInDrawer: true,
+          showInHome: true)
+    ];
+  }
+
+  @override
+  services() {}
+
+  @override
+  goroutes() => [];
+
+  @override
+  List<StatefulShellBranch> branches() => [
+    Routes.shellBranch(<%= nameCamelCase %>List, <%= nameCamelCase %>List,<%= nameTitleCase %>List()),
+    Routes.shellBranch(<%= nameCamelCase %>Detail, <%= nameCamelCase %>Detail,<%= nameTitleCase %>Detail()),
+    Routes.shellBranch(<%= nameCamelCase %>Form, <%= nameCamelCase %>Form,<%= nameTitleCase %>Form()),
+  ];
+}
