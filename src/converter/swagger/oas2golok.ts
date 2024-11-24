@@ -470,6 +470,37 @@ export class BidirectionalConverter {
 // Example usage:
 const converter = new BidirectionalConverter();
 
+const originScriptYaml = '''
+entities:
+- Product:
+    doc: Ini product
+    author: bhangun
+    example: 
+    properties:
+    - code: Double, //Product code 
+    - name: String, min=3, max=25 //Nama produk
+    - sku: int,min=3, max=30, required
+    - unit: enum=Unit //Satuan produk
+    relationship:
+    - category: ProductCategory, manyToOne //Kategori produk
+- Category:
+    doc: Ini kategori
+    properties:
+    - name: String, min=3, max=20 //Category name
+    - description: String, min=3, max=30, required //Product code 
+enums:
+- Unit: 
+  - Kg{id:Kg, en:Kg}
+  - g{id:g, en:g}
+configuration: 
+  default: 
+    - name: default 
+      properties: 
+        - id: long //ID
+        - createAt: datetime //Created time 
+        - updateBy: User, ManyToOne //Updated time
+''';
+
 // Convert from Origin Script to OAS
 const originScript = yaml.parse(originScriptYaml);
 const oas = converter.originScriptToOas(originScript);

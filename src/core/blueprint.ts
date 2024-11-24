@@ -1,255 +1,76 @@
-import {
-  typeCheck,
-  parseYaml,
-  removeWhitespace,
-  splitString,
-  extractLocale
-} from './utils'
-import Entities from './entities'
-import Properties from './properties'
-import { Blueprint, Entity, Property, Operation, Enum, EnumValue, Parameter, Config } from './schema'
-
-export { compileBlueprint, golokBlueprint, getFront }
 
 
-/**
- * constructor
- * @param {object} yaml
- * @param {object} options
- */
-function compileBlueprint(origin: Blueprint, config?: Config): Blueprint {
-  const globalConfig = this.getGlobalConfig(origin)
-  const defaultProp = globalConfig.defaultProperties
-
-
-
-  // Mapping entities
-  /* if (yaml.entities) {
-    const entities = new Entities(yaml, defaultProp)
-    yaml.entities = entities.getEntities()
-  } */
-
-  // Mapping operations
-  if (yaml.operations) {
-    const operations = this.mappingOperations(yaml)
-    yaml.operations = operations
-  }
-
-  // Mapping enums
-  if (yaml.enums) {
-    const enums = this.mappingEnums(yaml)
-    yaml.enums = enums
-  }
-
-  //
-  if (
-    yaml.applications.frontend &&
-    yaml.applications.frontend.entities &&
-    typeCheck(yaml.applications.frontend.entities) == 'string'
-  ) {
-    // Rewrite string with comma to array
-    yaml.applications.frontend.entities = splitString(
-      yaml.applications.frontend.entities
-    )
-  }
-
-  if (
-    yaml.applications.frontend &&
-    yaml.applications.frontend.platform &&
-    typeCheck(yaml.applications.frontend.platform) == 'string'
-  ) {
-    // Rewrite string with comma to array
-    yaml.applications.frontend.platform = splitString(
-      yaml.applications.frontend.platform
-    )
-  }
-
-  if (yaml.enums && yaml.enums.length > 0) {
-    // Rewrite string with comma to array
-    const enums = []
-    yaml.enums.forEach(e => {
-      enums.push(e)
-    })
-    yaml.enums = enums
-  }
-
-  // Get last yaml mapping.
-  if (yaml.applications) {
-    yaml.applications = this.mappingApplications(yaml)
-  }
-
-  return yaml;
-}
-
-function getBlueprint() {
-  return this.blueprint
-}
-
-function mappingApplications(yaml) {
-  let apps = yaml.applications
-  apps.frontend.forEach(el => {
-    el.entities = this.getAppsEntities(yaml, el.entities)
-  })
-
-  /* apps.applications.backend.forEach(el => {
-          
-      }); */
-
-  return apps
-}
-
-function getAppsEntities(yaml, appEntities) {
-  let _entities = Array<Entity>//[]
-  if (appEntities === '*') {
-    _entities = yaml.entities
-  }
-  return _entities
-}
-
-function mappingEnums(yaml: Blueprint) {
-  let enums: Array<Enum>;
-
-  // Iterate properties
-  yaml.enums.forEach(en => {
-    let _enum: Enum;
-    Object.entries(en).forEach(e => {
-      _enum.name = e[0]
-      _enum.values = []
-      e[1].forEach(el => {
-        let value: EnumValue;
-        value.name = el.split(',')[0]
-        value.locale = extractLocale(el)
-        _enum.values.push(value)
-      })
-    })
-    enums.push(_enum)
-  })
-  return enums
+function transpileRelationship(originRelationship) {
+    return Object.entries(originRelationship).map(([label, relationship]) => ({
+        label,
+        name: Object.keys(relationship)[0],
+        camelCase: toCamelCase(Object.keys(relationship)[0]),
+        titleCase: toTitleCase(Object.keys(relationship)[0]),
+        snakeCase: toSnakeCase(Object.keys(relationship)[0]),
+    }));
 }
 
 
-
-/**
- * getGlobalConfig
- * @param {string} yaml
- * @return {string} Global config has been transpile.
- */
-function getGlobalConfig(yaml) {
-  const defaultProp = []
-
-  // Get default configuration
-  if (yaml.configuration) {
-    if (yaml.configuration.default) {
-      const defaultConfig = yaml.configuration.default
-      if (defaultConfig[0].name == 'default' && defaultConfig[0].properties) {
-        defaultConfig[0].properties.forEach(el => {
-          defaultProp.push(el)
-        })
-      }
-    }
-  }
-  return {
-    defaultProperties: defaultProp
-  }
+function transpileProperties(originProperties) {
+    return Object.entries(originProperties).map(([name, type]) => ({
+        name,
+        origin: type,
+        dartType: getDartType(type),
+        javaType: getJavaType(type),
+        min: getMinMax(type, "min"),
+        max: getMinMax(type, "max"),
+    }));
 }
 
-/**
- * mappingOperations
- * @param {string} yaml
- * @return {string} Global config has been transpile.
- */
-function mappingOperations(yaml: Blueprint) {
-  let operations: Array<Operation>
-  yaml.operations.forEach((ops, index) => {
-    let operation: Operation;
-    operation.name = ''
+function transpileOriginToTarget(originScript: string): Blueprint {
+    const { entities, enums, configuration } = yaml.load(originScript) as {
+        entities: { [key: string]: any }[];
+        enums: { [key: string]: any };
+        configuration: { default: { [key: string]: any } };
+    };
 
-    /* Object.entries(ops).forEach(op => {
-      let _op: Operation;
-      let parameters: Parameter
+    const targetEntities: Entity[] = entities.map((entity) => ({
+        name: Object.keys(entity)[0],
+        doc: entity[Object.keys(entity)[0]].doc,
+        author: entity[Object.keys(entity)[0]].author,
+        example: entity[Object.keys(entity)[0]].example,
+        properties: transpileProperties(
+            entity[Object.keys(entity)[0]].properties,
+        ),
+        relationship: transpileRelationship(
+            entity[Object.keys(entity)[0]].relationship,
+        ),
+    }));
 
-      _op.name = op[0];
+    const targetEnums: Enum[] = Object.entries(enums).map(([name, values]) => ({
+        name,
+        values: Object.entries(values).map(([key, locale]) => ({
+            name: key,
+            locale: {
+                id: locale.id,
+                en: locale.en,
+            },
+        })),
+    }));
 
-      // Get Documentations
-      if (op[1].doc) {_op.doc = op[1].doc}
+    const targetConfiguration: Configuration = {
+        default: {
+            name: configuration.default.name,
+            properties: Object.entries(configuration.default.properties).map((
+                [name, type],
+            ) => ({
+                name,
+                origin: type,
+                dartType: getDartType(type),
+                javaType: getJavaType(type),
+            })),
+        },
+    };
 
-      // Get Return
-      if (op[1].return) {
-        _op.return = op[1].return
-
-        if (op[1].return.type === 'array') {
-          _op.return.returnString = 'List<' + op[1].return.type + '>'
-        }
-      }
-
-      // Get Parameters
-      if (op[1].parameters) {
-        operation.parameter = []
-        let _parameterString = ''
-
-        op[1].parameters.forEach((par, i) => {
-          let param: Parameter;
-          let isEnd = false
-          Object.entries(par).forEach(p => {
-            if (p[0]) param.name = p[0];
-            if (p[1]) param.type = p[1];
-          })
-          isEnd = i < op[1].parameters.length - 1 ? false : true
-         parameters.push(param)
-          // _op.parameterString = parameterString(_parameterString, param.name, param.type, isEnd);
-          _parameterString +=
-            param.type + ' ' + param.name + (isEnd ? '' : ', ')
-        })
-
-        _op.parameters = parameters
-
-       _op.parameterString = {
-          dart: _parameterString
-        }
-      }
-
-      operations.push(_op)
-    }) */
-  })
-
-  return operations
+    return {
+        entities: targetEntities,
+        enums: targetEnums,
+        configuration: targetConfiguration,
+    };
 }
-
-
-/**
- * golok Blueprint
- * @param {String} blueprint
- * @return {String} value
- */
-function golokBlueprint(blueprint) {
-  return {
-    info: {
-      title: blueprint.info.title
-    },
-    applications: {
-      frontend: getFront(blueprint)
-    }
-  }
-}
-
-/**
- * getFront
- * @param {String} blueprint
- * @return {String} value
- */
-function getFront(blueprint) {
-  return {
-    appsName: blueprint.applications.appsName,
-    framework: blueprint.applications.framework,
-    packageName: blueprint.applications.packages,
-    localDatabase: 'sqlite',
-    admin: true,
-    themes: 'light',
-    stateManagement: 'riverpod',
-    platform: 'all',
-    locale: 'en, id',
-    entities: blueprint.applications.entities
-  }
-}
-
 
