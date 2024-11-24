@@ -1,0 +1,110 @@
+import {
+    Blueprint,
+    Configuration,
+    Entity,
+    EntityEnum,
+    EntityProperty,
+    EntityRelationship,
+} from "./models.ts";
+import Yaml from "yaml";
+import "./utils.ts";
+import {
+    getDartType,
+    getJavaType,
+    getMinMax,
+    toCamelCase,
+    toSnakeCase,
+    toTitleCase,
+} from "./utils.ts";
+
+export function transpile(originScript: string): Blueprint {
+    const { entities, enums, configuration } = Yaml.parse(originScript) as Blueprint /* as {
+        entities: { [key: string]: any }[];
+        enums: { [key: string]: any };
+        configuration: { default: { [key: string]: any } };
+    } */;
+
+    console.log(entities[0])
+    console.log(configuration)
+
+    const targetEntities = entities.map((entity: Entity) => ({
+        name: Object.keys(entity)[0],
+        doc: entity[Object.keys(entity)[0]].doc,
+        author: entity[Object.keys(entity)[0]].author,
+        example: entity[Object.keys(entity)[0]].example,
+        properties: transpileProperties(
+            entity[Object.keys(entity)[0]].properties,
+        ),
+        relationship: transpileRelationship(
+            entity[Object.keys(entity)[0]].relationship,
+        ),
+    }));
+
+    console.log(targetEntities[0])
+
+    const targetEnums: EntityEnum[] = Object.entries(enums).map((
+        [name, values],
+    ) => ({
+        name,
+        values: Object.entries(values).map(([key, locale]) => ({
+            name: key,
+            locale: {
+                id: locale.id,
+                en: locale.en,
+            },
+        })),
+    }));
+
+    const targetConfiguration: Configuration = {
+        default: {
+            name: configuration?.default.name,
+            properties: Object.entries(configuration?.default.properties).map((
+                [name, type],
+            ) => ({
+                name,
+                origin: type,
+                dartType: getDartType(type),
+                javaType: getJavaType(type),
+            })),
+        },
+    };
+
+    return {
+        entities: targetEntities,
+        enums: targetEnums,
+        configuration: targetConfiguration,
+    };
+}
+
+function transpileProperties(originProperties: EntityProperty[]) {
+    return originProperties.map((item) =>
+        Object.entries(item).map(([name, type]) => ({
+            name,
+            origin: type,
+            dartType: getDartType(type),
+            javaType: getJavaType(type),
+            min: getMinMax(type, "min"),
+            max: getMinMax(type, "max"),
+        }))
+    );
+}
+
+function transpileRelationship(originRelationship?: EntityRelationship[]) {
+    return originRelationship?.map((item) =>
+        Object.entries(item).map(([label, relationship]) => ({
+            label,
+            name: Object.keys(relationship)[0],
+            camelCase: toCamelCase(Object.keys(relationship)[0]),
+            titleCase: toTitleCase(Object.keys(relationship)[0]),
+            snakeCase: toSnakeCase(Object.keys(relationship)[0]),
+        }))
+    );
+}
+
+/* function getJavaType(type: unknown): any {
+  throw new Error("Function not implemented.");
+} */
+
+/* function getMinMax(type: unknown, arg1: string): any {
+  throw new Error("Function not implemented.");
+} */

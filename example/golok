@@ -1,0 +1,441 @@
+import * as yaml from 'yaml';
+import * as fs from "node:fs";
+import { Stream } from 'stream';
+import { z } from 'zod';
+
+// Types for script formats
+interface BaseScript {
+  info: {
+    name: string;
+    title: string;
+    description: string;
+  };
+  endpoint: {
+    url: string;
+  };
+  applications: {
+    frontend: Array<any>;
+    backend: Array<any>;
+    config: any;
+  };
+}
+
+interface OriginScript extends BaseScript {
+  entities: Array<Record<string, any>>;
+  enums: Array<Record<string, any>>;
+  configuration: {
+    default: Array<any>;
+  };
+  operations: Array<Record<string, any>>;
+  states: Array<Record<string, any>>;
+}
+
+interface TargetScript extends BaseScript {
+  entities: Array<{
+    name: string;
+    properties: Array<{
+      name: string;
+      origin: string;
+      dartType: string;
+      javaType: string;
+      [key: string]: any;
+    }>;
+    [key: string]: any;
+  }>;
+  enums: Array<{
+    name: string;
+    values: Array<{
+      name: string;
+      locale: Record<string, string>;
+    }>;
+  }>;
+  operations: Array<Record<string, any>>;
+  states: Array<{
+    name: string;
+    properties: Array<any>;
+    [key: string]: any;
+  }>;
+}
+
+// Validation schemas
+const InfoSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  description: z.string(),
+});
+
+const EndpointSchema = z.object({
+  url: z.string().url(),
+});
+
+const OriginScriptSchema = z.object({
+  info: InfoSchema,
+  endpoint: EndpointSchema,
+  applications: z.object({
+    frontend: z.array(z.record(z.any())),
+    backend: z.array(z.record(z.any())),
+    config: z.record(z.any()),
+  }),
+  entities: z.array(z.record(z.any())),
+  enums: z.array(z.record(z.any())),
+  configuration: z.object({
+    default: z.array(z.any()),
+  }),
+  operations: z.array(z.record(z.any())),
+  states: z.array(z.record(z.any())),
+});
+
+const TargetScriptSchema = z.object({
+  info: InfoSchema,
+  endpoint: EndpointSchema,
+  applications: z.object({
+    frontend: z.array(z.record(z.any())),
+    backend: z.array(z.record(z.any())),
+    config: z.record(z.any()),
+  }),
+  entities: z.array(z.object({
+    name: z.string(),
+    properties: z.array(z.object({
+      name: z.string(),
+      origin: z.string(),
+      dartType: z.string(),
+      javaType: z.string(),
+    }).and(z.record(z.any()))),
+  }).and(z.record(z.any()))),
+  enums: z.array(z.object({
+    name: z.string(),
+    values: z.array(z.object({
+      name: z.string(),
+      locale: z.record(z.string()),
+    })),
+  })),
+  operations: z.array(z.record(z.any())),
+  states: z.array(z.object({
+    name: z.string(),
+    properties: z.array(z.any()),
+  }).and(z.record(z.any()))),
+});
+
+export class ScriptTransformer {
+  private typeMapping = {
+    'string': { dart: 'String', java: 'String' },
+    'double': { dart: 'double', java: 'Double' },
+    'long': { dart: 'long', java: 'Long' },
+    'dateTime': { dart: 'DateTime', java: 'Instant' },
+    'bool': { dart: 'boolean', java: 'Boolean' },
+  };
+
+  // Convert ORIGIN_SCRIPT to TARGET_SCRIPT
+  public originToTarget(originScript: OriginScript): TargetScript {
+    try {
+      // Validate origin script
+      OriginScriptSchema.parse(originScript);
+
+      const targetScript: TargetScript = {
+        info: originScript.info,
+        endpoint: originScript.endpoint,
+        applications: originScript.applications,
+        entities: this.transformEntities(originScript),
+        enums: this.transformEnums(originScript.enums),
+        operations: this.transformOperations(originScript.operations),
+        states: this.transformStates(originScript.states, originScript),
+      };
+
+      // Validate target script
+      TargetScriptSchema.parse(targetScript);
+      return targetScript;
+    } catch (error) {
+      throw new Error(`Transformation error: ${error}`);
+    }
+  }
+
+  // Convert TARGET_SCRIPT back to ORIGIN_SCRIPT
+  public targetToOrigin(targetScript: TargetScript): OriginScript {
+    try {
+      // Validate target script
+      TargetScriptSchema.parse(targetScript);
+
+      const originScript: OriginScript = {
+        info: targetScript.info,
+        endpoint: targetScript.endpoint,
+        applications: targetScript.applications,
+        entities: this.reverseTransformEntities(targetScript.entities),
+        enums: this.reverseTransformEnums(targetScript.enums),
+        configuration: { default: [] },
+        operations: targetScript.operations,
+        states: this.reverseTransformStates(targetScript.states),
+      };
+
+      // Validate origin script
+      OriginScriptSchema.parse(originScript);
+      return originScript;
+    } catch (error) {
+      throw new Error(`Reverse transformation error: ${error}`);
+    }
+  }
+
+  // Input methods
+  public async fromFile(filePath: string): Promise<any> {
+    try {
+      const content = await fs.promises.readFile(filePath, 'utf8');
+      return yaml.parse(content);
+    } catch (error) {
+      throw new Error(`File read error: ${error}`);
+    }
+  }
+
+  public fromString(content: string): any {
+    try {
+      return yaml.parse(content);
+    } catch (error) {
+      throw new Error(`Parse error: ${error}`);
+    }
+  }
+
+  public async fromStream(stream: Stream): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let data = '';
+      stream.on('data', chunk => data += chunk);
+      stream.on('end', () => resolve(this.fromString(data)));
+      stream.on('error', reject);
+    });
+  }
+
+  // Output methods
+  public async toFile(data: any, filePath: string): Promise<void> {
+    try {
+      const content = yaml.stringify(data);
+      await fs.promises.writeFile(filePath, content);
+    } catch (error) {
+      throw new Error(`File write error: ${error}`);
+    }
+  }
+
+  public toString(data: any): string {
+    return yaml.stringify(data);
+  }
+
+  public async toStream(data: any, stream: Stream): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        const content = this.toString(data);
+        stream.write(content, error => {
+          if (error) reject(error);
+          else resolve();
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  // Private helper methods for transformation
+  private transformEntities(originScript: OriginScript): TargetScript['entities'] {
+    const defaultProps = originScript.configuration?.default?.[0]?.properties || [];
+    const defaultRels = originScript.configuration?.default?.[0]?.relationship || [];
+
+    return originScript.entities.map(entityObj => {
+      const [entityName, entityData] = Object.entries(entityObj)[0];
+      const properties = [
+        ...defaultProps.map(this.transformProperty.bind(this)),
+        ...(entityData.properties || []).map(this.transformProperty.bind(this))
+      ];
+
+      const relationships = [
+        ...defaultRels.map(this.transformRelationship.bind(this)),
+        ...(entityData.relationship || []).map(this.transformRelationship.bind(this))
+      ];
+
+      return {
+        name: entityName,
+        ...entityData,
+        properties,
+        relationship: relationships,
+      };
+    });
+  }
+
+  private transformProperty(prop: any): any {
+    const [name, typeInfo] = typeof prop === 'string' ? 
+      prop.split(':').map(s => s.trim()) : 
+      [prop.name, prop.type];
+
+    const [baseType, ...modifiers] = typeInfo.split(',').map(s => s.trim());
+    const types = this.typeMapping[baseType] || {
+      dart: baseType,
+      java: baseType,
+    };
+
+    return {
+      name,
+      origin: baseType,
+      dartType: types.dart,
+      javaType: types.java,
+      ...(modifiers || []).reduce((acc, mod) => {
+        const [key, value] = mod.split('=').map(s => s.trim());
+        acc[key] = value || true;
+        return acc;
+      }, {}),
+    };
+  }
+
+  private transformRelationship(rel: any): any {
+    const [name, info] = typeof rel === 'string' ? 
+      rel.split(':').map(s => s.trim()) : 
+      [rel.name, rel.type];
+
+    const [entity, type] = info.split(',').map(s => s.trim());
+    const camelCase = name.charAt(0).toLowerCase() + name.slice(1);
+    const titleCase = name.charAt(0).toUpperCase() + name.slice(1);
+    const snakeCase = name.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+    return {
+      name,
+      entity,
+      camelCase,
+      titleCase,
+      snakeCase,
+      type,
+    };
+  }
+
+  private transformEnums(enums: OriginScript['enums']): TargetScript['enums'] {
+    return enums.map(enumObj => {
+      const [enumName, values] = Object.entries(enumObj)[0];
+      return {
+        name: enumName,
+        values: values.map((value: any) => {
+          const [name, locale] = Object.entries(value)[0];
+          return { name, locale };
+        }),
+      };
+    });
+  }
+
+  private transformOperations(operations: OriginScript['operations']): TargetScript['operations'] {
+    return operations.map(op => {
+      const [name, details] = Object.entries(op)[0];
+      return {
+        [name]: {
+          ...details,
+          parametersString: this.generateParametersString(details.parameters),
+          parametersType: this.generateParametersType(details.parameters),
+        },
+      };
+    });
+  }
+
+  private transformStates(states: OriginScript['states'], originScript: OriginScript): TargetScript['states'] {
+    return states.map(stateObj => {
+      const [stateName, stateData] = Object.entries(stateObj)[0];
+      const refEntity = stateData.refEntity;
+      
+      if (refEntity) {
+        const entityData = originScript.entities.find(e => Object.keys(e)[0] === refEntity);
+        if (entityData) {
+          return {
+            name: stateName,
+            ...entityData[refEntity],
+            properties: [
+              ...this.transformProperties(entityData[refEntity].properties),
+              ...this.transformProperties(stateData.properties || []),
+            ],
+          };
+        }
+      }
+
+      return {
+        name: stateName,
+        ...stateData,
+        properties: this.transformProperties(stateData.properties || []),
+      };
+    });
+  }
+
+  // Helper methods for reverse transformation
+  private reverseTransformEntities(entities: TargetScript['entities']): OriginScript['entities'] {
+    return entities.map(entity => ({
+      [entity.name]: {
+        ...entity,
+        properties: this.reverseTransformProperties(entity.properties),
+        relationship: this.reverseTransformRelationships(entity.relationship),
+      },
+    }));
+  }
+
+  private reverseTransformProperties(properties: any[]): any[] {
+    return properties.map(prop => {
+      const modifiers = [];
+      if (prop.required) modifiers.push('required');
+      if (prop.unique) modifiers.push('unique');
+      if (prop.default !== undefined) modifiers.push(`default=${prop.default}`);
+      
+      return `${prop.name}: ${prop.origin}${modifiers.length ? ', ' + modifiers.join(', ') : ''}`;
+    });
+  }
+
+  private reverseTransformRelationships(relationships: any[]): any[] {
+    return relationships.map(rel => 
+      `${rel.name}: ${rel.entity}${rel.attribute ? `(${rel.attribute})` : ''}, ${rel.type}(${rel.label})`
+    );
+  }
+
+  private reverseTransformEnums(enums: TargetScript['enums']): OriginScript['enums'] {
+    return enums.map(enumDef => ({
+      [enumDef.name]: enumDef.values.map(value => ({
+        [value.name]: value.locale,
+      })),
+    }));
+  }
+
+  private reverseTransformStates(states: TargetScript['states']): OriginScript['states'] {
+    return states.map(state => ({
+      [state.name]: {
+        properties: this.reverseTransformProperties(state.properties),
+        ...(state.relationship ? { relationship: this.reverseTransformRelationships(state.relationship) } : {}),
+      },
+    }));
+  }
+
+  // Helper methods for parameter transformation
+  private generateParametersString(parameters: string): string {
+    if (!parameters) return '';
+    return parameters.split(',')
+      .map(param => {
+        const [type, name] = param.trim().split(' ');
+        return `${type} ${name}`;
+      })
+      .join(', ');
+  }
+
+  private generateParametersType(parameters: string): Array<any> {
+    if (!parameters) return [];
+    const paramList = parameters.split(',').map(p => p.trim());
+    const result = [];
+    let currentEntity: any = null;
+
+    for (const param of paramList) {
+      const [entity, prop] = param.split('.');
+      if (!currentEntity || currentEntity.name !== entity) {
+        if (currentEntity) {
+          result.push(currentEntity);
+        }
+        currentEntity = {
+          name: entity,
+          properties: [],
+        };
+      }
+      currentEntity.properties.push(prop);
+    }
+
+    if (currentEntity) {
+      result.push(currentEntity);
+    }
+
+    return result;
+  }
+
+  private transformProperties(properties: any[]): any[] {
+    return properties.map(this.transformProperty.bind(this));
+  }
+}

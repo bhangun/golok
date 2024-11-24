@@ -1,0 +1,314 @@
+import {
+    parse as parseYaml,
+    stringify as stringifyYaml,
+} from "https://deno.land/std@0.224.0/yaml/mod.ts";
+import { dirname, extname, basename, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import process from "node:process";
+import ejs from "npm:ejs";
+
+
+export { getDartType, getJavaType,getMinMax, toCamelCase, toSnakeCase, getCurrentDirname,
+    longtime,getDirectory,parameterString,capitalize, cleanOtherChar, yaml2js, json2js,printColor,
+     mapType,dirName, renderEjsFile, toTitleCase, getMimeType, removeWhitespace, splitString };
+
+function getDartType(type: string): string {
+
+    const [baseType] = type.split(",").map((t) => t.trim());
+    switch (baseType) {
+        case "String":
+            return "String";
+        case "int":
+            return "int";
+        case "long":
+            return "int";
+        case "double":
+            return "double";
+        case "datetime":
+            return "DateTime";
+        default:
+            return "dynamic";
+    }
+}
+
+function getJavaType(type: string): string {
+    const [baseType] = type.split(",").map((t) => t.trim());
+    //const [baseType, ...modifiers] = type.split(",").map((t) => t.trim());
+    switch (baseType) {
+        case "String":
+            return "String";
+        case "int":
+            return "Integer";
+        case "long":
+            return "Long";
+        case "double":
+            return "Double";
+        case "datetime":
+            return "Instant";
+        default:
+            return "Object";
+    }
+}
+
+function getMinMax(type: string, key: "min" | "max" | "required"): string | undefined {
+    const [, ...modifiers] = type.split(",").map((t) => t.trim());
+    const modifier = modifiers.find((m) => m.startsWith(key));
+    return modifier ? modifier.split("=")[1] : undefined;
+}
+
+
+
+function mapType(type: string): string {
+    const typeMap: Record<string, { type: string; format?: string }> = {
+        'String': { type: 'string' },
+        'TextBlob': { type: 'string' },
+        'Instant': { type: 'string', format: 'date-time' },
+        'Integer': { type: 'integer' },
+        'Long': { type: 'integer', format: 'int64' },
+        'Float': { type: 'number', format: 'float' },
+        'Double': { type: 'number', format: 'double' },
+        'Boolean': { type: 'boolean' },
+        'Date': { type: 'string', format: 'date' }
+    };
+
+    return typeMap[type]?.type || 'string';
+}
+
+function toCamelCase(str: string): string {
+    return str.replace(
+        /(?:^\w|[A-Z]|\b\w)/g,
+        (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase(),
+    ).replace(/\s+/g, "");
+}
+
+function toTitleCase(str: string): string {
+    return str.replace(
+        /\w\S*/g,
+        (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
+    );
+}
+
+function toSnakeCase(str: string): string {
+    return str.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`).slice(1);
+}
+
+  function getMimeType(ext: string) {
+    switch (checkFileExt(ext)) {
+      case '.png':
+        return 'image/png'
+      default:
+        return 'image/jpeg'
+    }
+  }
+  
+  function dirName () {
+    const __filename = fileURLToPath('.')
+    return dirname(__filename)
+  }
+  
+  /**
+   * checkFileExt
+   * @param {String} file
+   * @return {String} value
+   */
+  function checkFileExt (file: string) {
+    // eslint-disable-next-line max-len
+    const pattern =
+      /^((https?|file):\/\/[^\s$.?#].[^\s]*)|([A-z0-9-_+/:]+.(json|yaml|yml|png|jpeg|jpg))$/
+    if (!pattern.test(file)) {
+      printColor('Something wrong with your URL or Path, please change!', 'red')
+    } else {
+      return extname(file)
+    }
+  }
+  
+  /**
+   * @return {String} default app name
+   */
+  function getCurrentDirname() {
+    return /^[a-zA-Z0-9-_]+$/.test(basename(process.cwd()))
+      ? basename(process.cwd())
+      : 'golok'
+  }
+  
+  /**
+   * @return {String} default app name
+   */
+  function getDirectory(filename: string) {
+    const parentDir = dirname(filename)
+    return parentDir
+  }
+
+
+/**
+ * Print color text
+ * @param {String} text
+ * @param {String} color
+ */
+function printColor(text:string, color="white") {
+    switch (color) {
+      case 'yellow':
+        console.log('\x1b[33m%s\x1b[0m', text)
+        break
+      case 'red':
+        console.log('\x1b[31m%s\x1b[0m', text)
+        break
+      case 'blue':
+        console.log('\x1b[34m%s\x1b[0m', text)
+        break
+      case 'magenta':
+        console.log('\x1b[35m%s\x1b[0m', text)
+        break
+      case 'cyan':
+        console.log('\x1b[36m%s\x1b[0m', text)
+        break
+      case 'gray':
+        console.log('\x1b[90m%s\x1b[0m', text)
+        break
+      case 'white':
+        console.log('\x1b[37m%s\x1b[0m', text)
+        break
+      default: // green
+        console.log('\x1b[32m%s\x1b[0m', text)
+        break
+    }
+  }
+  
+
+  /**
+ * json2js
+ * @param {String} inputFile
+ * @return {String} value
+ */
+function json2js(inputFile: string) {
+    const js = JSON.parse( (inputFile).toString())
+    return js
+  }
+
+  /**
+ * yml2js
+ * @param {String} inputFile
+ * @return {String} value
+ */
+function yaml2js(inputFile: string) {
+    const file = JSON.parse(Deno.readTextFile(inputFile).toString())
+    const js = parseYaml(file)
+    return js
+  }
+
+
+
+/**
+ * Longtime
+ * @param {String} startTime
+ * @return {String} value
+ */
+function longtime(startTime: number) {
+    return (Date.now() - startTime) / 1000
+  }
+  
+  /**
+   * capitalize
+   * @param {String} text
+   * @return {String} value
+   */
+  function capitalize(text: string) {
+    return text.substring(0, 1).toUpperCase() + text.substring(1)
+  }
+  
+  /**
+   * cleanOtherChar
+   * @param {String} text
+   * @return {String} value
+   */
+  function cleanOtherChar(text: string) {
+    if (text) {
+      return text
+        .replace(
+          /[-+/\|$%()^&*@#!<>{}]\w+/g,
+          letter =>
+            `${letter.substring(1, 1).toUpperCase() + letter.substring(2)}`
+        )
+        .replace(/[-+/\|$%()^&*@#!<>{}]+/g, '')
+    } else return text
+  }
+  
+
+function parameterString(parameterString: string, name:string, type:string, isEnd:string) {
+    parameterString += '' + type + ' ' + name + isEnd ? '' : ','
+  
+    return {
+      dart: parameterString
+    }
+  }
+  
+  /**
+   * Get configuration, model and options argument
+   * @param {number} text The first number.
+   * @param {string} delim The second number.
+   * @return {string} The sum of the two numbers.
+   */
+  function splitString(text:string, delim?:string) {
+    return text.replace(/\s/g, '').split(delim ? delim : ',')
+  }
+  
+  /**
+   * removeWhitespace
+   * @param {string} text
+   * @return {string} .
+   */
+  function removeWhitespace(text: string) {
+    return text.replaceAll(/\s/g, '')
+  }
+  
+  /**
+   * Copy file
+   * @param {String} from
+   * @param {String} to
+   * @param {String} mode
+   */
+/*   function copyFile (from, to, mode) {
+    fs.copyFile(from, to, mode, err => {
+      printColor(to)
+      if (err) throw err
+    })
+  } */
+  
+  /**
+   * getLastModifiedDate
+   * @param {String} path
+   * @return {String} time
+   */
+/*   function getLastModifiedDate (path) {
+    const stats = fs.statSync(path)
+  
+    return stats.mtime
+  } */
+  
+  /**
+   * Render .ejs files
+   * @param {String} sourceTemplate
+   * @param {String} outputDir
+   * @param {String} templateFile
+   * @param {String} context
+   * @param {String} options
+   */
+  function renderEjsFile(
+    sourceTemplate: string,
+    outputDir:string,
+    templateFile:string,
+    context:string,
+    options:object
+  ) {
+    const destinPath = join(outputDir, templateFile.replace(/.ejs+$/, ''))
+  
+    // Render all ejs file
+    ejs.renderFile(sourceTemplate, context, options, function (err: string, str: Uint8Array) {
+      if (err) throw err
+      // Write rendered file to new directory
+      Deno.writeFile(destinPath, str);
+      printColor(destinPath)
+    })
+  }
+    
+
