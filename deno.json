@@ -1,11 +1,13 @@
 {
+  "name":"@kayys/golok",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./main.ts",
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "exec": "deno run -A --watch main.ts",
+    "exec:link": "deno run --import-map=link.json main.ts "
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert@1",
-    "yaml": "npm:yaml@2.3.4",
-    "zod": "npm:zod",
-    "stream": "npm:stream"
+    "@std/assert": "jsr:@std/assert@1"
   }
 }

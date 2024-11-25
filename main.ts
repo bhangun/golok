@@ -1,3 +1,4 @@
-import GolokCLI from "./cli/index.ts";
+import GolokCLI from "./cli/cli.ts";
 
-new GolokCLI()
+const cli = new GolokCLI();
+await cli.execute();

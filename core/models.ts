@@ -1,15 +1,32 @@
 export type {
     ApplicationConfig,
     Blueprint,
+    RawBlueprint,
     Configuration,
     Entity,
     Enum,
     Info,
     Property,
     Relationship,
-    ValidationResult,
-    GolokConfig
+    GolokConfig,
+    Language
 };
+
+
+interface RawBlueprint {
+    info?: Info;
+    endpoint?: { url: string };
+    applications?: {
+        frontend?: Frontend;
+        backend?: Backend;
+        config?: Config;
+    };
+    entities?: RawEntity[];
+    enums?: RawEnum[];
+    operations?: Record<string, Operation>;
+    configuration?: GolokConfig;
+    states?: State[];
+}
 
 interface Blueprint {
     info: Info;
@@ -32,9 +49,7 @@ interface Info {
     description?: string;
 }
 
-/* interface RawProperties {
-    [key: string]: string[];
-} */
+
 
 interface ApplicationConfig {
     baseName: string;
@@ -52,6 +67,14 @@ interface Entity {
     example?: string;
     properties?: Property[];
     relationship?: Relationship[];
+}
+
+interface RawEntity {
+    [key: string]: string;
+}
+
+interface EnumValue {
+    [key: string]: string[];
 }
 
 interface Property {
@@ -83,10 +106,7 @@ interface Relationship {
     doc?: string;
 }
 
-interface EnumValue {
-    name?: string;
-    locale?: Record<string, string>;
-}
+
 
 interface Operation {
     doc?: string;
@@ -106,6 +126,10 @@ interface State {
     relationship?: Relationship[];
 }
 
+interface RawEnum{
+
+}
+
 interface Enum {
     name: string;
     values: { name: string; locale: { id: string; en: string } }[];
@@ -118,11 +142,12 @@ interface Configuration {
     };
 }
 
-// Validation Results
-interface ValidationResult {
-    isValid: boolean;
-    errors: string[];
-    warnings: string[];
+enum Framework{
+    flutter, quarkus, react, springboot, strapi
+}
+
+enum Language{
+    dart, java, python, javascript, typescript 
 }
 
 interface Frontend {
@@ -178,20 +203,17 @@ interface ConfigItem {
 
 
 interface GolokConfig {
+    startTime: number;
     isAI?: boolean
-    path?: string
+    blueprintPath: string
+    output?: string
     isConvertion?: boolean
     blueprintRaw?: Blueprint
     appsName?: string
     blueprint?: Blueprint
     package?: string
-    framework?: string
+    framework?: Framework
     stateManagement?: string
-    options?: Options
-}
-
-interface Options {
-    output?: string
     zip?: string
     input?: string
     key?: string
