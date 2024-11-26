@@ -206,11 +206,11 @@ enums:
       - 'g{id:g, en:g}'
 configuration:
   default:
-    - name: default
-      properties:
+    name: default
+    properties:
         - id: long
         - createdAt: datetime //Created time
-      relationship:
+    relationship:
         - updatedBy: 'User, manyToOne(belong to) //Updated by'
 operations:
   - getCustomProduct:

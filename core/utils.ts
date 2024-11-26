@@ -8,6 +8,7 @@ import { join } from "jsr:@std/path";
 //import { fileURLToPath } from "node:url";
 //import process from "node:process";
 import ejs from "npm:ejs";
+import type { ValidationError } from "./validator.ts";
 
 export {
   capitalize,
@@ -210,7 +211,7 @@ async function jsonFileToTS(inputFile: string): Promise<Record<string,string>> {
  * @param {String} inputFile
  * @return {String} value
  */
-async function yamlFileToTS(inputFile: string): Promise<any> {
+async function yamlFileToTS(inputFile: string): Promise<unknown> {
   const js = parseYaml(await readTextFile(inputFile));
   return js;
 }
@@ -223,7 +224,7 @@ function stringToYaml(script: string) {
  * @param {String} inputFile
  * @return {String} value
  */
-function yamlToString(yaml: string): string {
+function yamlToString(yaml: undefined): string {
   const js = stringifyYaml(yaml);
   return js;
 }
@@ -236,9 +237,10 @@ async function readTextFile(
     checkFileExt(filePath);
     const content = await Deno.readTextFile(filePath);
     return content;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const e = error as ValidationError;
     throw new Error(
-      `Failed to read file ${filePath}: ${error.message}`,
+      `Failed to read file ${filePath}: ${e.message}`,
     );
   }
 }

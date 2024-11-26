@@ -1,4 +1,4 @@
-import { Blueprint } from "./models.ts";
+import { Blueprint, Manifest, Template } from "./models.ts";
 
 export {
     GolokValidator, ValidationError
@@ -46,6 +46,25 @@ class GolokValidator{
             throw new ValidationError("Invalid endpoint URL format");
         }
     }
+
+    static  validateManifest(manifest: Manifest): void {
+        if (!manifest?.templates) {
+            throw new ValidationError("Missing or invalid templates");
+        }
+        manifest?.templates.map((template: Template)=>{
+            template.templateItems.map((item)=>{
+            if (!item.dataBinding) {
+                throw new ValidationError("Missing or dataBinding not defined");
+            }
+        });
+        })
+        try {
+           
+        } catch {
+            throw new ValidationError("Invalid endpoint URL format");
+        }
+    }
+
 
     static validateApplications(applications: any): void {
         if (!applications) {

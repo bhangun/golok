@@ -2,11 +2,13 @@ version: 1.0
 name: default
 templates:
 - name: riverpod
-  templates:
+  templateItems:
   - name: app
+    dataBinding: entities
   - name: entity
+    dataBinding: entities
     loop: true
-    items:
+    fileItems:
     - from: entity.dart.ejs
       to: lib/modules/{entityName}/model/{entityFile}.dart
     - from: entity.module.dart.ejs

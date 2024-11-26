@@ -87,11 +87,10 @@ entities:
         - category: ProductCategory(description), oneToMany(belong to)
 enums:
   - Unit: 
-    - Kg{id:Kg, en:Kg}
-    - g{id:g, en:g}
+    - Kg={id:Kg, en:Kg}
+    - g={id:g, en:g}
 configuration: 
   default: 
-    - name: default 
       properties: 
         - id: long
         - createdAt: datetime //Created time 
