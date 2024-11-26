@@ -1,5 +1,4 @@
 import { Framework, Language, TechnologyLayer, type TemplateProfile } from "./models.ts";
-import { FluterGenerator } from "../generator/flutter/index.ts";
 
 export class GolokRegistry {
   templateRegistries(): TemplateProfile[] {

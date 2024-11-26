@@ -211,7 +211,7 @@ async function jsonFileToTS(inputFile: string): Promise<Record<string,string>> {
  * @param {String} inputFile
  * @return {String} value
  */
-async function yamlFileToTS(inputFile: string): Promise<unknown> {
+async function yamlFileToTS(inputFile: string): Promise<any> {
   const js = parseYaml(await readTextFile(inputFile));
   return js;
 }
@@ -224,7 +224,7 @@ function stringToYaml(script: string) {
  * @param {String} inputFile
  * @return {String} value
  */
-function yamlToString(yaml: undefined): string {
+function yamlToString(yaml: any): string {
   const js = stringifyYaml(yaml);
   return js;
 }
