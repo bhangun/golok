@@ -101,9 +101,9 @@ interface ApplicationConfig {
 interface Entity {
   name?: string;
   doc?: string;
-  camelCase?: string;
-  titleCase?: string;
-  snakeCase?: string;
+  camelCase: string;
+  titleCase: string;
+  snakeCase: string;
   author?: string;
   example?: string;
   properties?: Property[];
@@ -315,6 +315,7 @@ interface Template {
 interface TemplateItems {
   dataBinding: BlueprintBinding;
   loop?: boolean;
+  baseDir: string;
   fileItems?: FileItems[];
 }
 

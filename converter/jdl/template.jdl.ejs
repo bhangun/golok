@@ -7,7 +7,7 @@ for (e in entities){
     _relation.push(entities[e].relationship[i].to);
 
     _relationship.push({
-      from: entities[e].nameTitleCase,
+      from: entities[e].titleCase,
       to: entities[e].relationship[i].to,
       type: entities[e].relationship[i].type,
       name: entities[e].relationship[i].name
@@ -66,7 +66,7 @@ application {
  * <%= entities[idx].doc %><% if(entities[idx].author){ %>
  * @author <%= entities[idx].author %><%}%>
  */  
-entity <%= entities[idx].nameTitleCase %> {<% for (px in entities[idx].properties) { 
+entity <%= entities[idx].titleCase %> {<% for (px in entities[idx].properties) { 
   if(!_relation.includes(entities[idx].properties[px].type.java.name)){%> 
   <% if(entities[idx].properties[px].doc){%>/** 
   * <%= entities[idx].properties[px].doc %> 

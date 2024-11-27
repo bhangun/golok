@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:<%= blueprint.info.name %>/shared/widgets/progress_indicator_widget.dart';
-import '../logic/<%= nameSnakeCase %>_logic.dart';
-import '../model/<%= nameSnakeCase %>.dart';
+import 'package:<%= info.name %>/shared/widgets/progress_indicator_widget.dart';
+import '../logic/<%= snakeCase %>_logic.dart';
+import '../model/<%= snakeCase %>.dart';
 
-class <%= nameTitleCase %>Form extends ConsumerStatefulWidget {
-  const <%= nameTitleCase %>Form({super.key});
+class <%= titleCase %>Form extends ConsumerStatefulWidget {
+  const <%= titleCase %>Form({super.key});
 
   @override
-  <%= nameTitleCase %>FormState createState() => <%= nameTitleCase %>FormState();
+  <%= titleCase %>FormState createState() => <%= titleCase %>FormState();
 }
 
-class <%= nameTitleCase %>FormState extends ConsumerState<<%= nameTitleCase %>Form> {<%for (idx in properties) { %><%if(properties[idx].name !='id'){%>
+class <%= titleCase %>FormState extends ConsumerState<<%= titleCase %>Form> {<%for (idx in properties) { %><%if(properties[idx].name !='id'){%>
   TextEditingController <%= properties[idx].name %> = TextEditingController();<%} }%>
 
   @override
-  void dispose() {<% for (idx in properties) { %><% if (properties[idx].type.dart.name != 'enum' && properties[idx].name !='id' && properties[idx]['desc'] != 'relationship') {%>
+  void dispose() {<% for (idx in properties) { %><% if (properties[idx].dartType != 'enum' && properties[idx].name !='id' && properties[idx]['desc'] != 'relationship') {%>
     <%= properties[idx].name %>.dispose();<%}%><%}%>
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    <%= nameTitleCase %>State <%= nameCamelCase %>State = ref.watch(<%= nameCamelCase %>Provider);
+    <%= titleCase %>State <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(<%= nameCamelCase %>State.title),
+          title: Text(<%= camelCase %>State.title),
         ),
         body: Stack(
           children: <Widget>[
-            <%= nameCamelCase %>State.status.loading
+            <%= camelCase %>State.status.loading
                 ? const CustomProgressIndicatorWidget()
                 : ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -41,7 +41,7 @@ class <%= nameTitleCase %>FormState extends ConsumerState<<%= nameTitleCase %>Fo
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => ref.read(<%= nameCamelCase %>Provider.notifier).save(<%= nameCamelCase %>State.<%= nameCamelCase %>),
+          onPressed: () => ref.read(<%= camelCase %>Provider.notifier).save(<%= camelCase %>State.<%= camelCase %>),
           tooltip: 'Add',
           child: const Icon(Icons.save),
         ));

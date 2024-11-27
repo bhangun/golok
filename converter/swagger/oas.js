@@ -654,8 +654,8 @@ cookie parameters,
       const DELIM = ', ';
 
       parameters.forEach((p, index) => {
-        if (p.type && p.type.dart.name) {
-          paramString += p.type.dart.name +' '+p.name+(index===last?'':DELIM);
+        if (p.type && p.dartType) {
+          paramString += p.dartType +' '+p.name+(index===last?'':DELIM);
 
           if (p.in === 'query' && p.required) {
             pathString += p.name +'=${'+p.name+'}';

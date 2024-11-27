@@ -4,14 +4,17 @@ import {
 } from "https://deno.land/std@0.224.0/yaml/mod.ts";
 import * as path from "jsr:@std/path";
 import { join } from "jsr:@std/path";
+import { existsSync } from "https://deno.land/std@0.224.0/fs/mod.ts";
 //import { basename, dirname, extname, join } from "node:path";
 //import { fileURLToPath } from "node:url";
 //import process from "node:process";
 import ejs from "npm:ejs";
 import type { ValidationError } from "./validator.ts";
+import type { Blueprint, Entity } from "./models.ts";
 
 export {
   capitalize,
+  checkDirExist,
   cleanOtherChar,
   dirName,
   getCurrentDirname,
@@ -131,6 +134,10 @@ function dirName() {
   return import.meta.dirname;
 }
 
+function checkDirExist(dir: string) {
+  return existsSync(dir);
+}
+
 /**
  * checkFileExt
  * @param {String} file
@@ -201,8 +208,10 @@ function printColor(text: string, color: string = "white") {
  * @param {String} inputFile
  * @return {String} value
  */
-async function jsonFileToTS(inputFile: string): Promise<Record<string,string>> {
-  const js = JSON.parse( await readTextFile(inputFile));
+async function jsonFileToTS(
+  inputFile: string,
+): Promise<Record<string, string>> {
+  const js = JSON.parse(await readTextFile(inputFile));
   return js;
 }
 
@@ -348,21 +357,47 @@ function renderEjsFile(
   sourceTemplate: string,
   outputDir: string,
   templateFile: string,
-  context: string,
-  options: object,
+  data: Entity,
+  options: Blueprint,
 ) {
-  const destinPath = join(outputDir, templateFile.replace(/.ejs+$/, ""));
+  const targetPath = templateFile.replace(/.ejs+$/, "");
 
+  Deno.readTextFile(sourceTemplate).then((str) => {
+    const rendered = ejs.render(str, data);
+    const encoder = new TextEncoder();
+    const renderedData = encoder.encode(rendered);
+    Deno.writeFile(targetPath, renderedData).then(() => {
+      printColor(targetPath);
+    });
+  });
   // Render all ejs file
-  ejs.renderFile(
+
+  /* ejs.renderFile(
     sourceTemplate,
     context,
     options,
-    function (err: string, str: Uint8Array) {
+    async function (err: string, str: Uint8Array) {
       if (err) throw err;
       // Write rendered file to new directory
-      Deno.writeFile(destinPath, str);
-      printColor(destinPath);
+
+      const data = new Uint8Array(str);
+      console.log(str)
+      await Deno.writeFile(targetPath, data);
+      printColor(targetPath);
     },
-  );
+  ); */
 }
+
+/* const encoder = new TextEncoder();
+      const data = encoder.encode('bismillah');
+       */
+/* let template = ejs.compile(str, options);
+template(data);
+// => Rendered HTML string
+
+ejs.render(str, data, options);
+// => Rendered HTML string
+
+ejs.renderFile(filename, data, options, function(err, str){
+    // str => Rendered HTML string
+}); */

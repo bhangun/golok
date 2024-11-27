@@ -40,7 +40,7 @@
     "errorUnauthorized": "Anda tidak memiliki otoritas",
     "errorNetwork": "Sesuatu terjadi pada jaringan, silahkan periksa jaringan",
     <% for (i in entities) { %>
-    "@<%= entities[i].nameCamelCase %>":{<% const props = entities[i].properties; for (p in props) { %>
+    "@<%= entities[i].camelCase %>":{<% const props = entities[i].properties; for (p in props) { %>
         "<%= props[p].name %>": "<%= props[p].docID %>"<% if(p < props.length-1){%>,<%}%> <% } %> 
     }<% if(i < entities.length-1){%>,<%}%><%}%>
 }

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:<%= blueprint.info.name %>/modules/<%= nameSnakeCase %>/logic/<%= nameSnakeCase %>_logic.dart';
-import 'package:<%= blueprint.info.name %>/shared/widgets/list_item_slide_widget.dart';
-import 'package:<%= blueprint.info.name %>/shared/widgets/progress_indicator_widget.dart';
+import 'package:<%= info.name %>/modules/<%= snakeCase %>/logic/<%= snakeCase %>_logic.dart';
+import 'package:<%= info.name %>/shared/widgets/list_item_slide_widget.dart';
+import 'package:<%= info.name %>/shared/widgets/progress_indicator_widget.dart';
 
-class <%= nameTitleCase %>List extends ConsumerStatefulWidget {
-  const <%= nameTitleCase %>List({super.key});
+class <%= titleCase %>List extends ConsumerStatefulWidget {
+  const <%= titleCase %>List({super.key});
 
   @override
-  <%= nameTitleCase %>ListState createState() => <%= nameTitleCase %>ListState();
+  <%= titleCase %>ListState createState() => <%= titleCase %>ListState();
 }
 
-class <%= nameTitleCase %>ListState extends ConsumerState<<%= nameTitleCase %>List> {
+class <%= titleCase %>ListState extends ConsumerState<<%= titleCase %>List> {
   final _listKey = GlobalKey<ScaffoldState>();
-  String title = "<%= nameTitleCase %> List";
+  String title = "<%= titleCase %> List";
   String dataEmpty = 'Data empty';
   String addTooltip = 'Add';
 
@@ -25,17 +25,17 @@ class <%= nameTitleCase %>ListState extends ConsumerState<<%= nameTitleCase %>Li
 
   @override
   Widget build(BuildContext context) {
-    <%= nameTitleCase %>State <%= nameCamelCase %>State = ref.watch(<%= nameCamelCase %>Provider);
+    <%= titleCase %>State <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
     return Scaffold(
         key: _listKey,
-        appBar: AppBar(title: const Text('<%= nameTitleCase %> List')),
+        appBar: AppBar(title: const Text('<%= titleCase %> List')),
         body: Stack(
           children: <Widget>[
-            <%= nameCamelCase %>State.status.loading
+            <%= camelCase %>State.status.loading
                 ? const CustomProgressIndicatorWidget()
-                : <%= nameCamelCase %>State.isListEmpty
+                : <%= camelCase %>State.isListEmpty
                     ? ListView.separated(
-                        itemCount: <%= nameCamelCase %>State.totalItem,
+                        itemCount: <%= camelCase %>State.totalItem,
                         separatorBuilder: (context, index) {
                           return const Divider();
                         },
@@ -44,19 +44,19 @@ class <%= nameTitleCase %>ListState extends ConsumerState<<%= nameTitleCase %>Li
                             child: ListTile(
                                 leading: const Icon(Icons.abc),
                                 title: Text(
-                                  '${<%= nameCamelCase %>State.<%= nameCamelCase %>List[index].id}',
+                                  '${<%= camelCase %>State.<%= camelCase %>List[index].id}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   softWrap: false,
                                 ),
-                                onTap: () => ref.read(<%= nameCamelCase %>Provider.notifier).itemTap(index)),
+                                onTap: () => ref.read(<%= camelCase %>Provider.notifier).itemTap(index)),
                           );
                         })
                     : Center(child: Text(dataEmpty)),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: ref.read(<%= nameCamelCase %>Provider.notifier).add(),
+          onPressed: ref.read(<%= camelCase %>Provider.notifier).add(),
           tooltip: addTooltip,
           child: const Icon(Icons.add),
         ));

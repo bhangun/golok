@@ -5,22 +5,24 @@ templates:
   templateItems:
   - name: app
     dataBinding: entities
+    baseDir: riverpod/app
   - name: entity
     dataBinding: entities
+    baseDir: riverpod/entity
     loop: true
     fileItems:
-    - from: entity.dart.ejs
-      to: lib/modules/{entityName}/model/{entityFile}.dart
-    - from: entity.module.dart.ejs
-      to: lib/modules/{entityName}/{entityFile}_module.dart
-    - from: entity.services.dart.ejs
-      to: lib/modules/{entityName}/services/{entityFile}_services.dart
-    - from: entity.logic.dart.ejs
-      to: lib/modules/{entityName}/logic/{entityFile}_logic.dart
-    - from: pages/entity.list.dart.ejs
-      to: lib/modules/{entityName}/pages/{entityFile}_list.dart
-    - from: pages/entity.detail.dart.ejs
-      to: lib/modules/{entityName}/pages/{entityFile}_detail.dart
-    - from: pages/entity.form.dart.ejs
-      to: lib/modules/{entityName}/pages/{entityFile}_form.dart
+    - fromPath: entity.dart.ejs
+      toPath: lib/modules/{entityName}/model/{entityFile}.dart
+    - fromPath: entity.module.dart.ejs
+      toPath: lib/modules/{entityName}/{entityFile}_module.dart
+    - fromPath: entity.services.dart.ejs
+      toPath: lib/modules/{entityName}/services/{entityFile}_services.dart
+    - fromPath: entity.logic.dart.ejs
+      toPath: lib/modules/{entityName}/logic/{entityFile}_logic.dart
+    - fromPath: pages/entity.list.dart.ejs
+      toPath: lib/modules/{entityName}/pages/{entityFile}_list.dart
+    - fromPath: pages/entity.detail.dart.ejs
+      toPath: lib/modules/{entityName}/pages/{entityFile}_detail.dart
+    - fromPath: pages/entity.form.dart.ejs
+      toPath: lib/modules/{entityName}/pages/{entityFile}_form.dart
     

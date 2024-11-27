@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:<%= blueprint.info.name %>/core/routes/navigation.dart';
-import '../logic/<%= nameSnakeCase %>_logic.dart';
-import '../<%= nameSnakeCase %>_module.dart';
+import 'package:<%= info.name %>/core/routes/navigation.dart';
+import '../logic/<%= snakeCase %>_logic.dart';
+import '../<%= snakeCase %>_module.dart';
 
-class <%= nameTitleCase %>Detail extends ConsumerStatefulWidget {
-  const <%= nameTitleCase %>Detail({super.key});
+class <%= titleCase %>Detail extends ConsumerStatefulWidget {
+  const <%= titleCase %>Detail({super.key});
 
   @override
-  <%= nameTitleCase %>DetailState createState() => <%= nameTitleCase %>DetailState();
+  <%= titleCase %>DetailState createState() => <%= titleCase %>DetailState();
 }
 
-class <%= nameTitleCase %>DetailState extends ConsumerState<<%= nameTitleCase %>Detail> {
+class <%= titleCase %>DetailState extends ConsumerState<<%= titleCase %>Detail> {
 
   @override
   void dispose() {
@@ -27,27 +27,27 @@ class <%= nameTitleCase %>DetailState extends ConsumerState<<%= nameTitleCase %>
 
   @override
   Widget build(BuildContext context) {
-    <%= nameTitleCase %>State <%= nameCamelCase %>State = ref.watch(<%= nameCamelCase %>Provider);
+    <%= titleCase %>State <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
     return Scaffold(
-            appBar: AppBar(title: const Text('<%= nameTitleCase %> Detail')),
-            body: <%= nameCamelCase %>State.isItemEmpty
-                ? const Center(child: Text('<%= nameTitleCase %> data are empty'))
-                : <%= nameCamelCase %>Detail(<%= nameCamelCase %>State),
+            appBar: AppBar(title: const Text('<%= titleCase %> Detail')),
+            body: <%= camelCase %>State.isItemEmpty
+                ? const Center(child: Text('<%= titleCase %> data are empty'))
+                : <%= camelCase %>Detail(<%= camelCase %>State),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => NavigationServices.navigateTo(<%= nameTitleCase %>Module.<%= nameCamelCase %>Form),
+              onPressed: () => NavigationServices.navigateTo(<%= titleCase %>Module.<%= camelCase %>Form),
               tooltip: 'Edit',
               child: const Icon(Icons.edit),
             ));
   }
 
-  <%= nameCamelCase %>Detail(<%= nameCamelCase %>State) {
+  <%= camelCase %>Detail(<%= camelCase %>State) {
     return ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         children: <Widget>[
           const SizedBox(height: 100.0),
           Icon(Icons.person, size: 100, color: Colors.blue[500]),
           Column(children: <Widget>[<%for (idx in properties) { %><%if(idx!='id'){%>
-            Text(<%= nameCamelCase %>State.<%= nameCamelCase %>.<%= properties[idx]['name'] %>!<%if(['int','Integer'].includes(properties[idx]['type']) ){%>.toString()<%}%>),<%}}%>
+            Text(<%= camelCase %>State.<%= camelCase %>.<%= properties[idx]['name'] %>!<%if(['int','Integer'].includes(properties[idx]['type']) ){%>.toString()<%}%>),<%}}%>
           ])
         ]);
   }

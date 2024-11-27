@@ -1,22 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-import 'package:<%= blueprint.info.name %>/app/models/general_status.dart';
-import '../<%= nameSnakeCase %>_module.dart';
-import '../services/<%= nameSnakeCase %>_services.dart';
-import '../model/<%= nameSnakeCase %>.dart';
+import 'package:<%= name %>/app/models/general_status.dart';
+import '../<%= snakeCase %>_module.dart';
+import '../services/<%= snakeCase %>_services.dart';
+import '../model/<%= snakeCase %>.dart';
 
-var log = Logger('<%= nameTitleCase %>Notifier');
+var log = Logger('<%= titleCase %>Notifier');
 
-/// Provider for the <%= nameTitleCase %> state
-final <%= nameCamelCase %>Provider = StateNotifierProvider<<%= nameTitleCase %>Notifier, <%= nameTitleCase %>State>((ref) {
-  return <%= nameTitleCase %>Notifier();
+/// Provider for the <%= titleCase %> state
+final <%= camelCase %>Provider = StateNotifierProvider<<%= titleCase %>Notifier, <%= titleCase %>State>((ref) {
+  return <%= titleCase %>Notifier();
 });
 
-/// Notifier to manage the <%= nameTitleCase %> state
-class <%= nameTitleCase %>Notifier extends StateNotifier<<%= nameTitleCase %>State> {
+/// Notifier to manage the <%= titleCase %> state
+class <%= titleCase %>Notifier extends StateNotifier<<%= titleCase %>State> {
 
-  <%= nameTitleCase %>Notifier() : super(<%= nameTitleCase %>State(
+  <%= titleCase %>Notifier() : super(<%= titleCase %>State(
     title: '',
     isUpdated: false,
     status: const StateStatus(),
@@ -24,12 +24,12 @@ class <%= nameTitleCase %>Notifier extends StateNotifier<<%= nameTitleCase %>Sta
     isItemEmpty: true,
     totalItem: 0,
     isListEmpty: true,
-    <%= nameCamelCase %>: const <%= nameTitleCase %>(),
-    <%= nameCamelCase %>List: []
+    <%= camelCase %>: const <%= titleCase %>(),
+    <%= camelCase %>List: []
   ));
 
-  void set<%= nameTitleCase %>(<%= nameTitleCase %> <%= nameCamelCase %>) {
-     state.copyWith(<%= nameCamelCase %>: <%= nameCamelCase %>);
+  void set<%= titleCase %>(<%= titleCase %> <%= camelCase %>) {
+     state.copyWith(<%= camelCase %>: <%= camelCase %>);
   }
 
   /// selected item
@@ -39,16 +39,16 @@ class <%= nameTitleCase %>Notifier extends StateNotifier<<%= nameTitleCase %>Sta
   add() {}
 
   /// Save entity
-  void save(<%= nameTitleCase %> <%= nameCamelCase %>) {
+  void save(<%= titleCase %> <%= camelCase %>) {
     state.copyWith(
-        <%= nameCamelCase %>: <%= nameCamelCase %>, status: const StateStatus(loading: true));
+        <%= camelCase %>: <%= camelCase %>, status: const StateStatus(loading: true));
     try {
-      <%= nameTitleCase %>Services.create<%= nameTitleCase %>(state.<%= nameCamelCase %>);
+      <%= titleCase %>Services.create<%= titleCase %>(state.<%= camelCase %>);
       state.copyWith(
-        <%= nameCamelCase %>: <%= nameCamelCase %>, status: const StateStatus(loading: false,success: true, error: false));
+        <%= camelCase %>: <%= camelCase %>, status: const StateStatus(loading: false,success: true, error: false));
     } catch (e) {
       state.copyWith(
-          <%= nameCamelCase %>: <%= nameCamelCase %>,
+          <%= camelCase %>: <%= camelCase %>,
           status: const StateStatus(
               loading: false, error: true, errorMessage: ''));
       log.severe(state.status.errorMessage, e);
@@ -67,8 +67,8 @@ class <%= nameTitleCase %>Notifier extends StateNotifier<<%= nameTitleCase %>Sta
   Future getInventoryList() async {}
 }
 
-// State for the <%= nameTitleCase %> entity
-class <%= nameTitleCase %>State {
+// State for the <%= titleCase %> entity
+class <%= titleCase %>State {
   final String title;
   final bool isUpdated;
   final StateStatus status;
@@ -76,10 +76,10 @@ class <%= nameTitleCase %>State {
   final bool isItemEmpty;
   final bool isListEmpty;
   final int totalItem;
-  final <%= nameTitleCase %> <%= nameCamelCase %>;
-  final List<<%= nameTitleCase %>> <%= nameCamelCase %>List;
+  final <%= titleCase %> <%= camelCase %>;
+  final List<<%= titleCase %>> <%= camelCase %>List;
 
-  <%= nameTitleCase %>State({
+  <%= titleCase %>State({
     required this.title,
     required this.isUpdated,
     required this.status,
@@ -87,11 +87,11 @@ class <%= nameTitleCase %>State {
     required this.isItemEmpty,
     required this.totalItem,
     required this.isListEmpty,
-    required this.<%= nameCamelCase %>,
-    required this.<%= nameCamelCase %>List
+    required this.<%= camelCase %>,
+    required this.<%= camelCase %>List
   });
 
-  <%= nameTitleCase %>State copyWith({
+  <%= titleCase %>State copyWith({
     String? title,
     bool? isUpdated,
     StateStatus? status,
@@ -99,10 +99,10 @@ class <%= nameTitleCase %>State {
     bool? isItemEmpty,
     int? totalItem,
     bool? isListEmpty,
-    <%= nameTitleCase %>? <%= nameCamelCase %>,
-    List<<%= nameTitleCase %>>? <%= nameCamelCase %>List
+    <%= titleCase %>? <%= camelCase %>,
+    List<<%= titleCase %>>? <%= camelCase %>List
   }) {
-    return <%= nameTitleCase %>State(
+    return <%= titleCase %>State(
       title: title?? this.title,
       isUpdated: isUpdated?? this.isUpdated,
       status: status?? this.status,
@@ -110,8 +110,8 @@ class <%= nameTitleCase %>State {
       isItemEmpty: isItemEmpty?? this.isItemEmpty,
       totalItem: totalItem?? this.totalItem,
       isListEmpty: isListEmpty?? this.isListEmpty,
-      <%= nameCamelCase %>: <%= nameCamelCase %>?? this.<%= nameCamelCase %>,
-      <%= nameCamelCase %>List: <%= nameCamelCase %>List?? this.<%= nameCamelCase %>List
+      <%= camelCase %>: <%= camelCase %>?? this.<%= camelCase %>,
+      <%= camelCase %>List: <%= camelCase %>List?? this.<%= camelCase %>List
     );
   }
 
@@ -125,8 +125,8 @@ class <%= nameTitleCase %>State {
       isItemEmpty: $isItemEmpty,
       totalItem: $totalItem,
       isListEmpty: $isListEmpty,
-      <%= nameCamelCase %>: $<%= nameCamelCase %>,
-      <%= nameCamelCase %>List: $<%= nameCamelCase %>List
+      <%= camelCase %>: $<%= camelCase %>,
+      <%= camelCase %>List: $<%= camelCase %>List
     ''';
   }
 }

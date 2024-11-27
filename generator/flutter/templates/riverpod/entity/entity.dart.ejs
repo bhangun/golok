@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart'; <% for (idx in relationship) { %><% if(relationship[idx].toSnakeCase === 'user'){%>
 import '../../account/models/user.dart';<%} else {%>
-import 'package:<%= blueprint.info.name %>/modules/<%= relationship[idx].toSnakeCase %>/model/<%= relationship[idx].toSnakeCase %>.dart';<% }}%>
+import 'package:<%= info.name %>/modules/<%= relationship[idx].toSnakeCase %>/model/<%= relationship[idx].toSnakeCase %>.dart';<% }}%>
 
 
-class <%= nameTitleCase %> extends Equatable{<% for (idx in properties) { %><% if(properties[idx].doc){%>
+class <%= titleCase %> extends Equatable{<% for (idx in properties) { %><% if(properties[idx].doc){%>
     /// <%= properties[idx].doc %> <%}%>
-    final <% if(properties[idx].type.dart.name ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].type.dart.name %><%}%>? <%= properties[idx].name %>; <% } %>
+    final <% if(properties[idx].dartType ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].dartType %><%}%>? <%= properties[idx].name %>; <% } %>
 
     const <%= name %>(<%if(properties.length > 0){%>{ <% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
         this.<%- properties[idx].name %>,<% } else {%> 
@@ -16,9 +16,9 @@ class <%= nameTitleCase %> extends Equatable{<% for (idx in properties) { %><% i
     factory <%= name %>.fromJson(Map<String, dynamic> json) =>  
         <%= name %>(<% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
  <% if(properties[idx]['isList']) { %>  
-        <%= properties[idx].name %>: List<<%= properties[idx].type.dart.name %>>.from(json['<%= properties[idx].name %>'].map((x) => 
-        <%= properties[idx].type.dart.name %>.fromJson(x))), <% } else { %>
-        <%= properties[idx].name %>: <%= properties[idx].type.dart.nameCapital %>.fromJson(json['<%= properties[idx].name %>']), 
+        <%= properties[idx].name %>: List<<%= properties[idx].dartType %>>.from(json['<%= properties[idx].name %>'].map((x) => 
+        <%= properties[idx].dartType %>.fromJson(x))), <% } else { %>
+        <%= properties[idx].name %>: <%= properties[idx].dartTypeCapital %>.fromJson(json['<%= properties[idx].name %>']), 
         <% } } else { %><%- properties[idx].name %>: json['<%- properties[idx].name %>'], 
         <% } } %>
     );
@@ -39,10 +39,10 @@ class <%= nameTitleCase %> extends Equatable{<% for (idx in properties) { %><% i
 
     static String list<%= name %>ToJson(List<<%= name %>> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-    <%= nameTitleCase %> copyWith({<% for (idx in properties) { %>
-        <% if(properties[idx].type.dart.name ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].type.dart.name %><%}%>? <%= properties[idx].name %>, <% } %>
+    <%= titleCase %> copyWith({<% for (idx in properties) { %>
+        <% if(properties[idx].dartType ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].dartType %><%}%>? <%= properties[idx].name %>, <% } %>
         }) {
-    return <%= nameTitleCase %>(<% for (idx in properties) { %>
+    return <%= titleCase %>(<% for (idx in properties) { %>
         <%= properties[idx].name %>: <%= properties[idx].name %>?? this.<%= properties[idx].name %>, <% } %>
         );
     }
@@ -59,19 +59,19 @@ class <%= nameTitleCase %> extends Equatable{<% for (idx in properties) { %><% i
     }
 }
 
-class <%= nameTitleCase %>List {
-  final List<<%= nameTitleCase %>>? <%= nameCamelCase %>s;
+class <%= titleCase %>List {
+  final List<<%= titleCase %>>? <%= camelCase %>s;
 
-  <%= nameTitleCase %>List({
-    this.<%= nameCamelCase %>s,
+  <%= titleCase %>List({
+    this.<%= camelCase %>s,
   });
 
   factory <%= name %>List.fromJson(List<dynamic> json) {
-    List<<%= name %>> <%= nameCamelCase %>s = [];
-    <%= nameCamelCase %>s = json.map((post) => <%= name %>.fromJson(post)).toList();
+    List<<%= name %>> <%= camelCase %>s = [];
+    <%= camelCase %>s = json.map((post) => <%= name %>.fromJson(post)).toList();
 
-    return <%= nameTitleCase %>List(
-      <%= nameCamelCase %>s: <%= nameCamelCase %>s,
+    return <%= titleCase %>List(
+      <%= camelCase %>s: <%= camelCase %>s,
     );
   }
 }
@@ -79,9 +79,9 @@ class <%= nameTitleCase %>List {
 let newEnums = [];
 for (p in properties) { 
     if(properties[p].isEnum){
-        for(b in blueprint.enums){ 
-            if (blueprint.enums[b].name == properties[p].type.origin.name) {
-                newEnums.push(blueprint.enums[b]);
+        for(b in enums){ 
+            if (enums[b].name == properties[p].type.origin.name) {
+                newEnums.push(enums[b]);
             }
         }
     }

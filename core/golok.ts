@@ -1,6 +1,9 @@
 import {
+  checkDirExist,
   getDartType,
+  getDirectory,
   getJavaType,
+  renderEjsFile,
   toCamelCase,
   toSnakeCase,
   toTitleCase,
@@ -13,6 +16,7 @@ import type {
   Entity,
   Enum,
   EnumValue,
+  FileItems,
   Framework,
   GolokConfig,
   KeyRawEntity,
@@ -30,6 +34,7 @@ import type {
 import { TechnologyLayer } from "./models.ts";
 import { GolokValidator, ValidationError } from "./validator.ts";
 import { GolokRegistry } from "./registry.ts";
+import { getCurrentDirname } from "./utils.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
@@ -37,12 +42,13 @@ export default class GolokCore {
   private registries: TemplateProfile[];
   private currentFrontManifest?: Manifest;
   private currentBackManifest?: Manifest;
-
+  private currentTemplateBaseDir: string;
   private config: GolokConfig;
 
   constructor() {
     this.rawBlueprint = {};
     this.compiledBlueprint = {};
+    this.currentTemplateBaseDir = "";
     this.currentFrontManifest = {
       path: "",
       name: "",
@@ -107,9 +113,6 @@ export default class GolokCore {
 
     this.setupManifest();
 
-    console.log(this.currentBackManifest);
-
-    console.log(this.currentFrontManifest);
     // Parse user blueprint
     this.parseRawToBlueprint();
 
@@ -121,6 +124,7 @@ export default class GolokCore {
   }
 
   private generate() {
+    this.renderTemplate();
   }
 
   private setupManifest() {
@@ -170,47 +174,92 @@ export default class GolokCore {
     );
   }
 
-  private renderTemplate(template: Template) {
-    const entityName = "entityName";
-    const entityFile = "entityFile";
+  private renderTemplate() {
+    const baseName = this.compiledBlueprint.info?.name ??
+      this.compiledBlueprint.info?.name;
 
-    const patternEntity = "/{" + entityName + "}/g";
-    const patternEntityFile = "/{" + entityFile + "}/g";
+    const isFront = this.compiledBlueprint.applications?.frontend
+      ? true
+      : false;
+    const isBack = this.compiledBlueprint.applications?.backend ? true : false;
+    const frontOutputDir = isFront
+      ? this.compiledBlueprint.applications?.frontend
+        ?.appsName
+      : "";
+    const backOutputDir = isBack
+      ? this.compiledBlueprint.applications?.backend
+        ?.appsName
+      : "";
 
-    /*  console.log(item)
-            const enttyPath = item.fromPath.replace(
-              patternEntity,
-              entity.snakeCase,
-            );
-            console.log(enttyPath); */
-
+    /* new Promise<void>((resolve) => {
+      setTimeout(() => { */
     this.compiledBlueprint.entities!.forEach((entity: Entity) => {
-      //console.log(entity)
+      if (isFront) {
+        this.currentFrontManifest?.templates.forEach((templ) => {
+          templ.templateItems.forEach((item) => {
+            if (item.fileItems) {
+              item.fileItems!.forEach((fileItem) => {
+                const outputDir = baseName + "/" + frontOutputDir! + "/";
+                const source = this.currentTemplateBaseDir + "/" +
+                  item.baseDir + "/" +
+                  fileItem.fromPath;
+                const dirEntity = source.replace(/\/[^/]*$/, "");
+                const targetFile = outputDir +
+                  this.placeholderPath(fileItem.toPath, entity);
+                const targetDir = getDirectory(targetFile);
+                /*   console.log("targetDir>> ", targetDir);
+                    console.log("source>>", source);
+                    console.log("dirEntity>>", dirEntity);
+                    console.log("targetFile>>", targetFile); */
 
-      // console.log(template);
-      //console.log(template);
+                // Create new directory if not exist
+                if (!checkDirExist(targetDir)) {
+                  Deno.mkdir(targetDir, {
+                    recursive: true,
+                  });
+                  console.log(targetDir);
+                }
 
-      //const dirEntity = pathFile.replace(/\/[^/]*$/, "");
+                renderEjsFile(source, targetDir, targetFile, {
+                  ...entity,
+                  ...this.compiledBlueprint,
+                }, {});
+              });
+            }
+          });
+        });
+      }
 
-      /*  // Add blueprint to each entity
-      entity.blueprint = blueprint;
-
-      // Create new directory
-      utils.makeDir(toDir + '/' + dirEntity);
-
-      new Promise((resolve) => {
-          setTimeout(() => {
-              renderEjsFile(source, toDir, pathFile, entity);
-              resolve();
-          }, 500);
-      }); */
+      /*  resolve();
+        }, 500); */
+      //  });
     });
+  }
+
+  private placeholderPath(
+    path: string,
+    entity: Entity,
+  ): string {
+    const patternEntity = /{entityName}/g;
+    const patternEntityFile = /{entityFile}/g;
+
+    const entityPath = path.replace(
+      patternEntity,
+      entity.snakeCase!,
+    );
+
+    const finalPath = entityPath.replace(
+      patternEntityFile,
+      entity.snakeCase!,
+    );
+    return finalPath;
   }
 
   async parseManifest(manifestPath: string): Promise<Manifest> {
     const baseDir = import.meta.dirname + "/../generator";
     const manifest = await yamlFileToTS(baseDir + manifestPath);
     GolokValidator.validateManifest(manifest);
+    this.currentTemplateBaseDir = baseDir + getDirectory(manifestPath);
     return manifest;
   }
 
@@ -254,6 +303,9 @@ export default class GolokCore {
 
         return {
           name: entityName,
+          titleCase: toCamelCase(entityName),
+          camelCase: toCamelCase(entityName),
+          snakeCase: toSnakeCase(entityName),
           ...entityData,
           properties: [
             ...configProperties,
