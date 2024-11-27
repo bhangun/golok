@@ -181,7 +181,7 @@ interface Configuration {
 
 interface Frontend {
   appsName?: string;
-  framework?: string;
+  framework?: Framework;
   localDatabase?: string;
   admin?: boolean;
   themes?: string;
@@ -194,6 +194,7 @@ interface Frontend {
 interface Backend {
   appsName?: string;
   packageName?: string;
+  framework: Framework;
   applicationType?: string;
   authenticationType?: string;
   buildTool?: string;
@@ -286,6 +287,7 @@ interface GolokBase {
   //generate():void;
 }
 
+
 interface TemplateProfile {
   name: string;
   description?: string;
@@ -295,10 +297,11 @@ interface TemplateProfile {
   manifestPath: string;
   technologyLayer: TechnologyLayer;
   instance?: GolokBase;
+  manifest?: Manifest;
 }
 
 interface Manifest {
-  version: string;
+  version?: string;
   path: string;
   name: string;
   templates: Template[];

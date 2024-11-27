@@ -6,7 +6,7 @@ endpoint:
   url: http://localhost
 applications:
   frontend:
-    - appsName: golok
+      appsName: golok
       framework: flutter
       localDatabase: sqlLite 
       admin: true
@@ -18,7 +18,7 @@ applications:
       locale: en, id
       entities: '*'
   backend:
-    - appsName: my_golok_front
+      appsName: my_golok_front
       packageName: tech.kayys.golok
       applicationType: microservice
       authenticationType: oauth2 

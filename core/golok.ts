@@ -1,7 +1,6 @@
 import {
   getDartType,
   getJavaType,
-  stringToYaml,
   toCamelCase,
   toSnakeCase,
   toTitleCase,
@@ -14,12 +13,13 @@ import type {
   Entity,
   Enum,
   EnumValue,
+  Framework,
   GolokConfig,
   KeyRawEntity,
-  LocaleDoc,
   Manifest,
   Property,
   RawBlueprint,
+  RawEntity,
   RawEnum,
   RawProperty,
   RawRelationship,
@@ -27,35 +27,46 @@ import type {
   Template,
   TemplateProfile,
 } from "./models.ts";
+import { TechnologyLayer } from "./models.ts";
 import { GolokValidator, ValidationError } from "./validator.ts";
 import { GolokRegistry } from "./registry.ts";
-import { RawEntity } from "./models.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
   private compiledBlueprint: Blueprint;
   private registries: TemplateProfile[];
-  private frontEndTemplate: Template;
-  private backEndTemplate: Template;
+  private currentFrontManifest?: Manifest;
+  private currentBackManifest?: Manifest;
 
   private config: GolokConfig;
 
   constructor() {
     this.rawBlueprint = {};
     this.compiledBlueprint = {};
-    this.frontEndTemplate = {
-      templateItems: [],
+    this.currentFrontManifest = {
+      path: "",
+      name: "",
+      templates: [],
       //dataBinding: BlueprintBinding.ENTITIES
     };
-    this.backEndTemplate = {
-      templateItems: [],
+
+    this.currentBackManifest = {
+      path: "",
+      name: "",
+      templates: [],
       //dataBinding: BlueprintBinding.ENTITIES
     };
-    this.registries = new GolokRegistry().templateRegistries();
+
     this.config = {
       startTime: 0,
       blueprintPath: "",
     };
+
+    // Load template registered
+    this.registries = GolokRegistry.getRegistries();
+
+    // Parse available template and matched based on request
+    this.loadManifest();
   }
 
   // Load script from string
@@ -94,11 +105,13 @@ export default class GolokCore {
     // Load and validate user blueprint
     await this.loadBlueprint();
 
+    this.setupManifest();
+
+    console.log(this.currentBackManifest);
+
+    console.log(this.currentFrontManifest);
     // Parse user blueprint
     this.parseRawToBlueprint();
-
-    // Parse available template and matched based on request
-    this.loadTemplate();
 
     // Generate apps by render template with data provided from user blueprint
     this.generate();
@@ -110,24 +123,43 @@ export default class GolokCore {
   private generate() {
   }
 
-  private loadTemplate(): void {
-    if (this.config.framework) {
-      //this.
+  private setupManifest() {
+    let frontFramework: Framework;
+    let backFramework: Framework;
+
+    if (this.rawBlueprint.applications) {
+      if (this.rawBlueprint.applications.frontend) {
+        frontFramework = this.rawBlueprint.applications.frontend?.framework!;
+      }
+
+      if (this.rawBlueprint.applications.backend) {
+        backFramework = this.rawBlueprint.applications.backend?.framework!;
+      }
     }
 
-    this.registries.map(async (registry) => {
-      console.log(registry);
-      console.log(this.config);
-      const manifest = await this.parseManifest(registry.manifestPath);
+    this.registries.find((item) => {
+      if (
+        item.framework == frontFramework &&
+        item.technologyLayer == TechnologyLayer.FRONTEND
+      ) {
+        this.currentFrontManifest = item.manifest;
+      }
+    })?.manifest;
 
-      manifest.templates.map((template) => {
-        //console.log(template)
-        if (template.templateItems && template.templateItems.length > 0) {
-          template.templateItems.map((item) => {
-            //renderEjsFile('source', 'toDir', enttyPath, 'entity', entity);
-          });
-        }
-      });
+    this.currentBackManifest = this.registries.find((item) => {
+      if (
+        item.framework == backFramework &&
+        item.technologyLayer == TechnologyLayer.BACKEND
+      ) {
+        this.currentBackManifest = item.manifest;
+      }
+    })?.manifest;
+  }
+
+  private loadManifest(): void {
+    this.registries.map(async (registry) => {
+      const manifest = await this.parseManifest(registry.manifestPath);
+      registry.manifest = manifest;
     });
   }
 
@@ -156,7 +188,7 @@ export default class GolokCore {
       //console.log(entity)
 
       // console.log(template);
-      console.log(template);
+      //console.log(template);
 
       //const dirEntity = pathFile.replace(/\/[^/]*$/, "");
 
@@ -193,8 +225,6 @@ export default class GolokCore {
       enums: this.rawBlueprint.enums?.map(this.parseRawToEnums),
       entities: this.parseRawToEntities(),
     };
-
-    console.log(this.compiledBlueprint.enums);
   }
 
   private parseRawToEntities(): Entity[] {
@@ -513,6 +543,7 @@ export default class GolokCore {
           `Script validation failed: ${validationResult.errors.join(", ")}`,
         );
       }
+
       // deno-lint-ignore no-explicit-any
     } catch (error: any) {
       throw new Error(

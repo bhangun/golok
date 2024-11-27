@@ -13,8 +13,6 @@ templates:
       to: lib/modules/{entityName}/model/{entityFile}.dart
     - from: entity.module.dart.ejs
       to: lib/modules/{entityName}/{entityFile}_module.dart
-    #- from: entity.route.dart.ejs
-    #  to: lib/modules/{entityName}/{entityFile}_routes.dart
     - from: entity.services.dart.ejs
       to: lib/modules/{entityName}/services/{entityFile}_services.dart
     - from: entity.logic.dart.ejs

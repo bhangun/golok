@@ -1,16 +1,21 @@
-import { Framework, Language, TechnologyLayer, type TemplateProfile } from "./models.ts";
+import { templateRegistries } from "../generator/register.ts";
+import type {TemplateProfile } from "./models.ts";
 
 export class GolokRegistry {
-  templateRegistries(): TemplateProfile[] {
-    return [
-      {
-        name: "Flutter",
-        framework: Framework.FLUTTER,
-        language: Language.DART,
-        manifestPath: '/flutter/templates/manifest.yaml',
-        technologyLayer: TechnologyLayer.FRONTEND
-        //instance: new FluterGenerator(),
-      },
+  static profiles:TemplateProfile[];
+  constructor(){
+    
+  }
+  
+  static setTemplate(profile: TemplateProfile){
+    this.profiles = [
+      ...[profile]
     ];
+  }
+  static getRegistries(): TemplateProfile[]{
+    this.profiles = [
+      ...templateRegistries
+    ];
+    return this.profiles;
   }
 }

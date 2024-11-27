@@ -71,17 +71,17 @@ class GolokValidator{
             throw new ValidationError("Missing applications section");
         }
 
-        if (
+        /* if (
             !Array.isArray(applications.frontend) &&
             !Array.isArray(applications.backend)
         ) {
             throw new ValidationError(
                 "Applications must contain frontend or backend arrays",
             );
-        }
+        } */
 
         // Validate frontend applications
-        applications.frontend?.forEach((app: any, index: number) => {
+        /* applications.frontend?.forEach((app: any, index: number) => {
             if (!app.appsName) {
                 throw new ValidationError(
                     `Frontend application at index ${index} missing appsName`,
@@ -92,10 +92,10 @@ class GolokValidator{
                     `Frontend application ${app.appsName} missing framework`,
                 );
             }
-        });
+        }); */
 
         // Validate backend applications
-        applications.backend?.forEach((app: any, index: number) => {
+        /* applications.backend?.forEach((app: any, index: number) => {
             if (!app.appsName) {
                 throw new ValidationError(
                     `Backend application at index ${index} missing appsName`,
@@ -106,7 +106,7 @@ class GolokValidator{
                     `Backend application ${app.appsName} missing applicationType`,
                 );
             }
-        });
+        }); */
     }
 
     static validateEntity(entity: any, entityName: string): void {
