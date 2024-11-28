@@ -7,8 +7,9 @@ import Denomander, {
 import GolokCore from "../core/golok.ts";
 import Logo from "../core/logo.ts";
 
-import { GolokConfig } from "../core/models.ts";
+import type { GolokConfig } from "../core/models.ts";
 import { jsonFileToTS } from "../core/utils.ts";
+
 //var pjson = require('../../package.json');
 
 export default class GolokCLI {
@@ -21,12 +22,11 @@ export default class GolokCLI {
     });
   }
   async execute() {
-
     // Initiate golok command line interface
     this.program._app_version =
       (await jsonFileToTS(import.meta.dirname + "/../deno.json"))["version"];
 
-    const golok = new GolokCore();
+    //const golok = new GolokCore();
     const config: GolokConfig = {
       startTime: Date.now(),
       blueprintPath: "",
@@ -34,8 +34,8 @@ export default class GolokCLI {
 
     // Show Golok logo
     Logo.show();
-    console.log('\x1b[33m%s\x1b[0m', 'version ' + this.program._app_version);
-    
+    console.log("\x1b[33m%s\x1b[0m", "version " + this.program._app_version);
+
     const framework = new Option({
       flags: "-f --framework",
       description: "Choose one of accepted choices",
@@ -43,15 +43,24 @@ export default class GolokCLI {
 
     this.program
       .command(
-        "create [path] [output?]",
-        "[path] Blueprint file. [output] Output directory",
+        "build [path] [manifest?]",
+        "[path] Blueprint file. [manifest] Manifest of your own templates",
       )
-      .action(({ path, output }: any) => {
+      .option(
+        "-o -output", "Output directory"
+      ).addOption(framework)
+      .action(({ path, manifest }: any) => {
         config.blueprintPath = path;
-        config.output = output;
+        config.output = this.program.output;
+        config.manifestPath = manifest;
+        config.framework = this.program.framework
+
+        const golok = new GolokCore(manifest);
+
         golok.setConfig(config);
         golok.compile();
 
+        
         // Do your actions here
         //console.log(`File is moved from ${blueprint} to ${outputDir}`);
         /* if (options) {

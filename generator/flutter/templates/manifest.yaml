@@ -1,6 +1,6 @@
 version: 1.0
 name: default
-templates:
+frontend:
 - name: riverpod
   templateItems:
   - name: app
@@ -25,4 +25,3 @@ templates:
       toPath: lib/modules/{entityName}/pages/{entityFile}_detail.dart
     - fromPath: pages/entity.form.dart.ejs
       toPath: lib/modules/{entityName}/pages/{entityFile}_form.dart
-    

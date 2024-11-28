@@ -148,6 +148,7 @@ function checkFileExt(file: string): string | undefined {
   const pattern =
     /^((https?|file):\/\/[^\s$.?#].[^\s]*)|([A-z0-9-_+/:]+.(golok|json|yaml|yml|png|jpeg|jpg))$/;
   if (!pattern.test(file)) {
+    printColor(file, "red")
     printColor("Something wrong with your URL or Path, please change!", "red");
   } else {
     return path.extname(file);
@@ -355,49 +356,28 @@ function removeWhitespace(text: string): string {
  */
 function renderEjsFile(
   sourceTemplate: string,
-  outputDir: string,
   templateFile: string,
   data: Entity,
-  options: Blueprint,
 ) {
   const targetPath = templateFile.replace(/.ejs+$/, "");
 
   Deno.readTextFile(sourceTemplate).then((str) => {
-    const rendered = ejs.render(str, data);
-    const encoder = new TextEncoder();
-    const renderedData = encoder.encode(rendered);
+    const renderedData = new TextEncoder().encode(ejs.render(str, data));
+    Deno.writeFile(targetPath, renderedData).then(() => {
+      printColor(targetPath, 'green');
+    });
+  });
+
+  /*   Deno.readTextFile(sourceTemplate).then((str) => {
+    const renderedData = new TextEncoder().encode(ejs.render(str, data));
     Deno.writeFile(targetPath, renderedData).then(() => {
       printColor(targetPath);
     });
-  });
-  // Render all ejs file
-
-  /* ejs.renderFile(
-    sourceTemplate,
-    context,
-    options,
-    async function (err: string, str: Uint8Array) {
-      if (err) throw err;
-      // Write rendered file to new directory
-
-      const data = new Uint8Array(str);
-      console.log(str)
-      await Deno.writeFile(targetPath, data);
-      printColor(targetPath);
-    },
-  ); */
+  }); */
 }
 
-/* const encoder = new TextEncoder();
-      const data = encoder.encode('bismillah');
-       */
-/* let template = ejs.compile(str, options);
-template(data);
-// => Rendered HTML string
-
-ejs.render(str, data, options);
-// => Rendered HTML string
-
-ejs.renderFile(filename, data, options, function(err, str){
-    // str => Rendered HTML string
-}); */
+/* function ejsRender(str: str, data, options
+):string{
+  return ejs.render(str, data)
+}
+ */

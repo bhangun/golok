@@ -1,8 +1,10 @@
 import {
   checkDirExist,
+  getCurrentDirname,
   getDartType,
   getDirectory,
   getJavaType,
+  printColor,
   renderEjsFile,
   toCamelCase,
   toSnakeCase,
@@ -16,7 +18,6 @@ import type {
   Entity,
   Enum,
   EnumValue,
-  FileItems,
   Framework,
   GolokConfig,
   KeyRawEntity,
@@ -34,7 +35,6 @@ import type {
 import { TechnologyLayer } from "./models.ts";
 import { GolokValidator, ValidationError } from "./validator.ts";
 import { GolokRegistry } from "./registry.ts";
-import { getCurrentDirname } from "./utils.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
@@ -44,22 +44,29 @@ export default class GolokCore {
   private currentBackManifest?: Manifest;
   private currentTemplateBaseDir: string;
   private config: GolokConfig;
+  private countFrontFiles: number;
+  private countBackFiles: number;
 
-  constructor() {
+  constructor(manifestPath?: string) {
     this.rawBlueprint = {};
     this.compiledBlueprint = {};
     this.currentTemplateBaseDir = "";
     this.currentFrontManifest = {
       path: "",
       name: "",
-      templates: [],
+      //templates: [],
       //dataBinding: BlueprintBinding.ENTITIES
     };
+
+    //this.setConfig(config!);
+
+    this.countFrontFiles = 0;
+    this.countBackFiles = 0;
 
     this.currentBackManifest = {
       path: "",
       name: "",
-      templates: [],
+      //templates: [],
       //dataBinding: BlueprintBinding.ENTITIES
     };
 
@@ -72,7 +79,7 @@ export default class GolokCore {
     this.registries = GolokRegistry.getRegistries();
 
     // Parse available template and matched based on request
-    this.loadManifest();
+    this.loadManifest(manifestPath!);
   }
 
   // Load script from string
@@ -120,11 +127,29 @@ export default class GolokCore {
     this.generate();
 
     // Calculate and show processing elapsed time
-    this.endCompileTime();
+    new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.endCompileTime();
+        if (this.countFrontFiles > 0) {
+          printColor(
+            "Frontend files count total: " + this.countFrontFiles,
+            "yellow",
+          );
+        }
+        if (this.countBackFiles > 0) {
+          printColor(
+            "Backend files count total: " + this.countFrontFiles,
+            "yellow",
+          );
+        }
+        resolve();
+      });
+    });
   }
 
   private generate() {
-    this.renderTemplate();
+
+    this.renderEntityTemplate();
   }
 
   private setupManifest() {
@@ -160,12 +185,32 @@ export default class GolokCore {
     })?.manifest;
   }
 
-  private loadManifest(): void {
+  private loadManifest(manifestPath: string): void {
+    const baseDir = import.meta.dirname + "/../generator";
+
     this.registries.map(async (registry) => {
-      const manifest = await this.parseManifest(registry.manifestPath);
+      let _manifestPath = "";
+      if (manifestPath) {
+        _manifestPath = Deno.cwd() + "/" + manifestPath;
+        this.currentTemplateBaseDir = Deno.cwd();
+      } else {
+        _manifestPath = registry.manifestPath;
+        this.currentTemplateBaseDir = baseDir + getDirectory(_manifestPath);
+        _manifestPath =  baseDir + _manifestPath; 
+      }
+      //console.log(_manifestPath)
+      const manifest = await yamlFileToTS( _manifestPath);
+      GolokValidator.validateManifest(manifest, _manifestPath);
       registry.manifest = manifest;
     });
   }
+
+  /*   async parseManifest(manifestPath: string, baseDir: string): Promise<Manifest> {
+    const manifest = await yamlFileToTS(manifestPath);
+    GolokValidator.validateManifest(manifest);
+    this.currentTemplateBaseDir = baseDir + getDirectory(manifestPath);
+    return manifest;
+  } */
 
   private endCompileTime() {
     console.log(
@@ -174,7 +219,14 @@ export default class GolokCore {
     );
   }
 
-  private renderTemplate() {
+  private renderTemplate(){
+    for (const dirEntry of Deno.readDirSync("/")) {
+      console.log(dirEntry.name);
+     }
+
+  }
+
+  private renderEntityTemplate() {
     const baseName = this.compiledBlueprint.info?.name ??
       this.compiledBlueprint.info?.name;
 
@@ -182,57 +234,76 @@ export default class GolokCore {
       ? true
       : false;
     const isBack = this.compiledBlueprint.applications?.backend ? true : false;
+
     const frontOutputDir = isFront
       ? this.compiledBlueprint.applications?.frontend
         ?.appsName
       : "";
+
     const backOutputDir = isBack
       ? this.compiledBlueprint.applications?.backend
         ?.appsName
       : "";
 
-    /* new Promise<void>((resolve) => {
-      setTimeout(() => { */
+     
     this.compiledBlueprint.entities!.forEach((entity: Entity) => {
-      if (isFront) {
-        this.currentFrontManifest?.templates.forEach((templ) => {
-          templ.templateItems.forEach((item) => {
-            if (item.fileItems) {
-              item.fileItems!.forEach((fileItem) => {
-                const outputDir = baseName + "/" + frontOutputDir! + "/";
-                const source = this.currentTemplateBaseDir + "/" +
-                  item.baseDir + "/" +
-                  fileItem.fromPath;
-                const dirEntity = source.replace(/\/[^/]*$/, "");
-                const targetFile = outputDir +
-                  this.placeholderPath(fileItem.toPath, entity);
-                const targetDir = getDirectory(targetFile);
-                /*   console.log("targetDir>> ", targetDir);
-                    console.log("source>>", source);
-                    console.log("dirEntity>>", dirEntity);
-                    console.log("targetFile>>", targetFile); */
-
-                // Create new directory if not exist
-                if (!checkDirExist(targetDir)) {
-                  Deno.mkdir(targetDir, {
-                    recursive: true,
-                  });
-                  console.log(targetDir);
-                }
-
-                renderEjsFile(source, targetDir, targetFile, {
-                  ...entity,
-                  ...this.compiledBlueprint,
-                }, {});
-              });
-            }
-          });
-        });
+      if (isFront && this.currentFrontManifest) {
+        this.rendering(
+          this.currentFrontManifest!.frontend!,
+          entity,
+          baseName!,
+          frontOutputDir!,
+          isFront,
+        );
       }
 
-      /*  resolve();
-        }, 500); */
-      //  });
+      if (isBack && this.currentBackManifest) {
+        this.rendering(
+          this.currentBackManifest!.backend!,
+          entity,
+          baseName!,
+          backOutputDir!,
+          false,
+        );
+      }
+    });
+  }
+
+  private rendering(
+    templates: Template[],
+    entity: Entity,
+    baseName: string,
+    targetOutputDir: string,
+    isFront: boolean,
+  ) {
+    templates.forEach((templ) => {
+      templ.templateItems.forEach((item) => {
+        if (item.fileItems) {
+          item.fileItems!.forEach((fileItem) => {
+            const outputDir = baseName + "/" + targetOutputDir! + "/";
+            const source = this.currentTemplateBaseDir + "/" +
+              item.baseDir + "/" +
+              fileItem.fromPath;
+            //const dirEntity = source.replace(/\/[^/]*$/, "");
+            const targetFile = outputDir +
+              this.placeholderPath(fileItem.toPath, entity);
+            const targetDir = getDirectory(targetFile);
+
+            // Create new directory if not exist
+            if (!checkDirExist(targetDir)) {
+              Deno.mkdir(targetDir, {
+                recursive: true,
+              });
+            }
+
+            renderEjsFile(source, targetFile, {
+              ...entity,
+              ...this.compiledBlueprint,
+            });
+            isFront ? this.countFrontFiles++ : this.countBackFiles++;
+          });
+        }
+      });
     });
   }
 
@@ -253,14 +324,6 @@ export default class GolokCore {
       entity.snakeCase!,
     );
     return finalPath;
-  }
-
-  async parseManifest(manifestPath: string): Promise<Manifest> {
-    const baseDir = import.meta.dirname + "/../generator";
-    const manifest = await yamlFileToTS(baseDir + manifestPath);
-    GolokValidator.validateManifest(manifest);
-    this.currentTemplateBaseDir = baseDir + getDirectory(manifestPath);
-    return manifest;
   }
 
   /**

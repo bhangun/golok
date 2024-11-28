@@ -1,16 +1,12 @@
 import { Blueprint, Manifest, Template } from "./models.ts";
 
-export {
-    GolokValidator, ValidationError
-}
+export { GolokValidator, ValidationError };
 
-class GolokValidator{
+class GolokValidator {
     static validationResult: ValidationResult;
 
     private originScript: any;
     private targetScript: any;
-    
-  
 
     constructor(originScript: Blueprint, targetScript: Blueprint) {
         this.originScript = originScript;
@@ -20,7 +16,6 @@ class GolokValidator{
             errors: [],
             warnings: [],
         };
-  
     }
 
     // Validation Methods
@@ -36,7 +31,7 @@ class GolokValidator{
         }
     }
 
-    static  validateEndpoint(endpoint: any): void {
+    static validateEndpoint(endpoint: any): void {
         if (!endpoint?.url) {
             throw new ValidationError("Missing or invalid endpoint URL");
         }
@@ -47,24 +42,49 @@ class GolokValidator{
         }
     }
 
-    static  validateManifest(manifest: Manifest): void {
-        if (!manifest?.templates) {
-            throw new ValidationError("Missing or invalid templates");
+    static validateManifest(manifest: Manifest, path: string): void {
+        if (!manifest?.frontend && !manifest?.backend) {
+            throw new ValidationError(
+                "Manifest file at " + path + "\n" +
+                    "Missing frontend or backend templates definition, at least one of exist.",
+            );
         }
-        manifest?.templates.map((template: Template)=>{
-            template.templateItems.map((item)=>{
-            if (!item.dataBinding) {
-                throw new ValidationError("Missing or dataBinding not defined");
-            }
-        });
-        })
-        try {
-           
+
+        if (manifest?.frontend!) {
+            GolokValidator.templatesValidator(manifest?.frontend!, true);
+        }
+        if (manifest?.backend!) {
+            GolokValidator.templatesValidator(manifest?.backend!, false);
+        }
+        /* try {
+
         } catch {
             throw new ValidationError("Invalid endpoint URL format");
-        }
+        } */
     }
 
+    static templatesValidator(templates: Template[], isFront: boolean) {
+        if (templates!.length < 1) {
+            throw new ValidationError(
+                "No one of templates defined, At least one of defined.",
+            );
+        }
+        templates.map((template: Template) => {
+            /* if (!template.isFrontend || !template.isBackend) {
+                throw new ValidationError(
+                    "Missing isFrontend or isBackend not defined. At least one and only defined!",
+                );
+            } */
+
+            template.templateItems.map((item) => {
+                if (!item.dataBinding) {
+                    throw new ValidationError(
+                        "Missing or dataBinding not defined",
+                    );
+                }
+            });
+        });
+    }
 
     static validateApplications(applications: any): void {
         if (!applications) {
@@ -208,7 +228,10 @@ class GolokValidator{
     }
 
     // Pre-execution validation
-    static async validateBeforeExecution(originScript: any, targetScript: any): Promise<ValidationResult> {
+    static async validateBeforeExecution(
+        originScript: any,
+        targetScript: any,
+    ): Promise<ValidationResult> {
         this.validationResult = {
             isValid: true,
             errors: [],
@@ -271,8 +294,8 @@ class GolokValidator{
         return this.validationResult;
     }
 
-     // Normalize relationship type to standard format
-     private normalizeRelationType(type: string): string {
+    // Normalize relationship type to standard format
+    private normalizeRelationType(type: string): string {
         const typeMap: Record<string, string> = {
             "oneToOne": "oneToOne",
             "oneToMany": "oneToMany",
@@ -287,7 +310,6 @@ class GolokValidator{
 
         return normalizedType;
     }
-
 }
 // Validation Errors
 class ValidationError extends Error {

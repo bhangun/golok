@@ -1,8 +1,14 @@
 # Golok
 Apps generator
 
-
-
+## Install Global
+```
+deno install -g --allow-net --allow-read -n golok ./main.ts
+```
+### Auto permission
+```
+deno install -g -A -n golok ./main.ts
+```
 
 ## Raw Golok Blueprint
 ```yaml

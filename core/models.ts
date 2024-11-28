@@ -233,6 +233,7 @@ interface ConfigItem {
 
 interface GolokConfig {
   startTime: number;
+  manifestPath?: string;
   isAI?: boolean;
   blueprintPath: string;
   output?: string;
@@ -250,11 +251,10 @@ interface GolokConfig {
   jdljson?: string;
   exampleDir?: string;
   isExample?: boolean;
-  generate?: string;
   example?: string;
   template?: string;
   printBlueprint?: string;
-  propertiesAsEntity?: string;
+
 }
 
 // Manifest
@@ -304,11 +304,14 @@ interface Manifest {
   version?: string;
   path: string;
   name: string;
-  templates: Template[];
+  frontend?: Template[];
+  backend?: Template[];
 }
 
 interface Template {
   name?: string;
+  isFrontend?: boolean;
+  isBackend?: boolean;
   templateItems: TemplateItems[];
 }
 
