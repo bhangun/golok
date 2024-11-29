@@ -1,0 +1,46 @@
+
+    this.rawBlueprint = {
+      ...this.compiledBlueprint,
+      entities: this.compiledBlueprint.entities!.map((entity: Entity) => {
+        
+        // Remove default properties and relationships that come from configuration
+        /* const defaultProps =
+          this.compiledBlueprint.configuration?.default?.[0]?.properties ||
+          []; */
+        /* const defaultRels = this.compiledBlueprint.configuration?.default?.[0]
+          ?.relationship || [];
+ */
+        const customProps = entity.properties?.filter((prop) =>
+          /* this.compiledBlueprint.some((defProp: any) =>
+            this.parseProperty(defProp).name === prop.name
+          ) */
+
+          this.propertyToString(prop)
+        );
+
+       /*  const customRels = entity.relationship?.filter((rel) =>
+          !defaultRels.some((defRel: any) =>
+            this.parseRelationship(defRel).name === rel.name
+          )
+        ) || []; */
+
+        const origin = {
+          [entity.name+'']: {
+            ...(entity.doc && { doc: entity.doc }),
+            ...(entity.author && { author: entity.author }),
+            ...(entity.example && { example: entity.example }),
+            properties: customProps?.map(
+              this.propertyToString.bind(this),
+            ),
+            
+/*             ...(customRels.length > 0 && {
+              relationship: customRels.map(
+                this.relationshipToString.bind(this),
+              ),
+            }), */
+          },
+        };
+
+        return origin;
+      }),
+    };

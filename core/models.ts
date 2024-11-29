@@ -80,6 +80,7 @@ type Blueprint = {
   enums?: Enum[];
   operations?: Record<string, Operation>;
   states?: State[];
+
 };
 
 // Types definitions

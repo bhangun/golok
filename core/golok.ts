@@ -1,6 +1,5 @@
 import {
   checkDirExist,
-  getCurrentDirname,
   getDartType,
   getDirectory,
   getExtName,
@@ -30,7 +29,6 @@ import type {
   RawProperty,
   RawRelationship,
   Relationship,
-  Template,
   TemplateProfile,
 } from "./models.ts";
 import { BlueprintBinding, TechnologyLayer } from "./models.ts";
@@ -39,7 +37,6 @@ import { GolokRegistry } from "./registry.ts";
 import type { TemplateItems } from "./models.ts";
 import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { join } from "https://deno.land/std@0.224.0/path/join.ts";
-import { basename } from "https://deno.land/std@0.224.0/path/mod.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
@@ -139,28 +136,15 @@ export default class GolokCore {
     // Parse user blueprint
     this.parseRawToBlueprint();
 
+    this.convertToRawBlueprint();
     // Generate apps by render template with data provided from user blueprint
-    this.generate();
+    // this.generate();
 
-    // Calculate and show processing elapsed time
-    new Promise<void>((resolve) => {
-      setTimeout(() => {
-        this.endCompileTime();
-        if (this.countFrontFiles > 0) {
-          printColor(
-            "Frontend files count total: " + this.countFrontFiles,
-            "yellow",
-          );
-        }
-        if (this.countBackFiles > 0) {
-          printColor(
-            "Backend files count total: " + this.countFrontFiles,
-            "yellow",
-          );
-        }
-        resolve();
-      });
-    });
+    // Write blueprint file
+    //this.exportToFile();
+
+    // Print Summary
+    //this.printSummary();
   }
 
   private generate() {
@@ -206,15 +190,36 @@ export default class GolokCore {
 
     const frontBaseDir = this.currentTemplateBaseDir + "/" +
       this.frontTemplate?.baseDir!;
-    console.log(frontBaseDir);
 
-    this.renderingTemplate(frontBaseDir);
+    this.renderingTemplate();
 
-    //this.renderingEntityTemplate(isFront, isBack);
+    this.renderingEntityTemplate(isFront, isBack);
+  }
+
+  private printSummary() {
+    // Calculate and show processing elapsed time
+    new Promise<void>((resolve) => {
+      setTimeout(() => {
+        if (this.countFrontFiles > 0) {
+          printColor(
+            "Frontend files count total: " + this.countFrontFiles,
+            "yellow",
+          );
+        }
+        if (this.countBackFiles > 0) {
+          printColor(
+            "Backend files count total: " + this.countFrontFiles,
+            "yellow",
+          );
+        }
+        this.endCompileTime();
+        resolve();
+      });
+    });
   }
 
   private renderingEntityTemplate(isFront: boolean, isBack: boolean) {
-    this.compiledBlueprint.entities!.forEach((entity: Entity) => {
+    this.compiledBlueprint.entities!.forEach((entity: Entity, x: number) => {
       if (isFront && this.currentFrontManifest) {
         this.rendering(
           this.frontEntityTemplate!,
@@ -304,7 +309,7 @@ export default class GolokCore {
     );
   }
 
-  async renderingTemplate(path: string) {
+  async renderingTemplate() {
     const templBaseDir = this.currentTemplateBaseDir + "/" +
       this.frontTemplate?.baseDir!;
 
@@ -320,21 +325,14 @@ export default class GolokCore {
       }
 
       if (getExtName(w.path) == ".ejs") {
-        const newFilename = targetDir.replace(/\.ejs$/, '');
-console.log(newFilename)
-       renderEjsFile(w.path, targetDir,undefined, this.compiledBlueprint);
+        renderEjsFile(w.path, targetDir, undefined, this.compiledBlueprint);
       } else {
         if (!w.isDirectory) {
           Deno.copyFile(w.path, targetDir);
-          printColor(targetDir, "green");
+          //printColor(targetDir, "green");
         }
       }
     }
-
-    /* for (const dirEntry of Deno.readDirSync(path)) {
-      dirEntry.isDirectory
-      console.log(dirEntry.name);
-    } */
   }
 
   private rendering(
@@ -481,26 +479,21 @@ console.log(newFilename)
       javaType: "",
     };
 
-    // Get documentation
     const [otherAttributes, doc] = value.split("//").map((s) => s.trim());
     if (doc) property.doc = doc;
-
-    // Get Entity name
     const parts = otherAttributes.split(",").map((p) => p.trim());
+
     let type = "";
     if (parts[0].includes("=")) {
-      type = parts[0].split("=")[0];
+      type = parts[0].split("=")[1];
       property.enum = true;
     } else {
       type = parts[0];
     }
-    parts.splice(0, 1);
-    property.origin = type;
-    property.dartType = getDartType(type);
-    property.javaType = getJavaType(type);
 
     // Get Placeholder
     const placeholder = otherAttributes.match(/placeholder=\{([^}]+)\}/);
+    if (placeholder != null) otherAttributes.replace(/placeholder/g, "");
     if (placeholder) {
       const placeContent = placeholder[1];
       const placeObj: any = {};
@@ -510,6 +503,10 @@ console.log(newFilename)
       });
       property.placeholder = placeObj;
     }
+    parts.splice(0, 1);
+    property.origin = type;
+    property.dartType = getDartType(type);
+    property.javaType = getJavaType(type);
 
     // Check & get for `required` and `unique` flags
     property.required = /required/.test(otherAttributes);
@@ -521,8 +518,6 @@ console.log(newFilename)
         if (key == "min") property.min = Number.parseInt(value);
         if (key == "max") property.max = Number.parseInt(value);
         if (key == "refLink") property.refLink = value;
-      } else {
-        property.origin = spec;
       }
     });
 
@@ -536,9 +531,12 @@ console.log(newFilename)
     const [name, value] = Object.entries<string>(rawRelationship)[0];
     const [otherAttributes, doc] = value.split("//").map((s) => s.trim());
     const [entityWithAttribute, typeWithLabel] = otherAttributes.split(",");
-    const [entity, attribute] = entityWithAttribute.split("(").map((s) =>
+    /* const [entity, attribute] = entityWithAttribute.split("(").map((s) =>
       s.replace(")", "").trim()
-    );
+    ); */
+    const entity = entityWithAttribute.split("(").map((s) =>
+      s.replace(")", "").trim()
+    )[0];
     const [type, label] = typeWithLabel.split("(").map((s) =>
       s.replace(")", "").trim()
     );
@@ -565,7 +563,8 @@ console.log(newFilename)
   // Convert relationship back to string format (for ORIGIN_SCRIPT)
   private relationshipToString(rel: Relationship): string {
     const docComment = rel.doc ? ` //${rel.doc}` : "";
-    return `${rel.name}: ${rel.entity}(${rel.attribute}), ${rel.type}(${rel.label})${docComment}`;
+    //return `${rel.name}: ${rel.entity}(${rel.attribute}), ${rel.type}(${rel.label})${docComment}`;
+    return `${rel.entity}(${rel.attribute}), ${rel.type}(${rel.label})${docComment}`;
   }
 
   // Transform property types
@@ -591,52 +590,42 @@ console.log(newFilename)
   }
 
   // Convert TARGET_SCRIPT back to ORIGIN_SCRIPT
-  convertToRawBlueprint(): void {
+  private convertToRawBlueprint(): void {
     if (!this.compiledBlueprint) {
       throw new Error("Target script not loaded");
     }
-    /*
-    this.rawBlueprint = {
-      ...this.compiledBlueprint,
-      entities: this.compiledBlueprint.entities.map((entity: Entity) => {
-        // Remove default properties and relationships that come from configuration
-        const defaultProps =
-          this.compiledBlueprint.configuration?.default?.[0]?.properties ||
-          [];
-        const defaultRels = this.compiledBlueprint.configuration?.default?.[0]
-          ?.relationship || [];
 
-        const customProps = entity.properties?.filter((prop) =>
-          !defaultProps.some((defProp: any) =>
-            this.parseProperty(defProp).name === prop.name
-          )
-        );
+    const ee: RawBlueprint = {
+      entities: this.convertToRawEntities(this.compiledBlueprint.entities!),
+      enums: this.convertToRawEnum(this.compiledBlueprint.enums!),
+    };
 
-        const customRels = entity.relationship?.filter((rel) =>
-          !defaultRels.some((defRel: any) =>
-            this.parseRelationship(defRel).name === rel.name
-          )
-        ) || [];
+    console.log(yamlToString(ee));
+  }
+  private convertToRawEnum(enums: Enum[]): RawEnum[] {
+    return enums!.map((e: Enum) => {
+      return {
+        [e.name + ""]: e.values.map((v)=>{return v.name}),
+      };
+    });
+  }
 
-        const origin = {
-          [entity.name]: {
-            ...(entity.doc && { doc: entity.doc }),
-            ...(entity.author && { author: entity.author }),
-            ...(entity.example && { example: entity.example }),
-            properties: customProps?.map(
-              this.propertyToString.bind(this),
-            ),
-            ...(customRels.length > 0 && {
-              relationship: customRels.map(
-                this.relationshipToString.bind(this),
-              ),
-            }),
-          },
-        };
-
-        return origin;
-      }),
-    }; */
+  private convertToRawEntities(entities: Entity[]): KeyRawEntity[] {
+    return entities!.map((entity: Entity) => {
+      return {
+        [entity.name + ""]: {
+          ...(entity.doc && { doc: entity.doc }),
+          ...(entity.author && { author: entity.author }),
+          ...(entity.example && { example: entity.example }),
+          properties: entity.properties?.map((prop) => {
+            return { [prop.name + ""]: this.propertyToString(prop) };
+          }),
+          relationship: entity.relationship?.map((rela) => {
+            return { [rela.name + ""]: this.relationshipToString(rela) };
+          }),
+        },
+      };
+    });
   }
 
   private propertyToString(prop: Property): string {
@@ -649,8 +638,8 @@ console.log(newFilename)
     if (prop.default !== undefined) specs.push(`default=${prop.default}`);
     if (prop.enum) specs.push(`enum=${prop.origin}`);
 
-    let result = `${prop.name}: ${specs.join(", ")}`;
-
+    //let result = `${prop.name}: ${specs.join(", ")}`;
+    let result = `${specs.join(", ")}`;
     if (prop.doc) {
       result += ` //${prop.doc}`;
     }
@@ -659,19 +648,29 @@ console.log(newFilename)
   }
 
   // Export to string
-  exportToString(): string {
+  private exportToString(): string {
     const script = this.compiledBlueprint || this.rawBlueprint;
-    if (!script) {
+    if (!this.compiledBlueprint) {
       throw new Error("No script loaded");
     }
-    return yamlToString(script);
+    return yamlToString(this.compiledBlueprint);
   }
 
   // Export to file
-  async exportToFile(filePath: string): Promise<void> {
-    const yamlString = await this.exportToString();
+  private async exportToFile(): Promise<void> {
+    const yamlString = this.exportToString();
+    const filePath = join(
+      Deno.cwd(),
+      this.baseOutDir!,
+      ".golok.blueprint.yaml",
+    );
     try {
-      await Deno.writeTextFile(filePath, yamlString);
+      //Print Compiled blueprint
+
+      printColor(filePath, "green");
+      await Deno.writeTextFile(filePath, yamlToString(this.compiledBlueprint));
+
+      //await Deno.writeTextFile(filePath, yamlToString(this.compiledBlueprint));
       // deno-lint-ignore no-explicit-any
     } catch (error: any) {
       throw new Error(

@@ -12,7 +12,7 @@ import type { ValidationError } from "./validator.ts";
 import type { Blueprint, Entity } from "./models.ts";
 import { basename, extname, join } from "https://deno.land/std/path/mod.ts";
 
-export {
+export {parseConfigString,
   capitalize,
   checkDirExist,
   cleanOtherChar,
@@ -86,6 +86,72 @@ function getMinMax(
   const modifier = modifiers.find((m) => m.startsWith(key));
   return modifier ? modifier.split("=")[1] : undefined;
 }
+
+
+// Type definitions
+interface Placeholder {
+  id: string;
+  en: string;
+}
+
+interface TargetConfig {
+  type: typeof String;
+  max: number;
+  placeholder: string;//Placeholder;
+  refLink: string;
+  doc: string;
+}
+
+
+function  parseConfigString(sourceConfig: string): TargetConfig {
+  // Split the string into configuration and comment parts
+  const [configPart, docComment] = sourceConfig.split("//").map((s) =>
+    s.trim()
+  );
+
+  // Initialize the base object with String type
+  const result: Partial<TargetConfig> = {
+    type: String,
+  };
+
+  // Split the configuration part into segments
+  const segments = configPart
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s !== "String"); // Remove the type indicator
+
+  // Process each segment
+  segments.forEach((segment) => {
+    if (segment.startsWith("max=")) {
+      result.max = parseInt(segment.split("=")[1]);
+    } else if (segment.startsWith("placeholder=")) {
+      // Extract the placeholder object
+      const placeholderStr = segment.substring(
+        segment.indexOf("{"),
+        segment.lastIndexOf("}") + 1,
+      );
+      try {
+        // Convert string to valid JSON format
+        const jsonStr = placeholderStr
+          .replace(/([a-zA-Z0-9_]+):/g, '"$1":') // Add quotes to keys
+          .replace(/'/g, '"'); // Replace single quotes with double quotes
+        result.placeholder = jsonStr;
+      } catch (error) {
+        console.error("Error parsing placeholder:", error);
+        throw new Error("Invalid placeholder format");
+      }
+    } else if (segment.startsWith("refLink=")) {
+      result.refLink = segment.split("=")[1].replace(/['"]/g, "");
+    }
+  });
+
+  // Add the documentation comment
+  result.doc = docComment || "";
+
+  return result as TargetConfig;
+}
+
+
 
 function mapType(type: string): string {
   const typeMap: Record<string, { type: string; format?: string }> = {
@@ -393,14 +459,14 @@ function renderEjsFile(
     Deno.readTextFile(sourceTemplate).then((str) => {
       const renderedData = new TextEncoder().encode(ejs.render(str, data));
       Deno.writeFile(targetPath, renderedData).then(() => {
-        printColor(targetPath, "green");
+        //printColor(targetPath, "green");
       });
     });
   } else {
     Deno.readTextFile(sourceTemplate).then((str) => {
       const renderedData = new TextEncoder().encode(ejs.render(str, blueprint));
       Deno.writeFile(targetPath, renderedData).then(() => {
-        printColor(targetPath);
+        //printColor(targetPath);
       });
     });
   }
