@@ -310,8 +310,6 @@ interface Manifest {
 
 interface Template {
   name?: string;
-  isFrontend?: boolean;
-  isBackend?: boolean;
   templateItems: TemplateItems[];
 }
 

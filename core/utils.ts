@@ -3,7 +3,6 @@ import {
   stringify as stringifyYaml,
 } from "https://deno.land/std@0.224.0/yaml/mod.ts";
 import * as path from "jsr:@std/path";
-import { join } from "jsr:@std/path";
 import { existsSync } from "https://deno.land/std@0.224.0/fs/mod.ts";
 //import { basename, dirname, extname, join } from "node:path";
 //import { fileURLToPath } from "node:url";
@@ -11,6 +10,7 @@ import { existsSync } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import ejs from "npm:ejs";
 import type { ValidationError } from "./validator.ts";
 import type { Blueprint, Entity } from "./models.ts";
+import { basename, extname, join } from "https://deno.land/std/path/mod.ts";
 
 export {
   capitalize,
@@ -20,6 +20,7 @@ export {
   getCurrentDirname,
   getDartType,
   getDirectory,
+  getExtName,
   getJavaType,
   getMimeType,
   getMinMax,
@@ -138,6 +139,29 @@ function checkDirExist(dir: string) {
   return existsSync(dir);
 }
 
+function truncateAndCopyPath(
+  source: string,
+  target: string,
+  truncatedPart: string,
+): { sourcePath: string; targetPath: string } {
+  // Remove the truncatedPart from the source path
+  const truncatedSource = source.replace(truncatedPart, "").replace(/^\//, "");
+
+  // Get the original filename
+  const originalFilename = basename(source);
+
+  // Remove .ejs extension if present
+  const newFilename = originalFilename.replace(/\.ejs$/, "");
+
+  // Create the full target path by joining target directory with modified filename
+  const targetPath = join(target, newFilename);
+
+  return {
+    sourcePath: source,
+    targetPath: targetPath,
+  };
+}
+
 /**
  * checkFileExt
  * @param {String} file
@@ -148,13 +172,16 @@ function checkFileExt(file: string): string | undefined {
   const pattern =
     /^((https?|file):\/\/[^\s$.?#].[^\s]*)|([A-z0-9-_+/:]+.(golok|json|yaml|yml|png|jpeg|jpg))$/;
   if (!pattern.test(file)) {
-    printColor(file, "red")
+    printColor(file, "red");
     printColor("Something wrong with your URL or Path, please change!", "red");
   } else {
     return path.extname(file);
   }
 }
 
+function getExtName(file: string) {
+  return path.extname(file);
+}
 /**
  * @return {String} default app name
  */
@@ -357,23 +384,30 @@ function removeWhitespace(text: string): string {
 function renderEjsFile(
   sourceTemplate: string,
   templateFile: string,
-  data: Entity,
+  data?: Entity,
+  blueprint?: Blueprint,
 ) {
-  const targetPath = templateFile.replace(/.ejs+$/, "");
+  const targetPath = ejsFileReplace(templateFile);
 
-  Deno.readTextFile(sourceTemplate).then((str) => {
-    const renderedData = new TextEncoder().encode(ejs.render(str, data));
-    Deno.writeFile(targetPath, renderedData).then(() => {
-      printColor(targetPath, 'green');
+  if (!blueprint) {
+    Deno.readTextFile(sourceTemplate).then((str) => {
+      const renderedData = new TextEncoder().encode(ejs.render(str, data));
+      Deno.writeFile(targetPath, renderedData).then(() => {
+        printColor(targetPath, "green");
+      });
     });
-  });
+  } else {
+    Deno.readTextFile(sourceTemplate).then((str) => {
+      const renderedData = new TextEncoder().encode(ejs.render(str, blueprint));
+      Deno.writeFile(targetPath, renderedData).then(() => {
+        printColor(targetPath);
+      });
+    });
+  }
+}
 
-  /*   Deno.readTextFile(sourceTemplate).then((str) => {
-    const renderedData = new TextEncoder().encode(ejs.render(str, data));
-    Deno.writeFile(targetPath, renderedData).then(() => {
-      printColor(targetPath);
-    });
-  }); */
+function ejsFileReplace(path: string) {
+  return path.replace(/.ejs+$/, "");
 }
 
 /* function ejsRender(str: str, data, options
