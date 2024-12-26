@@ -39,6 +39,7 @@ export {parseConfigString,
   toTitleCase,
   yamlFileToTS,
   yamlToString,
+  checkFileExist
 };
 
 function getDartType(type: string): string {
@@ -242,6 +243,19 @@ function checkFileExt(file: string): string | undefined {
     printColor("Something wrong with your URL or Path, please change!", "red");
   } else {
     return path.extname(file);
+  }
+}
+
+async function checkFileExist(path:string) {
+  try {
+    await Deno.stat(path);
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) {
+      printColor(path, "red");
+      printColor("File does not exist at the given path!", "red");
+    } else {
+      throw error;
+    }
   }
 }
 

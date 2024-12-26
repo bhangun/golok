@@ -12,6 +12,4 @@ export const templateRegistries: TemplateProfile[] = [{
   manifestPath: "/flutter/templates/manifest.yaml",
   technologyLayer: TechnologyLayer.FRONTEND,
   //instance: new FluterGenerator(),  //Other option to register manifest
-},
-
-];
+}];

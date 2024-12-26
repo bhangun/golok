@@ -136,18 +136,78 @@ export default class GolokCore {
     // Parse user blueprint
     this.parseRawToBlueprint();
 
-
-
-
-//    this.convertToRawBlueprint();
+    //    this.convertToRawBlueprint();
     // Generate apps by render template with data provided from user blueprint
-     this.generate();
+    this.generate();
 
     // Write blueprint file
     //this.exportToFile();
 
     // Print Summary
     //this.printSummary();
+  }
+
+  // Load script from string with validation
+  async loadBlueprint(
+    isOrigin: boolean = true,
+  ): Promise<void> {
+    try {
+      const parsedScript = await yamlFileToTS(
+        this.config.blueprintPath,
+      ) as RawBlueprint;
+
+      // Mean from Raw Blueprint
+      if (isOrigin) {
+        this.rawBlueprint = parsedScript;
+      } else {
+        // this.compiledBlueprint = parsedScript;
+      }
+
+      // If blueprint has includes, transform it
+      if (parsedScript.includes) {
+        await this.transformIncludes(parsedScript);
+      }
+
+      // Validate after loading
+      const validationResult = await GolokValidator.validateBeforeExecution(
+        this.rawBlueprint,
+        this.compiledBlueprint,
+      );
+
+      if (!validationResult.isValid) {
+        throw new ValidationError(
+          `Script validation failed: ${validationResult.errors.join(", ")}`,
+        );
+      }
+
+      // deno-lint-ignore no-explicit-any
+    } catch (error: any) {
+      throw new Error(
+        `Failed to parse or validate YAML string: ${error.message}`,
+      );
+    }
+  }
+
+  async transformIncludes(parsedScript: RawBlueprint): Promise<void> {
+    if (this.rawBlueprint.entities === undefined) {
+      this.rawBlueprint.entities = [];
+    }
+    if (this.rawBlueprint.enums === undefined) {
+      this.rawBlueprint.enums = [];
+    }
+
+    const baseDirBlueprintPath = getDirectory(this.config.blueprintPath);
+
+    const includePromises = parsedScript.includes!.map(async (includeItem) => {
+      const includePath = `${baseDirBlueprintPath}/${includeItem.file}`;
+      const includeData = await yamlFileToTS(includePath) as RawBlueprint;
+      includeData.entities!;
+  
+      this.rawBlueprint.entities!.push(...includeData.entities!);
+      this.rawBlueprint.enums!.push(...includeData.enums!);
+    });
+
+    await Promise.all(includePromises);
   }
 
   private generate() {
@@ -171,6 +231,7 @@ export default class GolokCore {
 
     this.currentFrontManifest!.frontend!.find((templ) => {
       templ!.templateItems!.find((item) => {
+        // Binding generation to entities template
         if (item!.loop! && item.dataBinding == BlueprintBinding.ENTITIES) {
           this.frontEntityTemplate = item;
         } else {
@@ -195,14 +256,12 @@ export default class GolokCore {
       this.frontTemplate?.baseDir!;
 
 
-     // console.log('gen... ',this.compiledBlueprint)
-    
     //this.renderingTemplate();
 
     //this.renderingEntityTemplate(isFront, isBack);
   }
 
-  getBlueprint(){
+  getBlueprint() {
     return this.compiledBlueprint;
   }
 
@@ -266,7 +325,7 @@ export default class GolokCore {
       }
     }
 
-    this.registries.find((item) => {
+    this.currentFrontManifest = this.registries.find((item) => {
       if (
         item.framework == frontFramework &&
         item.technologyLayer == TechnologyLayer.FRONTEND
@@ -283,6 +342,8 @@ export default class GolokCore {
         this.currentBackManifest = item.manifest;
       }
     })?.manifest;
+
+    console.log(this.currentFrontManifest);
   }
 
   private loadManifest(manifestPath: string): void {
@@ -290,27 +351,26 @@ export default class GolokCore {
 
     this.registries.map(async (registry) => {
       let _manifestPath = "";
+      // Load manifest from user input
       if (manifestPath) {
-        _manifestPath = Deno.cwd() + "/" + manifestPath;
+        _manifestPath = manifestPath;
         this.currentTemplateBaseDir = Deno.cwd();
-      } else {
+      } else { // Load manifest from registered template
         _manifestPath = registry.manifestPath;
         this.currentTemplateBaseDir = baseDir + getDirectory(_manifestPath);
         _manifestPath = baseDir + _manifestPath;
       }
-      //console.log(_manifestPath)
+
       const manifest = await yamlFileToTS(_manifestPath);
+     
       GolokValidator.validateManifest(manifest, _manifestPath);
       registry.manifest = manifest;
-    });
-  }
 
-  /*   async parseManifest(manifestPath: string, baseDir: string): Promise<Manifest> {
-    const manifest = await yamlFileToTS(manifestPath);
-    GolokValidator.validateManifest(manifest);
-    this.currentTemplateBaseDir = baseDir + getDirectory(manifestPath);
-    return manifest;
-  } */
+      console.log(registry);
+    });
+
+    console.log(this.registries);
+  }
 
   private endCompileTime() {
     console.log(
@@ -408,11 +468,11 @@ export default class GolokCore {
       endpoint: this.rawBlueprint.endpoint,
       enums: this.rawBlueprint.enums?.map(this.parseRawToEnums),
       entities: this.parseRawToEntities(),
-
     };
   }
 
   private parseRawToEntities(): Entity[] {
+ 
     const entities: Entity[] =
       this.rawBlueprint.entities!.map((entity: KeyRawEntity) => {
         const [entityName, entityData] = Object.entries<RawEntity>(entity)[0];
@@ -462,17 +522,23 @@ export default class GolokCore {
       name: name,
       values: [
         ...values.map((value) => {
-          const [key, _value] = value.split("=");
-          const newEnum: EnumValue = { name: key };
-          const localeValue = _value.match(/\{([^}]+)\}/);
-          if (localeValue) {
-            const localeContent = localeValue[1];
-            const localeObj: any = {};
-            localeContent.split(", ").forEach((pair) => {
-              const [key, value] = pair.split(":");
-              localeObj[key.trim()] = value.trim().replace(/"/g, "");
-            });
-            if (localeObj) newEnum.locale = localeObj;
+          const newEnum: EnumValue = {};
+          if (value.split("=").length > 1) {
+            const [key, _value] = value.split("=");
+            
+            const newEnum: EnumValue = { name: key };
+            const localeValue = _value.match(/\{([^}]+)\}/);
+            if (localeValue) {
+              const localeContent = localeValue[1];
+              const localeObj: Record<string, string> = {};
+              localeContent.split(", ").forEach((pair) => {
+                const [key, value] = pair.split(":");
+                localeObj[key.trim()] = value.trim().replace(/"/g, "");
+              });
+              if (localeObj) newEnum.locale = localeObj;
+            }
+          } else {
+            newEnum.name = value;
           }
           return newEnum;
         }),
@@ -545,9 +611,8 @@ export default class GolokCore {
     /* const [entity, attribute] = entityWithAttribute.split("(").map((s) =>
       s.replace(")", "").trim()
     ); */
-    const entity = entityWithAttribute.split("(").map((s) =>
-      s.replace(")", "").trim()
-    )[0];
+    const entity =
+      entityWithAttribute.split("(").map((s) => s.replace(")", "").trim())[0];
     const [type, label] = typeWithLabel.split("(").map((s) =>
       s.replace(")", "").trim()
     );
@@ -610,13 +675,13 @@ export default class GolokCore {
       entities: this.convertToRawEntities(this.compiledBlueprint.entities!),
       enums: this.convertToRawEnum(this.compiledBlueprint.enums!),
     };
-
-    console.log(yamlToString(ee));
   }
   private convertToRawEnum(enums: Enum[]): RawEnum[] {
     return enums!.map((e: Enum) => {
       return {
-        [e.name + ""]: e.values.map((v)=>{return v.name}),
+        [e.name + ""]: e.values.map((v) => v.name).filter((
+          name,
+        ): name is string => name !== undefined),
       };
     });
   }
@@ -660,7 +725,7 @@ export default class GolokCore {
 
   // Export to string
   private exportToString(): string {
-    const script = this.compiledBlueprint || this.rawBlueprint;
+    //const script = this.compiledBlueprint || this.rawBlueprint;
     if (!this.compiledBlueprint) {
       throw new Error("No script loaded");
     }
@@ -679,7 +744,7 @@ export default class GolokCore {
       //Print Compiled blueprint
 
       printColor(filePath, "green");
-      await Deno.writeTextFile(filePath, yamlToString(this.compiledBlueprint));
+      await Deno.writeTextFile(filePath, yamlToString(yamlString));
 
       //await Deno.writeTextFile(filePath, yamlToString(this.compiledBlueprint));
       // deno-lint-ignore no-explicit-any
@@ -700,43 +765,6 @@ export default class GolokCore {
     for (let i = 0; i < chunks.length; i += chunkSize) {
       yield new TextDecoder().decode(
         chunks.slice(i, Math.min(i + chunkSize, chunks.length)),
-      );
-    }
-  }
-
-  // Load script from string with validation
-  async loadBlueprint(
-    isOrigin: boolean = true,
-  ): Promise<void> {
-    try {
-      const parsedScript = await yamlFileToTS(
-        this.config.blueprintPath,
-      ) as RawBlueprint;
-
-      if (isOrigin) {
-        this.rawBlueprint = parsedScript;
-      } else {
-        // this.compiledBlueprint = parsedScript;
-      }
-
-      if (!this.rawBlueprint) {
-        throw new Error("Golok blueprint not loaded");
-      }
-      // Validate after loading
-      const validationResult = await GolokValidator.validateBeforeExecution(
-        this.rawBlueprint,
-        this.compiledBlueprint,
-      );
-      if (!validationResult.isValid) {
-        throw new ValidationError(
-          `Script validation failed: ${validationResult.errors.join(", ")}`,
-        );
-      }
-
-      // deno-lint-ignore no-explicit-any
-    } catch (error: any) {
-      throw new Error(
-        `Failed to parse or validate YAML string: ${error.message}`,
       );
     }
   }

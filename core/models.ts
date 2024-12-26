@@ -5,6 +5,7 @@ export type {
   Configuration,
   Entity,
   Enum,
+  Include,
   Frontend,
   Backend,
   EnumValue,
@@ -46,12 +47,19 @@ type RawBlueprint = {
   info?: Info;
   endpoint?: Endpoint;
   applications?: Application;
+  includes?: Include[];
   entities?: KeyRawEntity[];
   enums?: RawEnum[];
   operations?: Record<string, Operation>;
   configuration?: Configuration;
   states?: State[];
 };
+
+type Include = {
+  file: string;
+  entities: string;
+  enums: string;
+}
 
 interface Endpoint {
   url: string;
@@ -173,7 +181,7 @@ interface Enum {
 }
 
 interface EnumValue{
-     name: string; 
+     name?: string; 
      locale?: LocaleDoc;
 }
 

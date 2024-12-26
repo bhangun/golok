@@ -1,12 +1,14 @@
-import { Blueprint, Manifest, Template } from "./models.ts";
+import type{ Blueprint, Manifest, Template, Include } from "./models.ts";
+import {  } from "./models.ts";
+import { checkFileExist } from "./utils.ts";
 
 export { GolokValidator, ValidationError };
 
 class GolokValidator {
     static validationResult: ValidationResult;
 
-    private originScript: any;
-    private targetScript: any;
+    private originScript: Blueprint;
+    private targetScript: Blueprint;
 
     constructor(originScript: Blueprint, targetScript: Blueprint) {
         this.originScript = originScript;
@@ -16,6 +18,19 @@ class GolokValidator {
             errors: [],
             warnings: [],
         };
+    }
+
+     // Validation Methods
+     static validateIncludes(includes: Include[]): void {
+        if (includes && includes.length > 0) {
+
+            includes.map((item, index)=>{
+                //checkFileExist(item.file);
+                if (!item.file){
+                    throw new ValidationError(`Empty file path in includes section index: ${index} ${index!=0? ', after: '+includes[index-1].file:''} `);
+                }
+            })
+        }
     }
 
     // Validation Methods
@@ -245,12 +260,16 @@ class GolokValidator {
             }
 
             // Validate main sections
+            this.validateIncludes(script.includes);
             this.validateScriptInfo(script.info);
             this.validateEndpoint(script.endpoint);
             this.validateApplications(script.applications);
 
+            
             // Validate entities
-            if (Array.isArray(script.entities)) {
+            if(!script.entities){
+                throw new ValidationError("No Entities provided");
+            } else if (Array.isArray(script.entities)) {
                 script.entities.forEach((entity: any) => {
                     if (originScript) {
                         const [entityName, entityData] =

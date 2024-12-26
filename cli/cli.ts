@@ -43,6 +43,7 @@ export default class GolokCLI {
       flags: "-f --framework",
       description: "Choose one of accepted choices",
     }).choices(["flutter", "quarkus", "springboot"]);
+
     const toOptions = new Option({
       flags: "-t --target",
       description: "Convert option",
@@ -63,7 +64,7 @@ export default class GolokCLI {
         "Output directory",
       )
       //.addOption(framework)
-      .action(({ path, manifest }: any) => {
+      .action(({ path, manifest }: { path: string; manifest?: string }) => {
         config.blueprintPath = path;
         config.output = this.program.output;
         config.manifestPath = manifest;
@@ -130,7 +131,7 @@ export default class GolokCLI {
         "-o, --output <string>",
         "Destination folder for generated apps, included blueprint file.",
       )
-      .action(({ pathContent }: any) => {
+      .action(({ pathContent }: { pathContent: string }) => {
        // console.log(this.program)
         if (this.program.from === "golok") {
           if (this.program.target === "jdl") {
