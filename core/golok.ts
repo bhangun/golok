@@ -136,9 +136,12 @@ export default class GolokCore {
     // Parse user blueprint
     this.parseRawToBlueprint();
 
-    this.convertToRawBlueprint();
+
+
+
+//    this.convertToRawBlueprint();
     // Generate apps by render template with data provided from user blueprint
-    // this.generate();
+     this.generate();
 
     // Write blueprint file
     //this.exportToFile();
@@ -191,9 +194,16 @@ export default class GolokCore {
     const frontBaseDir = this.currentTemplateBaseDir + "/" +
       this.frontTemplate?.baseDir!;
 
-    this.renderingTemplate();
 
-    this.renderingEntityTemplate(isFront, isBack);
+     // console.log('gen... ',this.compiledBlueprint)
+    
+    //this.renderingTemplate();
+
+    //this.renderingEntityTemplate(isFront, isBack);
+  }
+
+  getBlueprint(){
+    return this.compiledBlueprint;
   }
 
   private printSummary() {
@@ -398,6 +408,7 @@ export default class GolokCore {
       endpoint: this.rawBlueprint.endpoint,
       enums: this.rawBlueprint.enums?.map(this.parseRawToEnums),
       entities: this.parseRawToEntities(),
+
     };
   }
 

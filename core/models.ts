@@ -1,9 +1,12 @@
 export type {
   ApplicationConfig,
+  Application,
   Blueprint,
   Configuration,
   Entity,
   Enum,
+  Frontend,
+  Backend,
   EnumValue,
   FileItems,
   GolokBase,
@@ -25,6 +28,18 @@ export type {
 };
 
 export { BlueprintBinding, Framework, Language, TechnologyLayer };
+
+// Core Blueprint
+type Blueprint = {
+  info?: Info;
+  endpoint?: Endpoint;
+  applications?: Application;
+  entities?: Entity[];
+  enums?: Enum[];
+  operations?: Record<string, Operation>;
+  states?: State[];
+  configuration?: Configuration;
+};
 
 // Raw Blueprint
 type RawBlueprint = {
@@ -71,17 +86,6 @@ interface RawRelationship {
   [key: string]: string;
 }
 
-// Core Blueprint
-type Blueprint = {
-  info?: Info;
-  endpoint?: Endpoint;
-  applications?: Application;
-  entities?: Entity[];
-  enums?: Enum[];
-  operations?: Record<string, Operation>;
-  states?: State[];
-
-};
 
 // Types definitions
 interface Info {
