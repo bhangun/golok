@@ -58,19 +58,19 @@ class GolokValidator {
     }
 
     static validateManifest(manifest: Manifest, path: string): void {
-        if (!manifest?.frontend && !manifest?.backend) {
+        if (!manifest?.templates) {
             throw new ValidationError(
                 "Manifest file at " + path + "\n" +
                     "Missing frontend or backend templates definition, at least one of exist.",
             );
         }
 
-        if (manifest?.frontend!) {
-            GolokValidator.templatesValidator(manifest?.frontend!, true);
+        if (manifest?.templates!) {
+            GolokValidator.templatesValidator(manifest?.templates!, true);
         }
-        if (manifest?.backend!) {
+        /* if (manifest?.backend!) {
             GolokValidator.templatesValidator(manifest?.backend!, false);
-        }
+        } */
         /* try {
 
         } catch {

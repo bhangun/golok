@@ -1,5 +1,3 @@
-import * as path from "node:path";
-
 import Denomander, {
   Option,
 } from "https://deno.land/x/denomander@0.9.3/mod.ts";
@@ -44,85 +42,55 @@ export default class GolokCLI {
       description: "Choose one of accepted choices",
     }).choices(["flutter", "quarkus", "springboot"]);
 
-    const toOptions = new Option({
+   /*  const toOptions = new Option({
       flags: "-t --target",
       description: "Convert option",
     }).choices(["golok", "jdl", "mermaid"]);
-
-    const fromOptions = new Option({
+ */
+    /* const fromOptions = new Option({
       flags: "-f --from",
       description: "Convert option",
     }).choices(["golok", "jdl", "mermaid"]);
-
+ */
     this.program
       .command(
-        "build [path] [manifest?]",
-        "[path] Blueprint file. [manifest] Manifest of your own templates",
+        "build [name]",
+        "[name] Name of your project",
       )
       .option(
-        "-o -output",
+        "-b --blueprint",
+        "Blueprint file.",
+      )
+      .option(
+        "-m --manifest",
+        "Manifest of your own templates",
+      )
+      .option(
+        "-o --output",
         "Output directory",
       )
-      //.addOption(framework)
-      .action(({ path, manifest }: { path: string; manifest?: string }) => {
-        config.blueprintPath = path;
+
+      .action(({ name }: { name: string;}) => {
+        config.projectName = name;
+        config.blueprintPath = this.program.blueprint;
+        config.manifestPath = this.program.manifest;
         config.output = this.program.output;
-        config.manifestPath = manifest;
+        
         config.framework = this.program.framework;
 
-        const golok = new GolokCore(manifest);
+        const golok = new GolokCore(config.manifestPath);
 
         golok.setConfig(config);
         golok.compile();
-
-        // Do your actions here
-        //console.log(`File is moved from ${blueprint} to ${outputDir}`);
-        /* if (options) {
-          console.log("message");
-        } */
       });
-
-    /* .argument(
-        '[string]',
-        'Path to blueprint file in yaml. default use example',
-        'exampleBlueprint'
-      ) */
-    //.addOption(framework)
-    /* .option(
-        '-o, --output <string>',
-        'Destination folder for generated apps',
-        'currentDirname'
-      ) */
-
-    // Command definition
-    /* program
-      .command('create')
-      .description('Generate fullstack application by blueprint first')
-
-      .option('-t, --template <string>', 'Path to your own folder template')
-      .option('-j, --jdl', 'Transpile to jhipster')
-      .option('-jj, --jdljson', 'Transpile to jhipster json')
-      //.option('-z, --zip', 'Zip result', false)
-      .action((blueprintPath: string, options: object) => {
-        config.options = options;
-        config.options.input = blueprintPath;
-        config.path = blueprintPath
-        //console.log(blueprintPath)
-       const golok = new GolokCore();
-       golok.setConfig(config);
-        //this.config.options = options;
-
-        // this.createCommand(blueprintPath, framework, false, {}, options);
-      }) */
-   
 
     this.program
       .command(
         "convert [pathContent]",
         "Generate fullstack application from plain json/yaml.",
       )
-      .addOption(fromOptions)
-      .addOption(toOptions)
+      /* .addOption(fromOptions)
+      .addOption(toOptions) */
       .option(
         "-e, --example <string>",
         "Type of example file, ex: json | yaml | yml | oas",
@@ -132,7 +100,6 @@ export default class GolokCLI {
         "Destination folder for generated apps, included blueprint file.",
       )
       .action(({ pathContent }: { pathContent: string }) => {
-       // console.log(this.program)
         if (this.program.from === "golok") {
           if (this.program.target === "jdl") {
             this.golokToJdl(pathContent);
@@ -142,17 +109,6 @@ export default class GolokCLI {
             this.jdlToGolok(pathContent);
           }
         }
-
-
-/*         // Parse the SOURCE text into TARGET
-const TARGET = parseSourceToTarget(SOURCE);
-console.log('Parsed TARGET:', TARGET);
-
-// Convert TARGET back to SOURCE
-const newSource = convertTargetToSource(TARGET);
-console.log('\nConverted SOURCE:', newSource); */
-
-
       });
     /* .option(
         '-g, --generate <bool>',
@@ -201,6 +157,7 @@ console.log('\nConverted SOURCE:', newSource); */
     // Execute the command
     this.program.parse(Deno.args);
   }
+  
   jdlToGolok(pathContent: any) {
     const jdl = new JDLConverter();
     new Promise<void>((resolve) => {
@@ -225,7 +182,6 @@ console.log('\nConverted SOURCE:', newSource); */
     new Promise<void>((resolve) => {
       setTimeout(() => {
         const b = golok.getBlueprint();
-        // console.log(join(Deno.cwd(),from), b)
         const jdl = new JDLConverter();
         console.log(jdl.golokToJdl(b));
 

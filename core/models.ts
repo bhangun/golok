@@ -1,6 +1,7 @@
 export type {
   ApplicationConfig,
   Application,
+  BaseApp,
   Blueprint,
   Configuration,
   Entity,
@@ -24,11 +25,15 @@ export type {
   RawRelationship,
   Relationship,
   Template,
-  TemplateItems,
+  TemplateItem,
   TemplateProfile,
 };
 
-export { BlueprintBinding, Framework, Language, TechnologyLayer };
+export { BlueprintBinding, Framework, Platform, TechnologyLayer, ManifestType, StateManagement };
+
+enum ManifestType{
+  USER_DEFINED = "userDefined",
+}
 
 // Core Blueprint
 type Blueprint = {
@@ -66,8 +71,8 @@ interface Endpoint {
 }
 
 interface Application {
-  frontend?: Frontend;
-  backend?: Backend;
+  frontend?: Frontend[];
+  backend?: Backend[];
   config?: Config;
 }
 
@@ -192,9 +197,7 @@ interface Configuration {
   };
 }
 
-interface Frontend {
-  appsName?: string;
-  framework?: Framework;
+interface Frontend extends BaseApp{
   localDatabase?: string;
   admin?: boolean;
   themes?: string;
@@ -204,10 +207,14 @@ interface Frontend {
   locale?: string;
   entities?: string;
 }
-interface Backend {
+
+interface BaseApp{
   appsName?: string;
   packageName?: string;
   framework: Framework;
+}
+
+interface Backend extends BaseApp{
   applicationType?: string;
   authenticationType?: string;
   buildTool?: string;
@@ -252,7 +259,7 @@ interface GolokConfig {
   output?: string;
   isConvertion?: boolean;
   blueprintRaw?: Blueprint;
-  appsName?: string;
+  projectName?: string;
   blueprint?: Blueprint;
   package?: string;
   framework?: Framework;
@@ -281,12 +288,17 @@ enum Framework {
   STRAPI = "strapi",
 }
 
-enum TechnologyLayer {
-  FRONTEND = "frontEnd",
-  BACKEND = "backEnd",
+enum StateManagement {
+  RIVERPOD = "riverpod",
+  BLOC = "bloc"
 }
 
-enum Language {
+enum TechnologyLayer {
+  FRONTEND = "frontend",
+  BACKEND = "backend",
+}
+
+enum Platform {
   DART = "dart",
   JAVA = "java",
   PYTHON = "python",
@@ -304,11 +316,11 @@ interface GolokBase {
 interface TemplateProfile {
   name: string;
   description?: string;
-  framework: Framework;
-  language: Language;
+  //framework: Framework;
+  //platform: Platform;
   isManifestInstance?: boolean;
   manifestPath: string;
-  technologyLayer: TechnologyLayer;
+  manifestBaseDir: string;
   instance?: GolokBase;
   manifest?: Manifest;
 }
@@ -317,16 +329,27 @@ interface Manifest {
   version?: string;
   path: string;
   name: string;
+  templates?: Template[];
+}
+
+/* interface Manifest {
+  version?: string;
+  path: string;
+  name: string;
   frontend?: Template[];
   backend?: Template[];
-}
+} */
 
 interface Template {
   name?: string;
-  templateItems: TemplateItems[];
+  platform?: string;
+  framework?: string;
+  side?: string;
+  baseDir?: string;
+  templateItems: TemplateItem[];
 }
 
-interface TemplateItems {
+interface TemplateItem {
   dataBinding: BlueprintBinding;
   loop?: boolean;
   baseDir: string;
@@ -339,6 +362,7 @@ interface FileItems {
 }
 
 enum BlueprintBinding {
+  BLUEPRINT = "blueprint",
   NONE = "none",
   INFO = "info",
   ENDPOINT = "endpoint",

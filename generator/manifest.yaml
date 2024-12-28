@@ -1,14 +1,18 @@
 version: 1.0
 name: default
-frontend:
-- name: riverpod
+templates:
+- name: default_flutter
+  framework: flutter
+  subFramework: riverpod
+  side: frontend
+  baseDir: riverpod
   templateItems:
   - name: app
     dataBinding: entities
-    baseDir: riverpod/app
+    baseDir: app
   - name: entity
     dataBinding: entities
-    baseDir: riverpod/entity
+    baseDir: entity
     loop: true
     fileItems:
     - fromPath: entity.dart.ejs

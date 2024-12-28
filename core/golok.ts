@@ -14,6 +14,8 @@ import {
 } from "./utils.ts";
 
 import type {
+  Application,
+  BaseApp,
   Blueprint,
   Entity,
   Enum,
@@ -29,58 +31,53 @@ import type {
   RawProperty,
   RawRelationship,
   Relationship,
+  Template,
+  TemplateItem,
   TemplateProfile,
 } from "./models.ts";
-import { BlueprintBinding, TechnologyLayer } from "./models.ts";
+import { BlueprintBinding, ManifestType, TechnologyLayer } from "./models.ts";
 import { GolokValidator, ValidationError } from "./validator.ts";
 import { GolokRegistry } from "./registry.ts";
-import type { TemplateItems } from "./models.ts";
+
 import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { join } from "https://deno.land/std@0.224.0/path/join.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
   private compiledBlueprint: Blueprint;
-  private registries: TemplateProfile[];
+  private registries: GolokRegistry;
 
   private currentTemplateBaseDir: string;
   private config: GolokConfig;
 
   private baseOutDir?: string;
 
-  private currentFrontManifest?: Manifest;
-  private countFrontFiles: number;
-  private frontEntityTemplate?: TemplateItems;
-  private frontTemplate?: TemplateItems;
-  private frontOutputDir?: string;
+  private currentManifest?: Manifest;
 
-  private currentBackManifest?: Manifest;
-  private countBackFiles: number;
-  private backEntityTemplate?: TemplateItems;
-  private backTemplate?: TemplateItems;
-  private backOutputDir?: string;
+  private countFiles: number;
+  private entityTemplateItem?: TemplateItem;
+  private templateItem?: TemplateItem;
+  private outputDir?: string;
+  private projectName: string;
+
+  private defaultGenDir: string;
 
   constructor(manifestPath?: string) {
     this.rawBlueprint = {};
     this.compiledBlueprint = {};
     this.currentTemplateBaseDir = "";
-    this.currentFrontManifest = {
+    this.projectName = "";
+    this.currentManifest = {
       path: "",
       name: "",
-      //templates: [],
-      //dataBinding: BlueprintBinding.ENTITIES
     };
+    this.defaultGenDir = import.meta.dirname + "/../generator";
 
-    //this.setConfig(config!);
+    this.countFiles = 0;
 
-    this.countFrontFiles = 0;
-    this.countBackFiles = 0;
-
-    this.currentBackManifest = {
+    this.currentManifest = {
       path: "",
       name: "",
-      //templates: [],
-      //dataBinding: BlueprintBinding.ENTITIES
     };
 
     this.config = {
@@ -89,39 +86,9 @@ export default class GolokCore {
     };
 
     // Load template registered
-    this.registries = GolokRegistry.getRegistries();
-
-    // Parse available template and matched based on request
-    this.loadManifest(manifestPath!);
+    this.registries = new GolokRegistry();
+    this.registries.setTemplateByPath(manifestPath!);
   }
-
-  // Load script from string
-  /*   async loadFromString(script: string, isOrigin: boolean = true): Promise<void> {
-    try {
-      const parsedScript = parseYaml(script) as any;
-      if (isOrigin) {
-        this.rawBlueprint = parsedScript;
-      } else {
-        this.compiledBlueprint = parsedScript;
-      }
-    } catch (error) {
-      throw new Error(`Failed to parse YAML string: ${error.message}`);
-    }
-  } */
-
-  // Load script from file
-  /* async loadFromFile(
-    isOrigin: boolean = true,
-  ): Promise<void> {
-    try {
-      const content = await readTextFile(filePath);
-      await this.loadFromString(content, isOrigin);
-    } catch (error: any) {
-      throw new Error(
-        `Failed to read file ${filePath}: ${error.message}`,
-      );
-    }
-  } */
 
   setConfig(config: GolokConfig) {
     this.config = config;
@@ -131,26 +98,26 @@ export default class GolokCore {
     // Load and validate user blueprint
     await this.loadBlueprint();
 
-    this.setupManifest();
-
     // Parse user blueprint
     this.parseRawToBlueprint();
 
-    //    this.convertToRawBlueprint();
     // Generate apps by render template with data provided from user blueprint
-    this.generate();
+    this.generateTemplate();
 
     // Write blueprint file
     //this.exportToFile();
 
     // Print Summary
-    //this.printSummary();
+    this.printSummary();
   }
 
   // Load script from string with validation
   async loadBlueprint(
     isOrigin: boolean = true,
   ): Promise<void> {
+    // Set project name
+    this.projectName = this.config.projectName!;
+
     try {
       const parsedScript = await yamlFileToTS(
         this.config.blueprintPath,
@@ -202,63 +169,12 @@ export default class GolokCore {
       const includePath = `${baseDirBlueprintPath}/${includeItem.file}`;
       const includeData = await yamlFileToTS(includePath) as RawBlueprint;
       includeData.entities!;
-  
+
       this.rawBlueprint.entities!.push(...includeData.entities!);
       this.rawBlueprint.enums!.push(...includeData.enums!);
     });
 
     await Promise.all(includePromises);
-  }
-
-  private generate() {
-    this.baseOutDir = this.compiledBlueprint.info?.name ??
-      this.compiledBlueprint.info?.name!;
-
-    const isFront = this.compiledBlueprint.applications?.frontend
-      ? true
-      : false;
-    const isBack = this.compiledBlueprint.applications?.backend ? true : false;
-
-    this.frontOutputDir = isFront
-      ? this.compiledBlueprint.applications?.frontend
-        ?.appsName!
-      : "";
-
-    this.backOutputDir = isBack
-      ? this.compiledBlueprint.applications?.backend
-        ?.appsName!
-      : "";
-
-    this.currentFrontManifest!.frontend!.find((templ) => {
-      templ!.templateItems!.find((item) => {
-        // Binding generation to entities template
-        if (item!.loop! && item.dataBinding == BlueprintBinding.ENTITIES) {
-          this.frontEntityTemplate = item;
-        } else {
-          this.frontTemplate = item;
-        }
-      });
-    });
-
-    if (this.currentBackManifest!) {
-      this.currentBackManifest!.backend!.find((templ) => {
-        templ!.templateItems!.find((item) => {
-          if (item!.loop! && item.dataBinding == BlueprintBinding.ENTITIES) {
-            this.backEntityTemplate = item;
-          } else {
-            this.backTemplate = item;
-          }
-        });
-      });
-    }
-
-    const frontBaseDir = this.currentTemplateBaseDir + "/" +
-      this.frontTemplate?.baseDir!;
-
-
-    //this.renderingTemplate();
-
-    //this.renderingEntityTemplate(isFront, isBack);
   }
 
   getBlueprint() {
@@ -269,155 +185,150 @@ export default class GolokCore {
     // Calculate and show processing elapsed time
     new Promise<void>((resolve) => {
       setTimeout(() => {
-        if (this.countFrontFiles > 0) {
+        if (this.countFiles > 0) {
           printColor(
-            "Frontend files count total: " + this.countFrontFiles,
+            "Frontend files count total: " + this.countFiles,
             "yellow",
           );
         }
-        if (this.countBackFiles > 0) {
+        /* if (this.countBackFiles > 0) {
           printColor(
-            "Backend files count total: " + this.countFrontFiles,
+            "Backend files count total: " + this.countFiles,
             "yellow",
           );
-        }
+        } */
         this.endCompileTime();
         resolve();
       });
     });
   }
 
-  private renderingEntityTemplate(isFront: boolean, isBack: boolean) {
-    this.compiledBlueprint.entities!.forEach((entity: Entity, x: number) => {
-      if (isFront && this.currentFrontManifest) {
-        this.rendering(
-          this.frontEntityTemplate!,
-          entity,
-          this.baseOutDir!,
-          this.frontOutputDir!,
-          isFront,
-        );
-      }
-
-      if (isBack && this.currentBackManifest) {
-        this.rendering(
-          this.backEntityTemplate!,
-          entity,
-          this.baseOutDir!,
-          this.backOutputDir!,
-          false,
-        );
-      }
-    });
-  }
-
-  private setupManifest() {
-    let frontFramework: Framework;
-    let backFramework: Framework;
-
+  private generateTemplate() {
     if (this.rawBlueprint.applications) {
       if (this.rawBlueprint.applications.frontend) {
-        frontFramework = this.rawBlueprint.applications.frontend?.framework!;
+        this.rawBlueprint.applications.frontend?.map((app) => {
+          this.generate(app, TechnologyLayer.FRONTEND);
+        });
       }
 
       if (this.rawBlueprint.applications.backend) {
-        backFramework = this.rawBlueprint.applications.backend?.framework!;
+        this.rawBlueprint.applications.backend?.map((app) => {
+          this.generate(app, TechnologyLayer.BACKEND);
+        });
       }
     }
-
-    this.currentFrontManifest = this.registries.find((item) => {
-      if (
-        item.framework == frontFramework &&
-        item.technologyLayer == TechnologyLayer.FRONTEND
-      ) {
-        this.currentFrontManifest = item.manifest;
-      }
-    })?.manifest;
-
-    this.currentBackManifest = this.registries.find((item) => {
-      if (
-        item.framework == backFramework &&
-        item.technologyLayer == TechnologyLayer.BACKEND
-      ) {
-        this.currentBackManifest = item.manifest;
-      }
-    })?.manifest;
-
-    console.log(this.currentFrontManifest);
   }
 
-  private loadManifest(manifestPath: string): void {
-    const baseDir = import.meta.dirname + "/../generator";
+  private generate(app: BaseApp, side: TechnologyLayer) {
+    this.registries.getRegistries().map((item) => {
+      if (item.name == ManifestType.USER_DEFINED) {
+        item.manifest!.templates?.map((templ) => {
+          if (templ.framework == app.framework) {
+            templ.side == TechnologyLayer.FRONTEND;
 
-    this.registries.map(async (registry) => {
-      let _manifestPath = "";
-      // Load manifest from user input
-      if (manifestPath) {
-        _manifestPath = manifestPath;
-        this.currentTemplateBaseDir = Deno.cwd();
-      } else { // Load manifest from registered template
-        _manifestPath = registry.manifestPath;
-        this.currentTemplateBaseDir = baseDir + getDirectory(_manifestPath);
-        _manifestPath = baseDir + _manifestPath;
+            this.currentManifest = item.manifest;
+
+            this.currentTemplateBaseDir = item.manifestBaseDir;
+
+            this.baseOutDir = join(this.currentTemplateBaseDir, templ.baseDir!);
+
+            this.outputDir = join(
+              Deno.cwd(),
+              this.projectName,
+              TechnologyLayer.FRONTEND,
+              app.appsName!,
+            );
+
+        
+            templ.templateItems.map((templItem) => {
+              const templateDir = join(
+                this.currentTemplateBaseDir,
+
+                templ.baseDir!,
+                templItem.baseDir,
+              );
+              const outputDir = join(
+                Deno.cwd(),
+                this.projectName,
+                TechnologyLayer.FRONTEND,
+                app.appsName!,
+              );
+
+              if (templItem.dataBinding == BlueprintBinding.BLUEPRINT) {
+                this.renderingTemplate(templItem, templateDir, outputDir);
+              } else if (templItem.dataBinding == BlueprintBinding.ENTITIES) {
+                this.renderingEntityTemplate(templItem, templateDir, outputDir);
+              }
+            });
+          }
+        });
+      } else {
+        item.manifest!.templates?.map((templ) => {
+          templ.framework == app.framework;
+          this.currentManifest = item.manifest;
+        });
       }
-
-      const manifest = await yamlFileToTS(_manifestPath);
-     
-      GolokValidator.validateManifest(manifest, _manifestPath);
-      registry.manifest = manifest;
-
-      console.log(registry);
     });
-
-    console.log(this.registries);
   }
 
-  private endCompileTime() {
-    console.log(
-      "\x1b[33m%s\x1b[0m",
-      "Elapsed time: " + (Date.now() - this.config.startTime + "ms"),
-    );
-  }
+  async renderingTemplate(template: TemplateItem, templateDir: string, outputDir: string) {
+    for await (const w of walk(templateDir)) {
+      w.path.split(templateDir)[1];
 
-  async renderingTemplate() {
-    const templBaseDir = this.currentTemplateBaseDir + "/" +
-      this.frontTemplate?.baseDir!;
-
-    for await (const w of walk(templBaseDir)) {
-      const targetDir = Deno.cwd() + "/" + this.baseOutDir + "/" +
-        this.frontOutputDir! +
-        w.path.split(this.frontTemplate?.baseDir!)[1];
-
-      if (w.isDirectory && !checkDirExist(targetDir)) {
-        Deno.mkdir(targetDir, {
+      if (w.isDirectory && !checkDirExist(outputDir)) {
+        Deno.mkdir(outputDir, {
           recursive: true,
         });
       }
 
       if (getExtName(w.path) == ".ejs") {
-        renderEjsFile(w.path, targetDir, undefined, this.compiledBlueprint);
+        renderEjsFile(
+          w.path,
+          outputDir,
+          undefined,
+          this.compiledBlueprint,
+        );
       } else {
         if (!w.isDirectory) {
-          Deno.copyFile(w.path, targetDir);
+          Deno.copyFile(w.path, outputDir);
           //printColor(targetDir, "green");
         }
       }
     }
   }
 
+  private renderingEntityTemplate(
+   
+    entityTemplateItem: TemplateItem, templateDir: string, outputDir: string
+  ) {
+    this.compiledBlueprint.entities!.forEach((entity: Entity) => {
+      //if (side && this.currentManifest) {
+        this.rendering(
+          entityTemplateItem,
+          entity,
+          templateDir,
+          outputDir,
+         // side,
+        );
+     // }
+    });
+  }
+
   private rendering(
-    templateItem: TemplateItems,
+    templateItem: TemplateItem,
     entity: Entity,
-    baseName: string,
-    targetOutputDir: string,
-    isFront: boolean,
+    templateDir: string,
+    outputDir: string,
+   // side: TechnologyLayer,
   ) {
     if (templateItem.fileItems) {
       templateItem.fileItems!.forEach((fileItem) => {
-        const outputDir = baseName + "/" + targetOutputDir! + "/";
-        const source = this.currentTemplateBaseDir + "/" +
+        //const outputDir = baseName + "/" + targetOutputDir! + "/";
+        /* const source = this.currentTemplateBaseDir + "/" +
           templateItem.baseDir + "/" +
-          fileItem.fromPath;
+          fileItem.fromPath; */
+
+        const source = join(templateDir, fileItem.fromPath)
         //const dirEntity = source.replace(/\/[^/]*$/, "");
         const targetFile = outputDir +
           this.placeholderPath(fileItem.toPath, entity);
@@ -434,9 +345,16 @@ export default class GolokCore {
           ...entity,
           ...this.compiledBlueprint,
         });
-        isFront ? this.countFrontFiles++ : this.countBackFiles++;
+        this.countFiles++;
       });
     }
+  }
+
+  private endCompileTime() {
+    console.log(
+      "\x1b[33m%s\x1b[0m",
+      "Elapsed time: " + (Date.now() - this.config.startTime + "ms"),
+    );
   }
 
   private placeholderPath(
@@ -472,7 +390,6 @@ export default class GolokCore {
   }
 
   private parseRawToEntities(): Entity[] {
- 
     const entities: Entity[] =
       this.rawBlueprint.entities!.map((entity: KeyRawEntity) => {
         const [entityName, entityData] = Object.entries<RawEntity>(entity)[0];
@@ -525,7 +442,7 @@ export default class GolokCore {
           const newEnum: EnumValue = {};
           if (value.split("=").length > 1) {
             const [key, _value] = value.split("=");
-            
+
             const newEnum: EnumValue = { name: key };
             const localeValue = _value.match(/\{([^}]+)\}/);
             if (localeValue) {
