@@ -98,14 +98,15 @@ export default class GolokCore {
     // Load and validate user blueprint
     await this.loadBlueprint();
 
+   
     // Parse user blueprint
     this.parseRawToBlueprint();
 
     // Generate apps by render template with data provided from user blueprint
     this.generateTemplate();
 
-    // Write blueprint file
-    //this.exportToFile();
+     // Write blueprint file
+    this.exportToFile();
 
     // Print Summary
     this.printSummary();
@@ -230,7 +231,13 @@ export default class GolokCore {
 
             this.currentTemplateBaseDir = item.manifestBaseDir;
 
-            this.baseOutDir = join(this.currentTemplateBaseDir, templ.baseDir!);
+            this.baseOutDir = join( Deno.cwd(),
+            this.projectName,);
+
+      
+           // this.exportToFile();
+
+
 
             this.outputDir = join(
               Deno.cwd(),
@@ -239,11 +246,9 @@ export default class GolokCore {
               app.appsName!,
             );
 
-        
             templ.templateItems.map((templItem) => {
               const templateDir = join(
                 this.currentTemplateBaseDir,
-
                 templ.baseDir!,
                 templItem.baseDir,
               );
@@ -271,26 +276,35 @@ export default class GolokCore {
     });
   }
 
-  async renderingTemplate(template: TemplateItem, templateDir: string, outputDir: string) {
-    for await (const w of walk(templateDir)) {
-      w.path.split(templateDir)[1];
+  async renderingTemplate(
+    template: TemplateItem,
+    templateDir: string,
+    outputDir: string,
+  ) {
 
-      if (w.isDirectory && !checkDirExist(outputDir)) {
-        Deno.mkdir(outputDir, {
+    for await (const w of walk(templateDir)) {
+
+      const targetDir = join(outputDir, w.path.split(templateDir)[1]);
+
+console.log( ' >> ',targetDir)
+
+      if (w.isDirectory && !checkDirExist(targetDir)) {
+
+        Deno.mkdir(targetDir, {
           recursive: true,
         });
       }
-
+     
       if (getExtName(w.path) == ".ejs") {
         renderEjsFile(
           w.path,
-          outputDir,
+          targetDir,
           undefined,
           this.compiledBlueprint,
         );
       } else {
-        if (!w.isDirectory) {
-          Deno.copyFile(w.path, outputDir);
+        if (w.isFile) {
+          Deno.copyFile(w.path, targetDir);
           //printColor(targetDir, "green");
         }
       }
@@ -298,19 +312,17 @@ export default class GolokCore {
   }
 
   private renderingEntityTemplate(
-   
-    entityTemplateItem: TemplateItem, templateDir: string, outputDir: string
+    entityTemplateItem: TemplateItem,
+    templateDir: string,
+    outputDir: string,
   ) {
     this.compiledBlueprint.entities!.forEach((entity: Entity) => {
-      //if (side && this.currentManifest) {
-        this.rendering(
-          entityTemplateItem,
-          entity,
-          templateDir,
-          outputDir,
-         // side,
-        );
-     // }
+      this.rendering(
+        entityTemplateItem,
+        entity,
+        templateDir,
+        outputDir,
+      );
     });
   }
 
@@ -319,18 +331,12 @@ export default class GolokCore {
     entity: Entity,
     templateDir: string,
     outputDir: string,
-   // side: TechnologyLayer,
   ) {
     if (templateItem.fileItems) {
       templateItem.fileItems!.forEach((fileItem) => {
-        //const outputDir = baseName + "/" + targetOutputDir! + "/";
-        /* const source = this.currentTemplateBaseDir + "/" +
-          templateItem.baseDir + "/" +
-          fileItem.fromPath; */
-
-        const source = join(templateDir, fileItem.fromPath)
+        const source = join(templateDir, fileItem.fromPath);
         //const dirEntity = source.replace(/\/[^/]*$/, "");
-        const targetFile = outputDir +
+        const targetFile = outputDir + "/" +
           this.placeholderPath(fileItem.toPath, entity);
         const targetDir = getDirectory(targetFile);
 
@@ -653,13 +659,13 @@ export default class GolokCore {
   private async exportToFile(): Promise<void> {
     const yamlString = this.exportToString();
     const filePath = join(
-      Deno.cwd(),
       this.baseOutDir!,
       ".golok.blueprint.yaml",
     );
+
+
     try {
       //Print Compiled blueprint
-
       printColor(filePath, "green");
       await Deno.writeTextFile(filePath, yamlToString(yamlString));
 
