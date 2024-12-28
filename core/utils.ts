@@ -12,11 +12,13 @@ import type { ValidationError } from "./validator.ts";
 import type { Blueprint, Entity } from "./models.ts";
 import { basename, extname, join } from "https://deno.land/std/path/mod.ts";
 
-export {parseConfigString,
+export {
   capitalize,
   checkDirExist,
+  checkFileExist,
   cleanOtherChar,
   dirName,
+  execGenLocale,
   getCurrentDirname,
   getDartType,
   getDirectory,
@@ -28,6 +30,7 @@ export {parseConfigString,
   longtime,
   mapType,
   parameterString,
+  parseConfigString,
   printColor,
   readTextFile,
   removeWhitespace,
@@ -39,7 +42,6 @@ export {parseConfigString,
   toTitleCase,
   yamlFileToTS,
   yamlToString,
-  checkFileExist
 };
 
 function getDartType(type: string): string {
@@ -88,7 +90,6 @@ function getMinMax(
   return modifier ? modifier.split("=")[1] : undefined;
 }
 
-
 // Type definitions
 interface Placeholder {
   id: string;
@@ -98,13 +99,12 @@ interface Placeholder {
 interface TargetConfig {
   type: typeof String;
   max: number;
-  placeholder: string;//Placeholder;
+  placeholder: string; //Placeholder;
   refLink: string;
   doc: string;
 }
 
-
-function  parseConfigString(sourceConfig: string): TargetConfig {
+function parseConfigString(sourceConfig: string): TargetConfig {
   // Split the string into configuration and comment parts
   const [configPart, docComment] = sourceConfig.split("//").map((s) =>
     s.trim()
@@ -151,8 +151,6 @@ function  parseConfigString(sourceConfig: string): TargetConfig {
 
   return result as TargetConfig;
 }
-
-
 
 function mapType(type: string): string {
   const typeMap: Record<string, { type: string; format?: string }> = {
@@ -246,7 +244,7 @@ function checkFileExt(file: string): string | undefined {
   }
 }
 
-async function checkFileExist(path:string) {
+async function checkFileExist(path: string) {
   try {
     await Deno.stat(path);
   } catch (error) {
@@ -489,9 +487,55 @@ function renderEjsFile(
 function ejsFileReplace(path: string) {
   return path.replace(/.ejs+$/, "");
 }
+async function executeCommandInDirectory(command: string, args: string[], directory: string) {
+  const cmd = new Deno.Command(command, {
+    args: args,
+    cwd: directory,
+  });
 
-/* function ejsRender(str: str, data, options
-):string{
-  return ejs.render(str, data)
+  const { code, stdout, stderr } = await cmd.output();
+
+  if (code === 0) {
+    console.log(new TextDecoder().decode(stdout));
+  } else {
+    console.error(new TextDecoder().decode(stderr));
+  }
 }
- */
+
+
+async function execGenLocale(targetDir: string) {
+  //Spawn a subprocess and pipe the output to a file
+
+  /*   const command = new Deno.Command(Deno.execPath(), {
+    args: [
+      "eval",
+      "console.log('Hello World')",
+    ],
+    stdin: "piped",
+    stdout: "piped",
+  }); */
+// Example usage:
+await executeCommandInDirectory("flutter", ["gen-l10n", "--arb-dir", "lib/core/translations"], targetDir+"/");
+/* 
+  const command = new Deno.Command(targetDir + "/flutter", {
+    args: ["gen-l10n", "--arb-dir", "lib/core/translations"],
+  });
+
+  const child = command.spawn();
+
+  const { code, stdout, stderr } = await command.output();
+
+  if (code === 0) {
+    console.log(new TextDecoder().decode(stdout));
+  } else {
+    console.error(new TextDecoder().decode(stderr));
+  }
+
+  // open a file and pipe the subprocess output to it.
+  child.stdout.pipeTo(
+    Deno.openSync("output", { write: true, create: true }).writable,
+  );
+
+  // manually close stdin
+  child.stdin.close(); */
+}
