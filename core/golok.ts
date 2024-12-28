@@ -98,15 +98,14 @@ export default class GolokCore {
     // Load and validate user blueprint
     await this.loadBlueprint();
 
-   
     // Parse user blueprint
     this.parseRawToBlueprint();
 
     // Generate apps by render template with data provided from user blueprint
     this.generateTemplate();
 
-     // Write blueprint file
-    this.exportToFile();
+    // Write blueprint file
+    //this.exportToFile();
 
     // Print Summary
     this.printSummary();
@@ -231,13 +230,9 @@ export default class GolokCore {
 
             this.currentTemplateBaseDir = item.manifestBaseDir;
 
-            this.baseOutDir = join( Deno.cwd(),
-            this.projectName,);
+            this.baseOutDir = join(Deno.cwd(), this.projectName);
 
-      
-           // this.exportToFile();
-
-
+            // this.exportToFile();
 
             this.outputDir = join(
               Deno.cwd(),
@@ -281,24 +276,19 @@ export default class GolokCore {
     templateDir: string,
     outputDir: string,
   ) {
-
     for await (const w of walk(templateDir)) {
-
       const targetDir = join(outputDir, w.path.split(templateDir)[1]);
 
-console.log( ' >> ',targetDir)
-
       if (w.isDirectory && !checkDirExist(targetDir)) {
-
-        Deno.mkdir(targetDir, {
+        Deno.mkdir(outputDir, {
           recursive: true,
         });
       }
-     
+
       if (getExtName(w.path) == ".ejs") {
         renderEjsFile(
           w.path,
-          targetDir,
+          outputDir,
           undefined,
           this.compiledBlueprint,
         );
@@ -662,7 +652,6 @@ console.log( ' >> ',targetDir)
       this.baseOutDir!,
       ".golok.blueprint.yaml",
     );
-
 
     try {
       //Print Compiled blueprint
