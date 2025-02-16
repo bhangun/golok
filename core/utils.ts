@@ -63,7 +63,8 @@ function getDartType(type: string): string {
   }
 }
 
-function getJavaType(type: string): string {
+function getJavaType(type: string| undefined, origin =false): string {
+  if(type){
   const [baseType] = type.split(",").map((t) => t.trim());
   //const [baseType, ...modifiers] = type.split(",").map((t) => t.trim());
   switch (baseType) {
@@ -78,8 +79,9 @@ function getJavaType(type: string): string {
     case "datetime":
       return "Instant";
     default:
-      return "Object";
+      return origin? type:"Object";
   }
+}else return '';
 }
 
 function getMinMax(
@@ -484,6 +486,9 @@ function renderEjsFile(
     });
   }
 }
+
+
+
 
 function ejsFileReplace(path: string) {
   return path.replace(/.ejs+$/, "");

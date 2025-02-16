@@ -77,6 +77,10 @@ export default class GolokCLI {
         "-r, --autorun",
         "Auto running flutter",
       )
+      .option(
+        "-j, --jdl",
+        "Generate JHipster JDL",
+      )
       .action(({ name }: { name: string;}) => {
         config.projectName = name;
         config.blueprintPath = this.program.blueprint;
@@ -85,6 +89,7 @@ export default class GolokCLI {
         config.isDebug = this.program.debug;
         config.framework = this.program.framework;
         config.isAutorun = this.program.autorun;
+        config.printJDL = this.program.jdl;
 
         const golok = new GolokCore(config.manifestPath);
 
@@ -191,7 +196,7 @@ export default class GolokCLI {
       setTimeout(() => {
         const b = golok.getBlueprint();
         const jdl = new JDLConverter();
-        console.log(jdl.golokToJdl(b));
+       // console.log(jdl.golokToJdl(b));
 
         resolve();
       });

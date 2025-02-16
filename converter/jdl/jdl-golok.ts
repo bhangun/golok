@@ -498,7 +498,7 @@ entity Product {
 `;
 
     console.log("YAML to JDL:");
-    //console.log(transformScript(yamlExample, "yamlToJdl"));
+    console.log(transformScript(yamlExample, "yamlToJdl"));
 
     console.log("\nJDL to YAML:");
     console.log(transformScript(jdlExample, "jdlToYaml"));

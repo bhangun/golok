@@ -44,6 +44,7 @@ import { GolokRegistry } from "./registry.ts";
 import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { join } from "https://deno.land/std@0.224.0/path/join.ts";
 import path from "node:path";
+import { JDLConverter } from "../converter/jdl/golok-jdl.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
@@ -104,11 +105,17 @@ export default class GolokCore {
     // Parse user blueprint
     this.parseRawToBlueprint();
 
+    
+    
+
     // Generate apps by render template with data provided from user blueprint
     this.generateTemplate();
 
+    //Print to JDL
+    this.printJDL();
+
     // Write blueprint file
-    //this.exportToFile();
+    this.exportToFile();
   }
 
   // Load script from string with validation
@@ -152,6 +159,19 @@ export default class GolokCore {
       throw new Error(
         `Failed to parse or validate YAML string: ${error.message}`,
       );
+    }
+  }
+
+   printJDL(){
+    // Parse to JDL
+    if(this.config.printJDL){
+    const jdl = JDLConverter.golokToJdl( this.compiledBlueprint);
+    const jdlPath = this.baseOutDir!+'/'+this.config.projectName+'.jdl';
+    console.log(jdlPath)
+     const encoder = new TextEncoder();
+     Deno.writeFile(jdlPath, encoder.encode(jdl)).then(() => {
+      //printColor(targetPath);
+    });
     }
   }
 

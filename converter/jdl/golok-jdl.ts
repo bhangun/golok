@@ -14,7 +14,7 @@ import type {
 import type { Blueprint } from "../../core/models.ts";
 import type { RawEntity } from "../../core/models.ts";
 import type { RawRelationship } from "../../core/models.ts";
-import { yamlToString } from "../../core/utils.ts";
+import { getJavaType, yamlToString } from "../../core/utils.ts";
 
 interface TransformerConfig {
   direction: "yamlToJdl" | "jdlToYaml";
@@ -26,6 +26,33 @@ export class JDLConverter {
 
   constructor() {
     this.lines = [];
+  }
+
+  // Transform YAML to JDL
+  static golokToJdl(parsed: Blueprint): string {
+    let output = "";
+
+    // Transform application configuration
+    output += this.transformApplicationConfig(parsed.applications?.backend?.[0]);
+
+    // Transform entities
+    output += this.transformEntities(parsed.entities || []);
+
+    // Transform relationships
+    output += this.transformRelationships(parsed.entities || []);
+
+    // Transform enums
+    output += this.transformEnums(parsed.enums || []);
+
+    // Transform global configurations
+    output += this.transformGlobalConfig(parsed.applications?.backend?.[0]);
+
+    // Transform frontend config
+    output += this.transformFrontendConfig(
+      parsed.applications!.frontend![0] || {},
+    );
+
+    return output;
   }
 
   async parseToRawBlueprint(pathContent: string): Promise<RawBlueprint> {
@@ -90,7 +117,7 @@ export class JDLConverter {
 
 
 
-console.log('<><><> ',this.parseRelaionship())
+//console.log('<><><> ',this.parseRelaionship())
 
 
 
@@ -280,7 +307,7 @@ console.log('<><><> ',this.parseRelaionship())
   } */
 
   // Transform YAML to JDL
-  private yamlToJdl(yamlInput: string): string {
+  /* private yamlToJdl(yamlInput: string): string {
     const parsed = parseYAML(yamlInput) as Blueprint;
     let output = "";
 
@@ -303,46 +330,21 @@ console.log('<><><> ',this.parseRelaionship())
     // output += this.transformFrontendConfig(parsed.frontend?.[0] || {});
 
     return output;
-  }
+  } */
 
-  // Transform YAML to JDL
-  golokToJdl(parsed: Blueprint): string {
-    let output = "";
+  
 
-    // Transform application configuration
-    output += this.transformApplicationConfig(parsed.applications?.backend!);
-
-    // Transform entities
-    output += this.transformEntities(parsed.entities || []);
-
-    // Transform relationships
-    output += this.transformRelationships(parsed.entities || []);
-
-    // Transform enums
-    output += this.transformEnums(parsed.enums || []);
-
-    // Transform global configurations
-    output += this.transformGlobalConfig(parsed.applications?.backend! || {});
-
-    // Transform frontend config
-    output += this.transformFrontendConfig(
-      parsed.applications!.frontend! || {},
-    );
-
-    return output;
-  }
-
-  private transformApplicationConfig(config: Backend): string {
+  static  transformApplicationConfig(config: Backend| undefined): string {
     // if (!config.backend?.[0]) return "";
-
+if(config){
     const backend = config;
     return `application {
   config {
     baseName ${backend.appsName}
     applicationType ${backend.applicationType}
     authenticationType ${backend.authenticationType}
-    languages ${JSON.stringify(backend.languages)}
-    testFrameworks ${JSON.stringify(backend.testFrameworks)}
+    languages ${JSON.stringify(backend.languages).replace(/"/g, '')}
+    testFrameworks ${JSON.stringify(backend.testFrameworks).replace(/"/g, '')}
     buildTool ${backend.buildTool}
     databaseType ${backend.databaseType}
     devDatabaseType ${backend.devDatabaseType}
@@ -360,9 +362,11 @@ console.log('<><><> ',this.parseRelaionship())
   }
   entities ${backend.entities}
 }\n\n`;
+}
+else return '';
   }
 
-  private transformEntities(entities: Entity[]): string {
+  static transformEntities(entities: Entity[]): string {
     return entities.map((entity) => {
       //const [entityName, config] = Object.entries(entity)[0];
       let entityStr = `entity ${entity.name} {\n`;
@@ -370,10 +374,10 @@ console.log('<><><> ',this.parseRelaionship())
       // Transform properties
       if (entity.properties) {
         entity.properties.forEach((prop) => {
-          const min = prop.min ? " minLength=" + prop.min : "";
-          const max = prop.max ? " maxLength=" + prop.max : "";
+          const min = prop.min ? " minlength(" + prop.min +")" : "";
+          const max = prop.max ? " maxlength(" + prop.max +")" : "";
           const req = prop.required ? " required" : "";
-          entityStr += `  ${prop.name} ${prop.javaType}${req}${min}${max}\n`;
+          entityStr += `  ${prop.name} ${getJavaType(prop.javaType, true)}${req}${min}${max}\n`;
         });
       }
 
@@ -382,7 +386,7 @@ console.log('<><><> ',this.parseRelaionship())
     }).join("");
   }
 
-  private transformRelationships(entities: Entity[]): string {
+  static transformRelationships(entities: Entity[]): string {
     let relationships = "";
 
     entities.forEach((entity) => {
@@ -407,7 +411,7 @@ console.log('<><><> ',this.parseRelaionship())
     return relationships;
   }
 
-  private transformEnums(enums: Enum[]): string {
+  static transformEnums(enums: Enum[]): string {
     return enums.map((enumObj) => {
       console.log(enumObj.values);
       return `enum ${enumObj.name} {\n  ${
@@ -418,9 +422,9 @@ console.log('<><><> ',this.parseRelaionship())
     }).join("");
   }
 
-  private transformGlobalConfig(config: Backend): string {
+  static transformGlobalConfig(config: Backend| undefined): string {
     let output = "";
-
+    if(config){
     if (config.dto) {
       output += "dto * with mapstruct\n";
     }
@@ -430,11 +434,12 @@ console.log('<><><> ',this.parseRelaionship())
     if (config.paginate) {
       output += "paginate * with infinite-scroll, pagination\n\n";
     }
+  }
 
     return output;
   }
 
-  private transformFrontendConfig(frontend: Frontend): string {
+  static transformFrontendConfig(frontend: Frontend): string {
     return `frontend {
   appName ${frontend.appsName}
   localDatabase ${frontend.localDatabase}
@@ -469,7 +474,7 @@ interface Target {
     pagination: string;
   };
 } */
-
+/* 
 private parseRelaionship(source?: string): any {
 
   const SOURCE = `
@@ -562,7 +567,7 @@ console.log('?????? ',relation)
     entities,
     configuration: { pagination: configuration },
   };
-};
+}; */
 /* 
 private parseRawToJDLRela(target: Blueprint): string{
   const { entities, configuration } = target;

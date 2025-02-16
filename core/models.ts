@@ -252,6 +252,7 @@ interface ConfigItem {
 }
 
 interface GolokConfig {
+  printJDL?: boolean;
   isAutorun?: boolean;
   isDebug?: boolean;
   startTime: number;
