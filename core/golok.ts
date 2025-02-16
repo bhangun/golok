@@ -7,6 +7,7 @@ import {
   getJavaType,
   printColor,
   renderEjsFile,
+  runFlutter,
   toCamelCase,
   toSnakeCase,
   toTitleCase,
@@ -42,6 +43,7 @@ import { GolokRegistry } from "./registry.ts";
 
 import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { join } from "https://deno.land/std@0.224.0/path/join.ts";
+import path from "node:path";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
@@ -107,7 +109,6 @@ export default class GolokCore {
 
     // Write blueprint file
     //this.exportToFile();
-
   }
 
   // Load script from string with validation
@@ -166,9 +167,14 @@ export default class GolokCore {
 
     const includePromises = parsedScript.includes!.map(async (includeItem) => {
       const includePath = `${baseDirBlueprintPath}/${includeItem.file}`;
-      const includeData = await yamlFileToTS(includePath) as RawBlueprint;
-      includeData.entities!;
+  
+    //console.log(this.config.isDebug)
+      if(this.config.isDebug)
+        printColor(includePath,"yellow");
 
+      const includeData = await yamlFileToTS(includePath) as RawBlueprint;
+ 
+      
       this.rawBlueprint.entities!.push(...includeData.entities!);
       this.rawBlueprint.enums!.push(...includeData.enums!);
     });
@@ -257,20 +263,20 @@ export default class GolokCore {
     for await (const entry of walk(templateDir)) {
       entries.push(entry);
     }
-  
+
     for (let i = 0; i < entries.length; i++) {
       const w = entries[i];
       const isLastIndex = i === entries.length - 1;
       const targetDir = join(outputDir, w.path.split(templateDir)[1]);
-  
+
       if (w.isDirectory && !checkDirExist(targetDir)) {
         await Deno.mkdir(targetDir, {
           recursive: true,
         });
       }
-  
+
       if (getExtName(w.path) == ".ejs") {
-         renderEjsFile(
+        renderEjsFile(
           w.path,
           outputDir,
           undefined,
@@ -282,15 +288,21 @@ export default class GolokCore {
           //printColor(targetDir, "green");
         }
       }
-  
+
       //console.log(`Processing ${w.path}, is last index: ${isLastIndex}`);
       if (isLastIndex) {
         this.countFiles++;
 
-        printColor('Executing locale generator...', 'yellow');
-        await execGenLocale(this.outputDir!);
-            // Print Summary
-        await this.printSummary();
+        // Print Summary
+        this.printSummary();
+        if(this.config.isAutorun){
+          printColor("Executing locale generator...", "yellow");
+          await execGenLocale(this.outputDir!);
+
+          printColor("Running flutter...", "yellow");
+          await runFlutter(this.outputDir!, ['macos']);
+        }
+        
       }
     }
   }
@@ -321,8 +333,6 @@ export default class GolokCore {
         const source = join(templateDir, fileItem.fromPath);
         //const dirEntity = source.replace(/\/[^/]*$/, "");
 
-        
-        
         const targetFile = outputDir + "/" +
           this.placeholderPath(fileItem.toPath, entity);
         const targetDir = getDirectory(targetFile);
@@ -345,30 +355,28 @@ export default class GolokCore {
     }
   }
 
-
   private printSummary() {
     // Calculate and show processing elapsed time
-   /*  new Promise<void>((resolve) => {
+    /*  new Promise<void>((resolve) => {
       setTimeout(() => { */
-     
-        if (this.countFiles > 0) {
-          printColor(
-            "Files count total: " + this.countFiles + " files",
-            "yellow",
-          );
-        }
-        /* if (this.countBackFiles > 0) {
+
+    if (this.countFiles > 0) {
+      printColor(
+        "Files count total: " + this.countFiles + " files",
+        "yellow",
+      );
+    }
+    /* if (this.countBackFiles > 0) {
           printColor(
             "Backend files count total: " + this.countFiles,
             "yellow",
           );
         } */
-        this.endCompileTime();
-     /*    resolve();
+    this.endCompileTime();
+    /*    resolve();
       });
     }); */
   }
-
 
   private endCompileTime() {
     console.log(

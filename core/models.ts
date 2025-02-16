@@ -252,6 +252,8 @@ interface ConfigItem {
 }
 
 interface GolokConfig {
+  isAutorun?: boolean;
+  isDebug?: boolean;
   startTime: number;
   manifestPath?: string;
   isAI?: boolean;

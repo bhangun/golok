@@ -35,6 +35,7 @@ export {
   readTextFile,
   removeWhitespace,
   renderEjsFile,
+  runFlutter,
   splitString,
   stringToYaml,
   toCamelCase,
@@ -487,7 +488,12 @@ function renderEjsFile(
 function ejsFileReplace(path: string) {
   return path.replace(/.ejs+$/, "");
 }
-async function executeCommandInDirectory(command: string, args: string[], directory: string) {
+async function executeCommandInDirectory(
+  command: string,
+  args: string[],
+  directory: string,
+  errorText?: string,
+) {
   const cmd = new Deno.Command(command, {
     args: args,
     cwd: directory,
@@ -499,43 +505,28 @@ async function executeCommandInDirectory(command: string, args: string[], direct
     console.log(new TextDecoder().decode(stdout));
   } else {
     console.error(new TextDecoder().decode(stderr));
+    printColor(errorText!, "red");
   }
 }
 
-
 async function execGenLocale(targetDir: string) {
-  //Spawn a subprocess and pipe the output to a file
+  await executeCommandInDirectory("flutter", [
+    "gen-l10n",
+    "--arb-dir",
+    "lib/core/translations",
+  ], targetDir + "/");
+}
 
-  /*   const command = new Deno.Command(Deno.execPath(), {
-    args: [
-      "eval",
-      "console.log('Hello World')",
+async function runFlutter(targetDir: string, args: string[]) {
+  await executeCommandInDirectory(
+    "flutter",
+    [
+      "run",
+      "-d",
+      ...args,
     ],
-    stdin: "piped",
-    stdout: "piped",
-  }); */
-// Example usage:
-await executeCommandInDirectory("flutter", ["gen-l10n", "--arb-dir", "lib/core/translations"], targetDir+"/");
-/* 
-  const command = new Deno.Command(targetDir + "/flutter", {
-    args: ["gen-l10n", "--arb-dir", "lib/core/translations"],
-  });
-
-  const child = command.spawn();
-
-  const { code, stdout, stderr } = await command.output();
-
-  if (code === 0) {
-    console.log(new TextDecoder().decode(stdout));
-  } else {
-    console.error(new TextDecoder().decode(stderr));
-  }
-
-  // open a file and pipe the subprocess output to it.
-  child.stdout.pipeTo(
-    Deno.openSync("output", { write: true, create: true }).writable,
+    targetDir + "/",
+    "Failed to run flutter command. \nPlease check your flutter installation."+
+    "\nor try to run flutter manually. \ncd " + targetDir + " && flutter run -d " + args.join(" "),
   );
-
-  // manually close stdin
-  child.stdin.close(); */
 }

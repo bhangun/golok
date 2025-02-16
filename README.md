@@ -9,6 +9,10 @@ deno install -g --allow-net --allow-read -n golok ./main.ts
 ```
 deno install -g -A -n golok ./main.ts
 ```
+### Alternative
+```
+deno install --name golok -g -f -A ./main.ts
+```
 
 ## Raw Golok Blueprint
 ```yaml

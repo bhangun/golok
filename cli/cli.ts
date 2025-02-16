@@ -69,14 +69,22 @@ export default class GolokCLI {
         "-o --output",
         "Output directory",
       )
-
+      .option(
+        "-d, --debug",
+        "Debug process",
+      )
+      .option(
+        "-r, --autorun",
+        "Auto running flutter",
+      )
       .action(({ name }: { name: string;}) => {
         config.projectName = name;
         config.blueprintPath = this.program.blueprint;
         config.manifestPath = this.program.manifest;
         config.output = this.program.output;
-        
+        config.isDebug = this.program.debug;
         config.framework = this.program.framework;
+        config.isAutorun = this.program.autorun;
 
         const golok = new GolokCore(config.manifestPath);
 

@@ -1,6 +1,6 @@
-import {JDL, JDLField, JDLRelationship} from './jdl_model.js';
-import * as utils from '../../core/utils.js';
-import ejs from 'ejs';
+import {JDL, JDLField, JDLRelationship} from './jdl_model.ts';
+import * as utils from '../../core/utils.ts';
+import ejs from "npm:ejs";
 import path from 'node:path';
 import fs from 'node:fs';
 
