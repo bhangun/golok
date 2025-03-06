@@ -1,17 +1,27 @@
-import 'dart:convert';
-import 'package:equatable/equatable.dart'; <% for (idx in relationship) { %><% if(relationship[idx].toSnakeCase === 'user'){%>
+<%_
+var hasEnum = false
+// Check if any object in the entity array has type === 'enum'
+hasEnum = properties.some(item => item.enum === true)
+%>
+import 'dart:convert';<% for (idx in relationship) { %><% if(relationship[idx].snakeCase === 'user'){%>
 import '../../account/models/user.dart';<%} else {%>
-import 'package:<%= info.name %>/modules/<%= relationship[idx].toSnakeCase %>/model/<%= relationship[idx].toSnakeCase %>.dart';<% }}%>
+import '../../<%= relationship[idx].snakeCase %>/model/<%= relationship[idx].snakeCase %>.dart';<% }}%>
+<% if(hasEnum){%>import '../../enums/enums.dart';<%}%>
 
+class <%= name %>{
+    final int? id;<% for (idx in properties) { %><% if(properties[idx].doc){%>
+    /// <%= properties[idx].doc %><%}%>  
+    final <% if(properties[idx].dartType){ %><%= properties[idx].dartType %><%} else {%><%= properties[idx].origin %><%}%>? <%= properties[idx].name %>; <% } %>
+    <% for (idx in relationship) { %>final <%= relationship[idx].entity %>? <%= relationship[idx].name %>;
+    <%}%>
 
-class <%= titleCase %> extends Equatable{<% for (idx in properties) { %><% if(properties[idx].doc){%>
-    /// <%= properties[idx].doc %> <%}%>
-    final <% if(properties[idx].dartType ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].dartType %><%}%>? <%= properties[idx].name %>; <% } %>
-
-    const <%= name %>(<%if(properties.length > 0){%>{ <% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
+    const <%= name %>(<%if(properties.length > 0){%>{ 
+        this.id,<% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
         this.<%- properties[idx].name %>,<% } else {%> 
-        this.<%- properties[idx].name %>,<% } } %> 
-    }<%}%>);
+        this.<%- properties[idx].name %>,<% } } %> <%}%>
+        <% for (idx in relationship) { %>this.<%= relationship[idx].name %>,
+        <%}%>
+    });
 
     factory <%= name %>.fromJson(Map<String, dynamic> json) =>  
         <%= name %>(<% for (idx in properties) { if (properties[idx]['doc'] == 'relationship') { %>
@@ -39,10 +49,10 @@ class <%= titleCase %> extends Equatable{<% for (idx in properties) { %><% if(pr
 
     static String list<%= name %>ToJson(List<<%= name %>> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-    <%= titleCase %> copyWith({<% for (idx in properties) { %>
-        <% if(properties[idx].dartType ===''){ %><%= properties[idx].type.origin.name %><%}else{%><%=properties[idx].dartType %><%}%>? <%= properties[idx].name %>, <% } %>
+    <%= name %> copyWith({<% for (idx in properties) { %>
+        <% if(properties[idx].dartType ===''){ %><%= properties[idx].origin %><%}else{%><%=properties[idx].dartType %><%}%>? <%= properties[idx].name %>, <% } %>
         }) {
-    return <%= titleCase %>(<% for (idx in properties) { %>
+    return <%= name %>(<% for (idx in properties) { %>
         <%= properties[idx].name %>: <%= properties[idx].name %>?? this.<%= properties[idx].name %>, <% } %>
         );
     }
@@ -59,10 +69,10 @@ class <%= titleCase %> extends Equatable{<% for (idx in properties) { %><% if(pr
     }
 }
 
-class <%= titleCase %>List {
-  final List<<%= titleCase %>>? <%= camelCase %>s;
+class <%= name %>List {
+  final List<<%= name %>>? <%= camelCase %>s;
 
-  <%= titleCase %>List({
+  <%= name %>List({
     this.<%= camelCase %>s,
   });
 
@@ -70,7 +80,7 @@ class <%= titleCase %>List {
     List<<%= name %>> <%= camelCase %>s = [];
     <%= camelCase %>s = json.map((post) => <%= name %>.fromJson(post)).toList();
 
-    return <%= titleCase %>List(
+    return <%= name %>List(
       <%= camelCase %>s: <%= camelCase %>s,
     );
   }
@@ -80,7 +90,7 @@ let newEnums = [];
 for (p in properties) { 
     if(properties[p].isEnum){
         for(b in enums){ 
-            if (enums[b].name == properties[p].type.origin.name) {
+            if (enums[b].name == properties[p].origin) {
                 newEnums.push(enums[b]);
             }
         }

@@ -1,11 +1,11 @@
 import {
   checkDirExist,
   execGenLocale,
-  getDartType,
   getDirectory,
   getExtName,
-  getJavaType,
+  jsonToString,
   printColor,
+  removeUndefined,
   renderEjsFile,
   runFlutter,
   toCamelCase,
@@ -45,6 +45,7 @@ import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { join } from "https://deno.land/std@0.224.0/path/join.ts";
 import path from "node:path";
 import { JDLConverter } from "../converter/jdl/golok-jdl.ts";
+import { stringify } from "https://deno.land/std@0.224.0/yaml/stringify.ts";
 
 export default class GolokCore {
   private rawBlueprint: RawBlueprint;
@@ -106,8 +107,6 @@ export default class GolokCore {
     this.parseRawToBlueprint();
 
     
-    
-
     // Generate apps by render template with data provided from user blueprint
     this.generateTemplate();
 
@@ -134,7 +133,7 @@ export default class GolokCore {
       if (isOrigin) {
         this.rawBlueprint = parsedScript;
       } else {
-        // this.compiledBlueprint = parsedScript;
+        this.config.blueprintRaw = parsedScript;
       }
 
       // If blueprint has includes, transform it
@@ -148,11 +147,11 @@ export default class GolokCore {
         this.compiledBlueprint,
       );
 
-      if (!validationResult.isValid) {
+      /* if (!validationResult.isValid) {
         throw new ValidationError(
           `Script validation failed: ${validationResult.errors.join(", ")}`,
         );
-      }
+      } */
 
       // deno-lint-ignore no-explicit-any
     } catch (error: any) {
@@ -167,7 +166,6 @@ export default class GolokCore {
     if(this.config.printJDL){
     const jdl = JDLConverter.golokToJdl( this.compiledBlueprint);
     const jdlPath = this.baseOutDir!+'/'+this.config.projectName+'.jdl';
-    console.log(jdlPath)
      const encoder = new TextEncoder();
      Deno.writeFile(jdlPath, encoder.encode(jdl)).then(() => {
       //printColor(targetPath);
@@ -188,7 +186,7 @@ export default class GolokCore {
     const includePromises = parsedScript.includes!.map(async (includeItem) => {
       const includePath = `${baseDirBlueprintPath}/${includeItem.file}`;
   
-    //console.log(this.config.isDebug)
+   
       if(this.config.isDebug)
         printColor(includePath,"yellow");
 
@@ -261,7 +259,10 @@ export default class GolokCore {
                 this.renderingTemplate(templItem, templateDir, outputDir);
               } else if (templItem.dataBinding == BlueprintBinding.ENTITIES) {
                 this.renderingEntityTemplate(templItem, templateDir, outputDir);
+              } else if (templItem.dataBinding == BlueprintBinding.ENUMS) {
+                this.renderingEnumsTemplate(templItem, templateDir, outputDir);
               }
+
             });
           }
         });
@@ -309,7 +310,6 @@ export default class GolokCore {
         }
       }
 
-      //console.log(`Processing ${w.path}, is last index: ${isLastIndex}`);
       if (isLastIndex) {
         this.countFiles++;
 
@@ -342,9 +342,24 @@ export default class GolokCore {
     });
   }
 
+  private renderingEnumsTemplate(
+    entityTemplateItem: TemplateItem,
+    templateDir: string,
+    outputDir: string,
+  ) {
+    this.compiledBlueprint.enums!.forEach((enumItem: Enum) => {
+      this.rendering(
+        entityTemplateItem,
+        enumItem,
+        templateDir,
+        outputDir
+      );
+    });
+  }
+
   private rendering(
     templateItem: TemplateItem,
-    entity: Entity,
+    entity: any,
     templateDir: string,
     outputDir: string,
   ) {
@@ -367,10 +382,13 @@ export default class GolokCore {
         renderEjsFile(source, targetFile, {
           ...entity,
           ...this.compiledBlueprint,
+          /* ...this.compiledBlueprint.enums,
+          ...this.compiledBlueprint.info,
+          ...this.compiledBlueprint.applications, */
         });
         this.countFiles++;
         const isLastIndex = index === templateItem.fileItems!.length - 1;
-        //console.log(`Processing ${entity.name}, is last index: ${isLastIndex}`);
+   
       });
     }
   }
@@ -409,8 +427,8 @@ export default class GolokCore {
     path: string,
     entity: Entity,
   ): string {
-    const patternEntity = /{entityName}/g;
-    const patternEntityFile = /{entityFile}/g;
+    const patternEntity = /{ENTITY_NAME}/g;
+    const patternEntityFile = /{ENTITY_FILE}/g;
 
     const entityPath = path.replace(
       patternEntity,
@@ -446,23 +464,27 @@ export default class GolokCore {
         const configProperties =
           (this.rawBlueprint.configuration?.default?.properties || [])
             .map(this.parseRawToProperty)
-            .map(this.transformPropertyTypes);
+            .map(this.transformPropertyTypes)
+            ;
 
         // Add entity-specific properties
         const properties = (entityData.properties || [])
           .map((val) => this.parseRawToProperty(val))
-          .map(this.transformPropertyTypes);
+          .map(this.transformPropertyTypes)
+          ;
 
         // Add default relationships from configuration
         const configRelationship =
           (this.rawBlueprint.configuration?.default?.relationship || [])
             .map(this.parseRawToRelationship);
 
+
+           
         // Add entity-specific relationships
         const relationship = (entityData.relationship || [])
           .map(this.parseRawToRelationship);
-
-        return {
+          
+        /* return {
           name: entityName,
           titleCase: toCamelCase(entityName),
           camelCase: toCamelCase(entityName),
@@ -476,10 +498,39 @@ export default class GolokCore {
             ...configRelationship,
             ...relationship,
           ],
+        }; */
+
+        const obj: Entity = {
+          name: entityName,
+          titleCase: entityName,//toTitleCase(entityName),
+          camelCase: toCamelCase(entityName),
+          snakeCase: toSnakeCase(entityName),
+          ...entityData,
+          properties: [
+            ...configProperties,
+            ...properties,
+          ],
+          relationship: [
+            ...configRelationship,
+            ...relationship,
+          ]
         };
+
+
+         /*  if(configRelationship || relationship){
+            obj.relationship = [
+              ...configRelationship,
+              ...relationship,
+            ]
+          }; */
+
+          return obj;
+
+
       }) || [];
     return entities;
   }
+
 
   private parseRawToEnums(rawEnum: RawEnum): Enum {
     const [name, values] = Object.entries(rawEnum)[0];
@@ -547,9 +598,8 @@ export default class GolokCore {
     }
     parts.splice(0, 1);
     property.origin = type;
-    property.dartType = getDartType(type);
-    property.javaType = getJavaType(type);
 
+    
     // Check & get for `required` and `unique` flags
     property.required = /required/.test(otherAttributes);
     property.unique = /unique/.test(otherAttributes);
@@ -576,6 +626,8 @@ export default class GolokCore {
     /* const [entity, attribute] = entityWithAttribute.split("(").map((s) =>
       s.replace(")", "").trim()
     ); */
+
+
     const entity =
       entityWithAttribute.split("(").map((s) => s.replace(")", "").trim())[0];
     const [type, label] = typeWithLabel.split("(").map((s) =>
@@ -584,7 +636,7 @@ export default class GolokCore {
 
     const camelCase = toCamelCase(entity);
     const snakeCase = toSnakeCase(entity);
-    const titleCase = toTitleCase(entity);
+    const titleCase = entity;
 
     const result: Relationship = {
       name: name,
@@ -610,18 +662,23 @@ export default class GolokCore {
 
   // Transform property types
   private transformPropertyTypes(prop: Property): Property {
-    const typeMapping: Record<string, { dart: string; java: string }> = {
-      "string": { dart: "String", java: "String" },
-      "long": { dart: "long", java: "Long" },
-      "double": { dart: "double", java: "Double" },
-      "bool": { dart: "boolean", java: "Boolean" },
-      "datetime": { dart: "DateTime", java: "Instant" },
+    const typeMapping: Record<string, { dartType: string; javaType: string }> = {
+      "string": { dartType: "String", javaType: "String" },
+      "long": { dartType: "long", javaType: "Long" },
+      "double": { dartType: "double", javaType: "Double" },
+      "bool": { dartType: "bool", javaType: "Boolean" },
+      "int": { dartType: "int", javaType: "Integer" },
+      "integer": { dartType: "int", javaType: "Integer" },
+      "boolean": { dartType: "bool", javaType: "Boolean" },
+      "instant": { dartType: "DateTime", javaType: "Instant" },
+      "datetime": { dartType: "DateTime", javaType: "Instant" },
     };
+
     if (prop) {
       const mapping = typeMapping[prop.origin ? prop.origin.toLowerCase() : ""];
       if (mapping) {
-        prop.dartType = mapping.dart;
-        prop.javaType = mapping.java;
+        prop.dartType = mapping.dartType;
+        prop.javaType = mapping.javaType;
       } else {
         prop.dartType = prop.origin;
         prop.javaType = prop.origin;
@@ -694,12 +751,15 @@ export default class GolokCore {
     if (!this.compiledBlueprint) {
       throw new Error("No script loaded");
     }
-    return yamlToString(this.compiledBlueprint);
+    const result = removeUndefined(this.compiledBlueprint);
+  
+    return stringify(result)//this.compiledBlueprint);
   }
 
   // Export to file
   private async exportToFile(): Promise<void> {
-    const yamlString = this.exportToString();
+    const data = this.exportToString();
+  
     const filePath = join(
       this.baseOutDir!,
       ".golok.blueprint.yaml",
@@ -708,7 +768,7 @@ export default class GolokCore {
     try {
       //Print Compiled blueprint
       printColor(filePath, "green");
-      await Deno.writeTextFile(filePath, yamlToString(yamlString));
+      await Deno.writeTextFile(filePath, data);
 
       //await Deno.writeTextFile(filePath, yamlToString(this.compiledBlueprint));
       // deno-lint-ignore no-explicit-any

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:<%= info.name %>/shared/widgets/progress_indicator_widget.dart';
+import '../../../core/models/general_status.dart';
 import '../logic/<%= snakeCase %>_logic.dart';
 import '../model/<%= snakeCase %>.dart';
 
@@ -23,7 +23,7 @@ class <%= titleCase %>FormState extends ConsumerState<<%= titleCase %>Form> {<%f
 
   @override
   Widget build(BuildContext context) {
-    <%= titleCase %>State <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
+    final <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
 
     return Scaffold(
         appBar: AppBar(
@@ -31,8 +31,8 @@ class <%= titleCase %>FormState extends ConsumerState<<%= titleCase %>Form> {<%f
         ),
         body: Stack(
           children: <Widget>[
-            <%= camelCase %>State.status.loading
-                ? const CustomProgressIndicatorWidget()
+            <%= camelCase %>State.status == StateStatus.loading
+                ? const CircularProgressIndicator()
                 : ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     children: [<%for (idx in properties) { %><%if(properties[idx].name !='id'){%>

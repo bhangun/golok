@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import '../models/user.dart';
 import '../services/user_services.dart';
 
@@ -17,7 +16,6 @@ final userProv = FutureProvider<List<User>>((ref) async {
     await rootBundle.loadString('assets/data/users.json'),
   );
   return User.listFromJson(content);
-
 });
 
 class UserBloc extends ChangeNotifier {
@@ -49,13 +47,11 @@ class UserBloc extends ChangeNotifier {
 
   String get formTitle => isUpdated ? title = 'Update User' : 'Create User';
 
-
   itemTap(int position) {
     try {
       position = position;
       user = userList![position];
       isItemEmpty = false;
-  
     } catch (e) {
       isItemEmpty = true;
     }
@@ -64,7 +60,6 @@ class UserBloc extends ChangeNotifier {
   add() {
     user = null;
     isUpdated = false;
-   
   }
 
   save() {
@@ -74,13 +69,11 @@ class UserBloc extends ChangeNotifier {
       isUpdated
           ? UserServices.updateUser(_toUser())
           : UserServices.createUser(_toUser());
-  
+
       loading = false;
       success = true;
       getUserList();
-    } catch (e) {
- 
-    }
+    } catch (e) {}
   }
 
   delete(int id) {
@@ -92,9 +85,7 @@ class UserBloc extends ChangeNotifier {
       loading = false;
       success = true;
       getUserList();
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   setUser(User user) {
@@ -105,14 +96,11 @@ class UserBloc extends ChangeNotifier {
     loading = true;
     success = false;
     try {
-    
       isUpdated = true;
       loading = false;
       success = true;
       getUserList();
-    } catch (e) {
-     // print(e.toString());
-    }
+    } catch (e) {}
   }
 
   Future getUserList() async {
@@ -130,17 +118,16 @@ class UserBloc extends ChangeNotifier {
     }
   }
 
-  FutureProvider<List<User>> users(){
+  FutureProvider<List<User>> users() {
     return FutureProvider<List<User>>((ref) async {
       return await UserServices.users();
     });
   }
 
-  Future<List<User>> usersList() async{
-      return await UserServices.users();
+  Future<List<User>> usersList() async {
+    return await UserServices.users();
   }
 
-  
   /* users() {
     return FutureProvider<List<User>>((ref) async {
       final content = json.decode(
@@ -172,6 +159,5 @@ class UserBloc extends ChangeNotifier {
 
   viewList() {
     getUserList();
-   
   }
 }

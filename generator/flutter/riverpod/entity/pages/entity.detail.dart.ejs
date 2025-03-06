@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:<%= info.name %>/core/routes/navigation.dart';
 import '../logic/<%= snakeCase %>_logic.dart';
 import '../<%= snakeCase %>_module.dart';
 
@@ -27,14 +27,14 @@ class <%= titleCase %>DetailState extends ConsumerState<<%= titleCase %>Detail> 
 
   @override
   Widget build(BuildContext context) {
-    <%= titleCase %>State <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
+    final <%= camelCase %>State = ref.watch(<%= camelCase %>Provider);
     return Scaffold(
             appBar: AppBar(title: const Text('<%= titleCase %> Detail')),
             body: <%= camelCase %>State.isItemEmpty
                 ? const Center(child: Text('<%= titleCase %> data are empty'))
                 : <%= camelCase %>Detail(<%= camelCase %>State),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => NavigationServices.navigateTo(<%= titleCase %>Module.<%= camelCase %>Form),
+              onPressed: () => context.go(<%= titleCase %>Module.<%= camelCase %>Form),
               tooltip: 'Edit',
               child: const Icon(Icons.edit),
             ));

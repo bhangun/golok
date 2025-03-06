@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-import 'package:<%= name %>/app/models/general_status.dart';
+import '../../../core/models/general_status.dart';
 import '../<%= snakeCase %>_module.dart';
 import '../services/<%= snakeCase %>_services.dart';
 import '../model/<%= snakeCase %>.dart';
@@ -19,7 +19,7 @@ class <%= titleCase %>Notifier extends StateNotifier<<%= titleCase %>State> {
   <%= titleCase %>Notifier() : super(<%= titleCase %>State(
     title: '',
     isUpdated: false,
-    status: const StateStatus(),
+    status: StateStatus.initial,
     formStatus: const FormStatus(),
     isItemEmpty: true,
     totalItem: 0,
@@ -41,17 +41,16 @@ class <%= titleCase %>Notifier extends StateNotifier<<%= titleCase %>State> {
   /// Save entity
   void save(<%= titleCase %> <%= camelCase %>) {
     state.copyWith(
-        <%= camelCase %>: <%= camelCase %>, status: const StateStatus(loading: true));
+        <%= camelCase %>: <%= camelCase %>, status: StateStatus.loading);
     try {
       <%= titleCase %>Services.create<%= titleCase %>(state.<%= camelCase %>);
       state.copyWith(
-        <%= camelCase %>: <%= camelCase %>, status: const StateStatus(loading: false,success: true, error: false));
+        <%= camelCase %>: <%= camelCase %>, status: StateStatus.success);
     } catch (e) {
       state.copyWith(
           <%= camelCase %>: <%= camelCase %>,
-          status: const StateStatus(
-              loading: false, error: true, errorMessage: ''));
-      log.severe(state.status.errorMessage, e);
+          status: StateStatus.error);
+      log.severe(state.status, e);
     }
   }
 

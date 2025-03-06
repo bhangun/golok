@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../model/<%= snakeCase %>.dart';
-import '../../../core/network/rest/rest_services.dart';
+import '../../../services/network/rest/rest_services.dart';
 
 class <%= titleCase %>Services {
 
   static Future<<%= titleCase %>> <%= camelCase %>(String id) async {
-    var response = await RestServices.fetch('/api/<%= camelCase %>$id');
+    var response = await RestService.fetch('/api/<%= camelCase %>$id');
     return <%= titleCase %>.fromJson(json.decode(response));
   }
 
   static Future<List<<%= titleCase %>>> <%= camelCase %>s([var page, var size, var sort]) async {
-    var data = await RestServices.fetch('/api/<%= camelCase %>s');
+    var data = await RestService.fetch('/api/<%= camelCase %>s');
     return <%= titleCase %>.listFromString(data);
   }
 

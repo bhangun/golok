@@ -1,6 +1,6 @@
 import * as yaml from 'yaml';
 import * as fs from "node:fs";
-import { Stream } from 'stream';
+import { Stream, Writable } from 'stream';
 import { z } from 'zod';
 
 // Types for script formats
@@ -117,12 +117,14 @@ const TargetScriptSchema = z.object({
 });
 
 export class ScriptTransformer {
-  private typeMapping = {
+  private typeMapping: Record<string, { dart: string; java: string }> = {
     'string': { dart: 'String', java: 'String' },
     'double': { dart: 'double', java: 'Double' },
     'long': { dart: 'long', java: 'Long' },
     'dateTime': { dart: 'DateTime', java: 'Instant' },
-    'bool': { dart: 'boolean', java: 'Boolean' },
+    'DateTime': { dart: 'DateTime', java: 'Instant' },
+    'bool': { dart: 'bool', java: 'Boolean' },
+    'Instant': { dart: 'DateTime', java: 'Instant' },
   };
 
   // Convert ORIGIN_SCRIPT to TARGET_SCRIPT
@@ -215,7 +217,7 @@ export class ScriptTransformer {
     return yaml.stringify(data);
   }
 
-  public async toStream(data: any, stream: Stream): Promise<void> {
+  public async toStream(data: any, stream: Writable): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const content = this.toString(data);

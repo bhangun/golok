@@ -88,7 +88,7 @@ export class JDLConverter {
       this.position++;
     }
 
-    console.log(yamlToString(config));
+    
     return config;
   }
 
@@ -114,11 +114,6 @@ export class JDLConverter {
 
       this.position++;
     }
-
-
-
-//console.log('<><><> ',this.parseRelaionship())
-
 
 
     return config;
@@ -259,7 +254,7 @@ export class JDLConverter {
     const [source, target] = rest.replace("}", "").split(" to ").map((s) =>
       s.trim()
     );
-    console.log(relationshipLine);
+   
     return {
       type: type.replace("relationship ", ""),
       source: source.split("{")[0].trim(),
@@ -390,8 +385,52 @@ else return '';
     let relationships = "";
 
     entities.forEach((entity) => {
-      const [entityName, config] = Object.entries(entity)[0];
-      if (config.relationship) {
+      //Object.entries(entity)
+      const [propertyName, entityName] = Object.entries(entity)[0];
+
+      if(Array.isArray(entity.relationship) && entity.relationship.length > 0){
+        entity.relationship.forEach((rel)=>{
+
+          if (rel.type == "manyToOne") {
+            relationships +=
+              `relationship ManyToOne {\n  ${entityName}{${rel.name}} to ${rel.entity}\n}\n\n`;
+          } else if (rel.type =="oneToMany") {
+            relationships +=
+              `relationship OneToMany {\n  ${entityName}{${rel.name}} to ${rel.entity}\n}\n\n`;
+          } else if (rel.type =="oneToOne") {
+            relationships +=
+              `relationship OneToOne {\n  ${entityName}{${rel.name}} to ${rel.entity}\n}\n\n`;
+          } else if (rel.type =="manyToMany") {
+            relationships +=
+              `relationship ManyToMany {\n  ${entityName}{${rel.name}} to ${rel.entity}\n}\n\n`;
+          }
+
+        });
+      }
+
+      /* [
+        [ "name", "Settings" ],
+        [ "titleCase", "settings" ],
+        [ "camelCase", "settings" ],
+        [ "snakeCase", "settings" ],
+        [
+          "properties",
+          [
+            {
+              name: "print",
+              origin: "String",
+              dartType: "String",
+              javaType: "String",
+              required: false,
+              unique: false
+            }
+          ]
+        ],
+        [ "relationship", [] ]
+      ]      */
+//console.log(Object.entries(entity))
+
+      /* if (config.relationship) {
         config.relationship.forEach((rel: string) => {
           const [field, spec] = rel.split(":");
           const [targetEntity, type] = spec.split(",").map((s) => s.trim());
@@ -405,7 +444,7 @@ else return '';
               `relationship OneToMany {\n  ${entityName}{${field}} to ${targetEntity}\n}\n\n`;
           }
         });
-      }
+      } */
     });
 
     return relationships;
@@ -413,7 +452,7 @@ else return '';
 
   static transformEnums(enums: Enum[]): string {
     return enums.map((enumObj) => {
-      console.log(enumObj.values);
+     
       return `enum ${enumObj.name} {\n  ${
         enumObj.values.map((v) => {
           return v.name;
@@ -504,12 +543,10 @@ private parseRelaionship(source?: string): any {
     const relationshipType = match[1] === 'ManyToOne' ? 'manyToOne' : 'manyToMany';
     const relationships = match[2].split(',').map((relation) => relation.trim());
 
-console.log('========',relationships)
 
 
     relationships.forEach((relation) => {
 
-console.log('?????? ',relation)
 
       const [left, right] = relation.split('to').map((part) => part.trim());
       const leftEntity = left.split('{')[0].trim();

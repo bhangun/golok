@@ -2,15 +2,15 @@
 Apps generator
 
 ## Install Global
-```
+```sh
 deno install -g --allow-net --allow-read -n golok ./main.ts
 ```
 ### Auto permission
-```
+```sh
 deno install -g -A -n golok ./main.ts
 ```
 ### Alternative
-```
+```sh
 deno install --name golok -g -f -A ./main.ts
 ```
 
@@ -145,3 +145,14 @@ states:
 ```
 
 
+# Usage
+
+## Add you blueprint
+```sh
+golok build mygolok -b my_blueprint.yaml
+```
+
+## Using your own template
+```sh
+golok build mygolok -b my_blueprint.yaml -m my_template/manifest.yaml
+```

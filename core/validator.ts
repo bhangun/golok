@@ -36,10 +36,10 @@ class GolokValidator {
     // Validation Methods
     static validateScriptInfo(info: any): void {
         if (!info) {
-            throw new ValidationError("Missing script info section");
+            throw new ValidationError("Missing info section");
         }
         if (!info.name) {
-            throw new ValidationError("Missing script name in info section");
+            throw new ValidationError("Missing name in info section");
         }
         if (typeof info.name !== "string") {
             throw new ValidationError("Script name must be a string");

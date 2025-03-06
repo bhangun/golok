@@ -1,31 +1,37 @@
 version: 1.0
-name: default
+name: akuh
 templates:
 - name: default_flutter
   framework: flutter
   subFramework: riverpod
-  side: frontend
+  side: FRONTEND
   baseDir: riverpod
   templateItems:
   - name: app
-    dataBinding: entities
+    dataBinding: BLUEPRINT
     baseDir: app
   - name: entity
-    dataBinding: entities
+    dataBinding: ENTITIES
     baseDir: entity
     loop: true
     fileItems:
     - fromPath: entity.dart.ejs
-      toPath: lib/modules/{entityName}/model/{entityFile}.dart
-    - fromPath: entity.module.dart.ejs
-      toPath: lib/modules/{entityName}/{entityFile}_module.dart
+      toPath: lib/features/{ENTITY_NAME}/model/{ENTITY_FILE}.dart
+    - fromPath: entity.feature.dart.ejs
+      toPath: lib/features/{ENTITY_NAME}/{ENTITY_FILE}_feature.dart
     - fromPath: entity.services.dart.ejs
-      toPath: lib/modules/{entityName}/services/{entityFile}_services.dart
+      toPath: lib/features/{ENTITY_NAME}/services/{ENTITY_FILE}_services.dart
     - fromPath: entity.logic.dart.ejs
-      toPath: lib/modules/{entityName}/logic/{entityFile}_logic.dart
+      toPath: lib/features/{ENTITY_NAME}/logic/{ENTITY_FILE}_logic.dart
     - fromPath: pages/entity.list.dart.ejs
-      toPath: lib/modules/{entityName}/pages/{entityFile}_list.dart
+      toPath: lib/features/{ENTITY_NAME}/pages/{ENTITY_FILE}_list.dart
     - fromPath: pages/entity.detail.dart.ejs
-      toPath: lib/modules/{entityName}/pages/{entityFile}_detail.dart
+      toPath: lib/features/{ENTITY_NAME}/pages/{ENTITY_FILE}_detail.dart
     - fromPath: pages/entity.form.dart.ejs
-      toPath: lib/modules/{entityName}/pages/{entityFile}_form.dart
+      toPath: lib/features/{ENTITY_NAME}/pages/{ENTITY_FILE}_form.dart
+  - name: enums
+    dataBinding: ENUMS
+    baseDir: entity
+    fileItems:
+    - fromPath: entity.enum.dart.ejs
+      toPath: lib/features/enums/enums.dart

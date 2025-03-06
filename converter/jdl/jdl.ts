@@ -31,10 +31,9 @@ function transpileJDL(blueprint, output, basedir) {
           ejs.renderFile(jdlTemplate, blueprint, {}, function(err, str) {
             if (err) throw err;
    
-            console.log(jdlResult)
+    
             // Write rendered file to new directory
             fs.writeFile(jdlResult, str, (err) => {
-             // print(destinPath);
               if (err) throw err;
             });
           });

@@ -261,7 +261,7 @@ interface GolokConfig {
   blueprintPath: string;
   output?: string;
   isConvertion?: boolean;
-  blueprintRaw?: Blueprint;
+  blueprintRaw?: RawBlueprint;
   projectName?: string;
   blueprint?: Blueprint;
   package?: string;
@@ -297,8 +297,8 @@ enum StateManagement {
 }
 
 enum TechnologyLayer {
-  FRONTEND = "frontend",
-  BACKEND = "backend",
+  FRONTEND = "FRONTEND",
+  BACKEND = "BACKEND",
 }
 
 enum Platform {
@@ -365,13 +365,14 @@ interface FileItems {
 }
 
 enum BlueprintBinding {
-  BLUEPRINT = "blueprint",
-  NONE = "none",
-  INFO = "info",
-  ENDPOINT = "endpoint",
-  APPLICATIONS = "applications",
-  ENTITIES = "entities",
-  ENUMS = "enums",
-  OPERATIONS = "operations",
-  STATES = "states",
+  BLUEPRINT = "BLUEPRINT",
+  NONE = "NODE",
+  INFO = "INDO",
+  ENDPOINT = "ENDPOINT",
+  APPLICATIONS = "APPLICATIONS",
+  ENTITIES = "ENTITIES",
+  ENUMS = "ENUMS",
+  OPERATIONS = "OPERATIONS",
+  STATES = "STATES",
+  SCREENS = "SCREENS",
 }

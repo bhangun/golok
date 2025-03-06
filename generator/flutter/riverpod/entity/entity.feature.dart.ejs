@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/modules/menu.dart';
-import '../../core/modules/module_model.dart';
+import '../../app/models/menu.dart';
 import '../../core/routes/routes.dart';
+import '../../core/features/feature.dart';
+import '../../core/features/features_base.dart';
+
 import 'pages/<%= snakeCase %>_list.dart';
 import 'pages/<%= snakeCase %>_detail.dart';
 import 'pages/<%= snakeCase %>_form.dart';
 
-class <%= titleCase %>Module implements Module {
+class <%= titleCase %>Module implements FeaturesBase {
   @override
   String? name = '<%= titleCase %>';
   static const String <%= camelCase %>List = '/<%= camelCase %>List';
@@ -16,20 +17,15 @@ class <%= titleCase %>Module implements Module {
   static const String <%= camelCase %>Form = '/<%= camelCase %>Form';
 
   @override
-  pages(BuildContext context) {
+  List<Menu> registerMenu() {
     return [
-      const Menu(title: '<%= titleCase %> Detail', path: <%= titleCase %>Module.<%= camelCase %>Detail),
-      const Menu(title: '<%= titleCase %> Form', path: <%= titleCase %>Module.<%= camelCase %>Form),
-      const Menu(
+      Menu(title: '<%= titleCase %> Detail', path: <%= titleCase %>Module.<%= camelCase %>Detail),
+      Menu(title: '<%= titleCase %> Form', path: <%= titleCase %>Module.<%= camelCase %>Form),
+      Menu(
           title: '<%= titleCase %> List',
-          path: <%= titleCase %>Module.<%= camelCase %>List,
-          showInDrawer: true,
-          showInHome: true)
+          path: <%= titleCase %>Module.<%= camelCase %>List)
     ];
   }
-
-  @override
-  services() {}
 
   @override
   goroutes() => [];
@@ -40,4 +36,9 @@ class <%= titleCase %>Module implements Module {
     Routes.shellBranch(<%= camelCase %>Detail, <%= camelCase %>Detail,<%= titleCase %>Detail()),
     Routes.shellBranch(<%= camelCase %>Form, <%= camelCase %>Form,<%= titleCase %>Form()),
   ];
+
+  @override
+  List<Feature> registerScreens() {
+    throw UnimplementedError();
+  }
 }

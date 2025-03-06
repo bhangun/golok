@@ -43,10 +43,13 @@ export {
   toTitleCase,
   yamlFileToTS,
   yamlToString,
+  jsonToString,
+  removeUndefined
 };
 
 function getDartType(type: string): string {
   const [baseType] = type.split(",").map((t) => t.trim());
+
   switch (baseType) {
     case "String":
       return "String";
@@ -57,6 +60,16 @@ function getDartType(type: string): string {
     case "double":
       return "double";
     case "datetime":
+      return "DateTime";
+    case "boolean":
+      return "bool";
+    case "Boolean":
+      return "bool";
+    case "bool":
+      return "bool";
+    case "Instant":
+      return "DateTime";
+    case "DateTime":
       return "DateTime";
     default:
       return "dynamic";
@@ -337,15 +350,46 @@ async function yamlFileToTS(inputFile: string): Promise<any> {
 function stringToYaml(script: string) {
   return parseYaml(script);
 }
+
+
+  // Function to remove undefined values
+  function removeUndefined(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj
+        .filter((item) => item !== undefined)
+        .map((item) => removeUndefined(item));
+    } else if (typeof obj === "object" && obj !== null) {
+      return Object.fromEntries(
+        Object.entries(obj)
+          .filter(([_, value]) => value !== undefined)
+          .map(([key, value]) => [key, removeUndefined(value)]),
+      );
+    }
+    return obj;
+  }
+
 /**
  * yml2js
  * @param {String} inputFile
  * @return {String} value
  */
 function yamlToString(yaml: any): string {
+
   const js = stringifyYaml(yaml);
+
   return js;
 }
+
+/**
+ * json2js
+ * @param {String} inputFile
+ * @return {String} value
+ */
+function jsonToString(json: any): string {
+
+    const js = JSON.stringify(json);
+    return js;
+  }
 
 // Load script from file
 async function readTextFile(

@@ -24,8 +24,6 @@ export function transpile(originScript: string): Blueprint {
         configuration: { default: { [key: string]: any } };
     } */;
 
-    console.log(entities[0])
-    console.log(configuration)
 
     const targetEntities = entities.map((entity: Entity) => ({
         name: Object.keys(entity)[0],
@@ -39,8 +37,6 @@ export function transpile(originScript: string): Blueprint {
             entity[Object.keys(entity)[0]].relationship,
         ),
     }));
-
-    console.log(targetEntities[0])
 
     const targetEnums: EntityEnum[] = Object.entries(enums).map((
         [name, values],

@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 
 import '../../bloc/path<%= index %>/<%= entityInstance %>_bloc.dart';
 import 'package:<%= appsName %>/widgets/global_methods.dart';
-import 'package:<%= appsName %>/widgets/progress_indicator_widget.dart';
 
 /**
 * <%= method.summary %>
@@ -59,7 +58,7 @@ for (idx in dartFields) { %><% if(idx=='id' || dartFields[idx]['desc'] == 'relat
     return Stack(
       children: <Widget>[
         _<%= entityInstance %>Bloc.loading
-            ? const CustomProgressIndicatorWidget()
+            ? const CircularProgressIndicator()
             : Material(child: _buildForm()),
         _<%= entityInstance %>Bloc.success
             ? Container()

@@ -1,0 +1,6 @@
+//All enums
+<% for (ide in enums) { %>
+enum <%= enums[ide].name %>{
+  <% for (idx in enums[ide].values) { %><%= enums[ide].values[idx].name.toLowerCase() %>, <%}%>
+}
+<%}%>
